@@ -1,9 +1,11 @@
 import React, { useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 // hardcoded locations right now
-function Map() {
+function Map({ locations = [] }) {
     const containerRef = useRef(null);
     const map3DRef = useRef(null);
+    const navigate = useNavigate();
 
     async function init() {
 
@@ -19,58 +21,76 @@ function Map() {
 
         map3D.addEventListener('gmp-click', (event) => {
             console.log(
-            `camera: { center: { lat: ${map3D.center.lat}, lng : ${map3D.center.lng}, altitude: ${map3D.center.altitude} }, range: ${map3D.range}, tilt: ${map3D.tilt}, heading: ${map3D.heading} }`
+                `camera: { center: { lat: ${map3D.center.lat}, lng : ${map3D.center.lng}, altitude: ${map3D.center.altitude} }, range: ${map3D.range}, tilt: ${map3D.tilt}, heading: ${map3D.heading} }`
             );
             console.log(`{ lat: ${event.position.lat}, lng : ${event.position.lng}, altitude: ${event.position.altitude} }`);
             map3D.stopCameraAnimation();
         });
 
-        const marker = new Marker3DInteractiveElement({
-            position: { lat: 40.8287377346249, lng: -73.44819177401407, altitude: 60 },
-            label: 'The Great Gatsby',
+        // test marker
+        const testMarker = new Marker3DInteractiveElement({
+            position: { lat: 40.7128, lng: -74.0060, altitude: 60 },
+            label: 'New York City',
             altitudeMode: 'ABSOLUTE',
             extruded: true,
         });
 
-        marker.addEventListener('gmp-click', (event) => {
-            map3D.flyCameraTo({
-                endCamera: {
-                    center: marker.position,
-                    tilt: 65,
-                    range: 500,
-                    heading: 0,
-                },
-                durationMillis: 6000,
+        map3D.append(testMarker);
+
+        console.log('Locations array:', locations);
+        console.log('Locations length:', locations.length);
+
+        locations.forEach((location) => {
+            console.log('Rendering marker for: ', location);
+            if (
+                !location ||
+                typeof location.lat !== "number" ||
+                typeof location.lng !== "number"
+            ) {
+                console.warn("Skipping invalid location:", location);
+                return;
+            }
+
+            const { id, lat, lng, altitude, title } = location;
+
+            const marker = new Marker3DInteractiveElement({
+                position: { lat: lat, lng: lng, altitude: altitude || 60 },
+                label: title || `ID: ${id}` || "Untitled",
+                altitudeMode: 'ABSOLUTE',
+                extruded: true,
             });
 
-            // i don't think this part is working
-            map3D.addEventListener('gmp-animationed', () => {
-                map3D.flyCameraAround({
-                    camera: {
+            map3D.append(marker);
+            console.log("Appended marker to map");
+
+            marker.addEventListener('gmp-click', (event) => {
+                map3D.flyCameraTo({
+                    endCamera: {
                         center: marker.position,
-                        tilt: 65, 
+                        tilt: 65,
                         range: 500,
                         heading: 0,
                     },
-
-                    durationMillis: 4000, 
-                    rounds: 1
+                    durationMillis: 6000,
                 });
-            }, { once: true });
 
-            event.stopPropagation();
+                // i don't think this part is working
+                map3D.addEventListener('gmp-animationend', () => {
+                    map3D.flyCameraAround({
+                        camera: {
+                            center: marker.position,
+                            tilt: 65,
+                            range: 500,
+                            heading: 0,
+                        },
+                        durationMillis: 4000,
+                        rounds: 1
+                    });
+                }, { once: true });
+                event.stopPropagation();
+                navigate(`/location/${location.id}`);
+            });
         });
-
-        const base = document.location.href.substr(0, document.location.href.lastIndexOf("/"));
-
-        const markerPin = new PinElement({
-            "background": 'white',
-            "scale": 1.0,
-        });
-
-        marker.append(markerPin);
-
-        map3D.append(marker);
 
         if (containerRef.current) {
             containerRef.current.appendChild(map3D);
@@ -79,10 +99,11 @@ function Map() {
     }
 
     useEffect(() => {
-        if (window.google && window.google.maps) {
+        if (locations.length > 0 && window.google && window.google.maps) {
+            console.log('Initializing map with locations:', locations);
             init();
         } else {
-            console.error("Google Maps API not loaded!");
+            console.log('Not initializing map yet. Locations:', locations.length, 'Google Maps loaded:', !!window.google?.maps);
         }
 
         return () => {
@@ -91,9 +112,9 @@ function Map() {
                 map3DRef.current = null;
             }
         };
-    }, []);
+    }, [locations]);
 
-    return <div ref={containerRef} style = {{ width: '100vw', height: '100vh', margin: 0, padding: 0 }} />
+    return <div ref={containerRef} style={{ width: '100vw', height: '100vh', margin: 0, padding: 0 }} />
 }
 
 export default Map;
