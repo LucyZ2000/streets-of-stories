@@ -27,14 +27,6 @@ function Map({ locations = [] }) {
             map3D.stopCameraAnimation();
         });
 
-        // test marker
-        const testMarker = new Marker3DInteractiveElement({
-            position: { lat: 40.7128, lng: -74.0060, altitude: 60 },
-            label: 'New York City',
-            altitudeMode: 'ABSOLUTE',
-            extruded: true,
-        });
-
         map3D.append(testMarker);
 
         console.log('Locations array:', locations);
