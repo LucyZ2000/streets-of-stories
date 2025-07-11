@@ -3,6 +3,8 @@ import Home from './pages/Home';
 import Location from './pages/Location';
 import About from './pages/About';
 import NavBar from './components/NavBar';
+import './styles/App.css'; 
+
 
 function App() {
   return (

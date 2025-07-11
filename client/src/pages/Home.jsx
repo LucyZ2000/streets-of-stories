@@ -1,5 +1,4 @@
 import Map from '../components/Map';
-import LocationCard from '../components/LocationCard';
 import { useEffect, useState } from 'react';
 
 function Home() {
@@ -28,15 +27,12 @@ function Home() {
     }, []);
 
     return (
-        <div style={{ position: 'relative' }}>
-            <Map locations={locations} />
-            {selectedLocation && (
-                <LocationCard
-                    location={selectedLocation}
-                    onClose={() => setSelectedLocation(null)}
-                />
-            )}
+        <div className="map-page">
+            <div style={{ position: 'relative' }}>
+                <Map locations={locations} />
+            </div>
         </div>
+
     );
 }
 

@@ -11,6 +11,8 @@ function Map({ locations = [] }) {
 
         const { Map3DElement, MapMode, Marker3DInteractiveElement } = await google.maps.importLibrary("maps3d");
         const { PinElement } = await google.maps.importLibrary('marker');
+        await google.maps.importLibrary("geometry");
+        await google.maps.importLibrary("visualization");
 
         const map3D = new Map3DElement({
             center: { lat: 46.717, lng: 7.075, altitude: 2175.130 },
@@ -26,8 +28,6 @@ function Map({ locations = [] }) {
             console.log(`{ lat: ${event.position.lat}, lng : ${event.position.lng}, altitude: ${event.position.altitude} }`);
             map3D.stopCameraAnimation();
         });
-
-        map3D.append(testMarker);
 
         console.log('Locations array:', locations);
         console.log('Locations length:', locations.length);
@@ -106,7 +106,22 @@ function Map({ locations = [] }) {
         };
     }, [locations]);
 
-    return <div ref={containerRef} style={{ width: '100vw', height: '100vh', margin: 0, padding: 0 }} />
+    return (
+        <div
+            ref={containerRef}
+            style={{
+                width: '100vw',
+                height: '100vh',
+                margin: 0,
+                padding: 0,
+                position: 'absolute', // or 'fixed' to force full coverage
+                top: 0,
+                left: 0,
+                zIndex: 0, // keep map behind the navbar
+                overflow: 'hidden',
+            }}
+        />
+    );
 }
 
 export default Map;
