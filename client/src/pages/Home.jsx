@@ -1,43 +1,19 @@
-import Map from '../components/Map';
-import LocationCard from '../components/LocationCard';
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
+import Map3D from '../components/Map3D';
+import { LOCATIONS } from '../data/locations';
 
 function Home() {
-    const [locations, setLocations] = useState([]);
-    const [selectedLocation, setSelectedLocation] = useState(null);
+  const [locations, setLocations] = useState([]);
 
-    useEffect(() => {
-        setLocations([
-            {
-                id: 1,
-                title: 'The Great Gatsby',
-                lat: 40.8287377346249,
-                lng: -73.44819177401407,
-                altitude: 60,
-                description: 'Long Island setting of Gatsby’s mansion',
-            },
-            {
-                id: 2,
-                title: 'Harry Potter',
-                lat: 51.531,
-                lng: -0.124,
-                altitude: 100,
-                description: 'King’s Cross Station, London',
-            },
-        ]);
-    }, []);
+  useEffect(() => {
+    setLocations(LOCATIONS);
+  }, []);
 
-    return (
-        <div style={{ position: 'relative' }}>
-            <Map locations={locations} />
-            {selectedLocation && (
-                <LocationCard
-                    location={selectedLocation}
-                    onClose={() => setSelectedLocation(null)}
-                />
-            )}
-        </div>
-    );
+  return (
+    <div className="map-page">
+      <Map3D locations={locations} />
+    </div>
+  );
 }
 
 export default Home;
