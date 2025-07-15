@@ -88,7 +88,7 @@ function Location() {
             onClick={handleBackTo3D}
             title="Back to 3D View"
           >
-            🌍 3D View
+            3D View
           </button>
         </div>
       </div>

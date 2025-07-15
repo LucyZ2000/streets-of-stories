@@ -1,10 +1,13 @@
 /* Location component styles */
 .location-container {
     padding: 20px;
-    padding-top: 100px; /* Add extra top padding to account for navbar */
+    padding-top: 100px;
     background: #000000;
     color: #ffffff;
     min-height: 100vh;
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding-bottom: 32px;
 }
 
 .location-selector {
@@ -46,7 +49,7 @@
     position: relative;
     border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
 }
 
 .instructions-panel {
@@ -70,7 +73,7 @@
     border: 2px solid #e2e8f0;
     border-radius: 12px;
     padding: 16px;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
     min-width: 240px;
     max-width: 280px;
     backdrop-filter: blur(10px);
@@ -142,7 +145,7 @@
     justify-content: center;
     font-weight: bold;
     color: white;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     transition: all 0.2s ease;
     z-index: 1001;
     user-select: none;
@@ -172,31 +175,32 @@
 @media (max-width: 768px) {
     .location-container {
         padding: 10px;
-        padding-top: 80px; /* Reduce top padding on mobile */
+        padding-top: 80px;
+        /* Reduce top padding on mobile */
     }
-    
+
     .panorama-container {
         height: 400px;
     }
-    
+
     .story-billboard {
         min-width: 200px;
         max-width: 240px;
         padding: 12px;
     }
-    
+
     .billboard-image {
         height: 100px;
     }
-    
+
     .billboard-title {
         font-size: 14px;
     }
-    
+
     .billboard-description {
         font-size: 12px;
     }
-    
+
     .story-indicator {
         width: 40px;
         height: 40px;
@@ -206,19 +210,20 @@
 
 @media (max-width: 480px) {
     .location-container {
-        padding-top: 70px; /* Further reduce on smaller screens */
+        padding-top: 70px;
+        /* Further reduce on smaller screens */
     }
-    
+
     .panorama-container {
         height: 300px;
     }
-    
+
     .story-billboard {
         min-width: 180px;
         max-width: 220px;
         padding: 10px;
     }
-    
+
     .billboard-image {
         height: 80px;
     }

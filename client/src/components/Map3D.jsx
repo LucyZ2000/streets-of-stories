@@ -1,4 +1,5 @@
 // Enhanced Map3D.jsx with view toggle and story navigation
+import { createBillboard } from '../utils/mapUtils';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useGoogleMaps } from '../hooks/useGoogleMaps';
@@ -87,6 +88,9 @@ function Map3D({ locations = [] }) {
       });
 
       setTimeout(() => {
+        // added code  ------------
+        addStoryPointMarkers(location);
+        // added code --------------
         setIsAnimating(false);
       }, 2000);
 
@@ -95,6 +99,69 @@ function Map3D({ locations = [] }) {
       setIsAnimating(false);
     }
   };
+
+
+  // New function to add story point markers using createBillboard --------------------------------------------
+  const addStoryPointMarkers = (location) => {
+    if (!map3DRef.current || !location.storyPoints) return;
+
+    // Clear existing story point markers
+    clearStoryPointMarkers();
+
+    location.storyPoints.forEach((storyPoint, index) => {
+      const billboard = createBillboard({
+        map: map3DRef.current,
+        position: { lat: storyPoint.lat, lng: storyPoint.lng },
+        title: storyPoint.text,
+        content: `
+        <div class="story-point-billboard">
+          <div class="billboard-number">${index + 1}</div>
+          <div class="billboard-content">
+            <h4>${storyPoint.text}</h4>
+            <p>${storyPoint.description}</p>
+          </div>
+        </div>
+      `,
+        className: 'story-point-marker',
+        onClick: () => {
+          // Update current story point index when clicked
+          setCurrentStoryPointIndex(index);
+
+          // Optionally fly to the story point's camera position
+          if (storyPoint.heading !== undefined && storyPoint.pitch !== undefined) {
+            map3DRef.current.flyCameraTo({
+              endCamera: {
+                center: { lat: storyPoint.lat, lng: storyPoint.lng, altitude: location.altitude || 60 },
+                tilt: 75,
+                range: 100,
+                heading: storyPoint.heading,
+              },
+              durationMillis: 1500,
+            });
+          }
+        }
+      });
+
+      // Store billboard reference for cleanup
+      markersRef.current.set(`storypoint-${location.id}-${index}`, billboard);
+    });
+  };
+
+  // Function to clear story point markers
+  const clearStoryPointMarkers = () => {
+    markersRef.current.forEach((marker, key) => {
+      if (key.startsWith('storypoint-')) {
+        // Assuming the billboard has a remove or destroy method
+        if (marker.remove) {
+          marker.remove();
+        } else if (marker.setMap) {
+          marker.setMap(null);
+        }
+        markersRef.current.delete(key);
+      }
+    });
+  };
+  // added code -------------------------------------------------------------------------------------------------
 
   const handleHomeReset = () => {
     if (!map3DRef.current || isAnimating) return;
@@ -139,12 +206,12 @@ function Map3D({ locations = [] }) {
 
   const handleNextStoryPoint = () => {
     if (!currentStory || !currentStory.storyPoints) return;
-    
+
     const nextIndex = (currentStoryPointIndex + 1) % currentStory.storyPoints.length;
     setCurrentStoryPointIndex(nextIndex);
-    
+
     const nextPoint = currentStory.storyPoints[nextIndex];
-    
+
     if (viewMode === 'street') {
       // If in street view, navigate to the story point
       navigate(`/location/${currentStory.id}?point=${nextIndex}`);
@@ -157,14 +224,14 @@ function Map3D({ locations = [] }) {
 
   const handlePrevStoryPoint = () => {
     if (!currentStory || !currentStory.storyPoints) return;
-    
-    const prevIndex = currentStoryPointIndex === 0 
-      ? currentStory.storyPoints.length - 1 
+
+    const prevIndex = currentStoryPointIndex === 0
+      ? currentStory.storyPoints.length - 1
       : currentStoryPointIndex - 1;
     setCurrentStoryPointIndex(prevIndex);
-    
+
     const prevPoint = currentStory.storyPoints[prevIndex];
-    
+
     if (viewMode === 'street') {
       // If in street view, navigate to the story point
       navigate(`/location/${currentStory.id}?point=${prevIndex}`);
@@ -173,6 +240,8 @@ function Map3D({ locations = [] }) {
       console.log('Navigating to story point:', prevPoint);
     }
   };
+
+
 
   const initializeMap = async () => {
     if (!isLoaded || !containerRef.current) return;
@@ -312,31 +381,31 @@ function Map3D({ locations = [] }) {
       {/* Navigation Controls */}
       <div className="map-controls">
         {/* Home Button */}
-        <button 
+        <button
           className="control-button home-button"
           onClick={handleHomeReset}
           disabled={isAnimating}
         >
-          🏠 Home
+          Home
         </button>
 
         {/* Story List Toggle Button */}
-        <button 
+        <button
           className="control-button story-list-toggle"
           onClick={() => setShowStoryList(!showStoryList)}
         >
-          {showStoryList ? '✕' : '📚'} Stories
+          Stories
         </button>
 
         {/* View Toggle Button - show when exploring a location */}
         {(viewMode === 'zoomed' || viewMode === 'street') && currentLocation && (
-          <button 
+          <button
             className="control-button view-toggle"
             onClick={handleViewToggle}
             disabled={isAnimating}
             title={viewMode === 'street' ? 'Switch to 3D View' : 'Switch to Street View'}
           >
-            {viewMode === 'street' ? '🌍 3D View' : '🚶 Street View'}
+            {viewMode === 'street' ? '3D View' : 'Street View'}
           </button>
         )}
       </div>
@@ -344,7 +413,7 @@ function Map3D({ locations = [] }) {
       {/* Story Navigation Controls - only show when exploring a story */}
       {currentStory && currentStory.storyPoints && currentStory.storyPoints.length > 1 && (
         <div className="story-navigation">
-          <button 
+          <button
             className="story-nav-button prev-button"
             onClick={handlePrevStoryPoint}
             disabled={isAnimating}
@@ -352,15 +421,15 @@ function Map3D({ locations = [] }) {
           >
             ← Previous
           </button>
-          
+
           <div className="story-point-indicator">
             {currentStoryPointIndex + 1} / {currentStory.storyPoints.length}
             <div className="story-point-title">
               {currentStory.storyPoints[currentStoryPointIndex]?.text}
             </div>
           </div>
-          
-          <button 
+
+          <button
             className="story-nav-button next-button"
             onClick={handleNextStoryPoint}
             disabled={isAnimating}
@@ -374,8 +443,8 @@ function Map3D({ locations = [] }) {
       {/* Story List Panel */}
       {showStoryList && (
         <div className="story-list-overlay">
-          <StoryList 
-            locations={locations} 
+          <StoryList
+            locations={locations}
             onLocationSelect={handleLocationSelect}
             selectedLocationId={selectedLocationId}
           />
@@ -389,7 +458,7 @@ function Map3D({ locations = [] }) {
             <h3>{currentLocation.title}</h3>
             <p>by {currentLocation.author} ({currentLocation.year})</p>
             <div className="view-mode-badge">
-              {viewMode === 'street' ? '🚶 Street View' : '🌍 3D View'}
+              {viewMode === 'street' ? 'Street View' : '3D View'}
             </div>
           </div>
         </div>

@@ -8,7 +8,8 @@ html, body, #root {
   width: 100%;
   font-family: 'Segoe UI', sans-serif;
   box-sizing: border-box;
-  overflow: hidden; /* Prevent scrollbars unless needed explicitly */
+  overflow-x: auto;
+  overflow-y: auto;
 }
 
 * {

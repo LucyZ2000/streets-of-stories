@@ -9,7 +9,16 @@ function StreetViewPanorama({ location }) {
   const [panorama, setPanorama] = useState(null);
 
   useEffect(() => {
-    if (!isLoaded || !location || !panoramaRef.current) return;
+    if (
+      !isLoaded ||
+      !location ||
+      !panoramaRef.current ||
+      !window.google ||
+      !window.google.maps ||
+      !window.google.maps.StreetViewPanorama
+    ) {
+      return;
+    }
 
     const panoramaInstance = new window.google.maps.StreetViewPanorama(panoramaRef.current, {
       position: { lat: location.lat, lng: location.lng },
@@ -39,10 +48,14 @@ function StreetViewPanorama({ location }) {
 
   return (
     <div ref={panoramaRef} className="panorama-container">
-      <StoryOverlay panorama={panorama} storyPoints={location?.storyPoints} />
-      <NavigationIndicators 
-        panorama={panorama} 
-        storyPoints={location?.storyPoints} 
+      <StoryOverlay
+        panorama={panorama}
+        panoramaElement={panoramaRef.current}
+        storyPoints={location?.storyPoints}
+      />
+      <NavigationIndicators
+        panorama={panorama}
+        storyPoints={location?.storyPoints}
         containerRef={panoramaRef}
       />
     </div>

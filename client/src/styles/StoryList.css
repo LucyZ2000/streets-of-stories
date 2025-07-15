@@ -36,13 +36,13 @@
 }
 
 .home-button {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  color: white;
+  background: rgba(255, 255, 255, 1);
+  color: black;
 }
 
 .home-button:hover:not(:disabled) {
-  background: linear-gradient(135deg, #059669 0%, #047857 100%);
-  box-shadow: 0 6px 25px rgba(16, 185, 129, 0.3);
+  background: rgba(255, 255, 255, 1);
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.2);
 }
 
 .story-list-toggle {
