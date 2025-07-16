@@ -1,4 +1,4 @@
-// Enhanced Map3D.jsx with view toggle and story navigation
+// Enhanced Map3D.jsx with smooth story point navigation
 import { createBillboard } from '../utils/mapUtils';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -76,21 +76,26 @@ function Map3D({ locations = [] }) {
     setViewMode('zoomed');
 
     try {
-      // Fly to a closer, more detailed view
+      // Fly to the first story point
+      const firstStoryPoint = location.storyPoints?.[0];
+      const targetLocation = firstStoryPoint || location;
+      
       map3DRef.current.flyCameraTo({
         endCamera: {
-          center: { lat: location.lat, lng: location.lng, altitude: location.altitude || 60 },
-          tilt: 75,
+          center: { 
+            lat: targetLocation.lat, 
+            lng: targetLocation.lng, 
+            altitude: location.altitude || 60 
+          },
+          tilt: firstStoryPoint?.pitch ? Math.abs(firstStoryPoint.pitch) + 65 : 75,
           range: 150,
-          heading: 0,
+          heading: firstStoryPoint?.heading || 0,
         },
         durationMillis: 2000,
       });
 
       setTimeout(() => {
-        // added code  ------------
         addStoryPointMarkers(location);
-        // added code --------------
         setIsAnimating(false);
       }, 2000);
 
@@ -100,8 +105,32 @@ function Map3D({ locations = [] }) {
     }
   };
 
+  // Enhanced function to fly to specific story point
+  const flyToStoryPoint = (storyPoint, location, duration = 2000) => {
+    if (!map3DRef.current || !storyPoint) return;
 
-  // New function to add story point markers using createBillboard --------------------------------------------
+    return new Promise((resolve) => {
+      map3DRef.current.flyCameraTo({
+        endCamera: {
+          center: { 
+            lat: storyPoint.lat, 
+            lng: storyPoint.lng, 
+            altitude: location.altitude || 60 
+          },
+          tilt: storyPoint.pitch ? Math.abs(storyPoint.pitch) + 65 : 75,
+          range: storyPoint.range || 150,
+          heading: storyPoint.heading || 0,
+        },
+        durationMillis: duration,
+      });
+
+      setTimeout(() => {
+        resolve();
+      }, duration);
+    });
+  };
+
+  // Function to add story point markers using createBillboard
   const addStoryPointMarkers = (location) => {
     if (!map3DRef.current || !location.storyPoints) return;
 
@@ -123,21 +152,18 @@ function Map3D({ locations = [] }) {
         </div>
       `,
         className: 'story-point-marker',
-        onClick: () => {
-          // Update current story point index when clicked
+        onClick: async () => {
+          if (isAnimating) return;
+          
+          setIsAnimating(true);
           setCurrentStoryPointIndex(index);
 
-          // Optionally fly to the story point's camera position
-          if (storyPoint.heading !== undefined && storyPoint.pitch !== undefined) {
-            map3DRef.current.flyCameraTo({
-              endCamera: {
-                center: { lat: storyPoint.lat, lng: storyPoint.lng, altitude: location.altitude || 60 },
-                tilt: 75,
-                range: 100,
-                heading: storyPoint.heading,
-              },
-              durationMillis: 1500,
-            });
+          try {
+            await flyToStoryPoint(storyPoint, location, 1500);
+          } catch (error) {
+            console.error('Error flying to story point:', error);
+          } finally {
+            setIsAnimating(false);
           }
         }
       });
@@ -151,7 +177,6 @@ function Map3D({ locations = [] }) {
   const clearStoryPointMarkers = () => {
     markersRef.current.forEach((marker, key) => {
       if (key.startsWith('storypoint-')) {
-        // Assuming the billboard has a remove or destroy method
         if (marker.remove) {
           marker.remove();
         } else if (marker.setMap) {
@@ -161,7 +186,6 @@ function Map3D({ locations = [] }) {
       }
     });
   };
-  // added code -------------------------------------------------------------------------------------------------
 
   const handleHomeReset = () => {
     if (!map3DRef.current || isAnimating) return;
@@ -172,6 +196,9 @@ function Map3D({ locations = [] }) {
     setCurrentStory(null);
     setCurrentStoryPointIndex(0);
     setViewMode('globe');
+
+    // Clear story point markers when returning to globe view
+    clearStoryPointMarkers();
 
     try {
       // Reset to default globe view
@@ -200,48 +227,83 @@ function Map3D({ locations = [] }) {
     } else {
       // Switch to street view
       setViewMode('street');
-      navigate(`/location/${currentLocation.id}`);
+      navigate(`/location/${currentLocation.id}?point=${currentStoryPointIndex}`);
     }
   };
 
-  const handleNextStoryPoint = () => {
-    if (!currentStory || !currentStory.storyPoints) return;
+  const handleNextStoryPoint = async () => {
+    if (!currentStory || !currentStory.storyPoints || isAnimating) return;
 
     const nextIndex = (currentStoryPointIndex + 1) % currentStory.storyPoints.length;
-    setCurrentStoryPointIndex(nextIndex);
-
     const nextPoint = currentStory.storyPoints[nextIndex];
 
     if (viewMode === 'street') {
       // If in street view, navigate to the story point
       navigate(`/location/${currentStory.id}?point=${nextIndex}`);
     } else {
-      // If in 3D view, just update the view
-      // This could be enhanced to show different camera angles for different story points
-      console.log('Navigating to story point:', nextPoint);
+      // If in 3D view, fly to the next story point
+      setIsAnimating(true);
+      setCurrentStoryPointIndex(nextIndex);
+
+      try {
+        // Calculate duration based on distance between points
+        const currentPoint = currentStory.storyPoints[currentStoryPointIndex];
+        const distance = calculateDistance(currentPoint, nextPoint);
+        const duration = Math.min(Math.max(distance * 100, 1500), 4000); // 1.5-4 seconds based on distance
+
+        await flyToStoryPoint(nextPoint, currentStory, duration);
+      } catch (error) {
+        console.error('Error navigating to next story point:', error);
+      } finally {
+        setIsAnimating(false);
+      }
     }
   };
 
-  const handlePrevStoryPoint = () => {
-    if (!currentStory || !currentStory.storyPoints) return;
+  const handlePrevStoryPoint = async () => {
+    if (!currentStory || !currentStory.storyPoints || isAnimating) return;
 
     const prevIndex = currentStoryPointIndex === 0
       ? currentStory.storyPoints.length - 1
       : currentStoryPointIndex - 1;
-    setCurrentStoryPointIndex(prevIndex);
-
     const prevPoint = currentStory.storyPoints[prevIndex];
 
     if (viewMode === 'street') {
       // If in street view, navigate to the story point
       navigate(`/location/${currentStory.id}?point=${prevIndex}`);
     } else {
-      // If in 3D view, just update the view
-      console.log('Navigating to story point:', prevPoint);
+      // If in 3D view, fly to the previous story point
+      setIsAnimating(true);
+      setCurrentStoryPointIndex(prevIndex);
+
+      try {
+        // Calculate duration based on distance between points
+        const currentPoint = currentStory.storyPoints[currentStoryPointIndex];
+        const distance = calculateDistance(currentPoint, prevPoint);
+        const duration = Math.min(Math.max(distance * 100, 1500), 4000); // 1.5-4 seconds based on distance
+
+        await flyToStoryPoint(prevPoint, currentStory, duration);
+      } catch (error) {
+        console.error('Error navigating to previous story point:', error);
+      } finally {
+        setIsAnimating(false);
+      }
     }
   };
 
-
+  // Helper function to calculate distance between two points (approximate)
+  const calculateDistance = (point1, point2) => {
+    if (!point1 || !point2) return 15; // Default medium distance
+    
+    const R = 6371; // Earth's radius in km
+    const dLat = (point2.lat - point1.lat) * Math.PI / 180;
+    const dLon = (point2.lng - point1.lng) * Math.PI / 180;
+    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(point1.lat * Math.PI / 180) * Math.cos(point2.lat * Math.PI / 180) *
+      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c; // Distance in km
+  };
 
   const initializeMap = async () => {
     if (!isLoaded || !containerRef.current) return;
@@ -461,6 +523,14 @@ function Map3D({ locations = [] }) {
               {viewMode === 'street' ? 'Street View' : '3D View'}
             </div>
           </div>
+        </div>
+      )}
+
+      {/* Loading indicator for transitions */}
+      {isAnimating && (
+        <div className="transition-indicator">
+          <div className="loading-spinner"></div>
+          <p>Flying to story point...</p>
         </div>
       )}
     </div>
