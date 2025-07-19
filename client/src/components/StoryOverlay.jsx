@@ -1,21 +1,30 @@
 import { useEffect, useRef } from 'react';
 import { createBillboard } from '../utils/mapUtils';
 
-function StoryOverlay({ panorama, storyPoints }) {
+// Change the prop name from storyPoints to currentBillboards
+function StoryOverlay({ panorama, currentBillboards }) {
   const overlayRef = useRef([]);
 
+  // Add debug logging
+  console.log('StoryOverlay received currentBillboards:', currentBillboards);
+  console.log('currentBillboards type:', typeof currentBillboards);
+  console.log('currentBillboards is array:', Array.isArray(currentBillboards));
+
   useEffect(() => {
-    if (!panorama || !storyPoints || !window.google) return;
+    console.log('StoryOverlay useEffect - currentBillboards:', currentBillboards);
+    if (!panorama || !currentBillboards || !window.google) return;
 
     // Clear existing overlays
     overlayRef.current.forEach(overlay => overlay.setMap(null));
     overlayRef.current = [];
 
-    storyPoints.forEach((point) => {
+    // Loop through currentBillboards instead of storyPoints
+    currentBillboards.forEach((billboard) => {
       const overlay = new window.google.maps.OverlayView();
 
       overlay.onAdd = function () {
-        this.div = createBillboard(point);
+        // Pass the billboard data to createBillboard instead of point data
+        this.div = createBillboard(billboard);
         this.div.style.position = 'absolute';
         const panes = this.getPanes();
         panes.overlayMouseTarget.appendChild(this.div);
@@ -27,7 +36,14 @@ function StoryOverlay({ panorama, storyPoints }) {
         const projection = this.getProjection();
         if (!projection) return;
 
-        const latLng = new window.google.maps.LatLng(point.lat, point.lng);
+        // Use billboard coordinates if they exist, otherwise fall back to panorama position
+        // Note: Your billboard data might not have lat/lng, so you might need to handle this differently
+        const lat = billboard.lat || panorama.getPosition()?.lat();
+        const lng = billboard.lng || panorama.getPosition()?.lng();
+        
+        if (!lat || !lng) return;
+
+        const latLng = new window.google.maps.LatLng(lat, lng);
         const pixel = projection.fromLatLngToDivPixel(latLng);
 
         if (!pixel) {
@@ -47,7 +63,7 @@ function StoryOverlay({ panorama, storyPoints }) {
         }
       };
 
-      overlay.setMap(panorama); // panorama here is a valid MapView for OverlayView
+      overlay.setMap(panorama);
       overlayRef.current.push(overlay);
 
       // Update overlay when POV changes
@@ -60,7 +76,7 @@ function StoryOverlay({ panorama, storyPoints }) {
       overlayRef.current.forEach(overlay => overlay.setMap(null));
       overlayRef.current = [];
     };
-  }, [panorama, storyPoints]);
+  }, [panorama, currentBillboards]); // Change dependency from storyPoints to currentBillboards
 
   return null;
 }

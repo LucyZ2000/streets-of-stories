@@ -342,8 +342,8 @@ export const LOCATIONS = [
         text: 'Traditional Bathhouse',
         description: 'The historic bathhouses of Kyoto that inspired Yubaba\'s magical bathhouse for spirits.',
         image: 'https://via.placeholder.com/200x120/7c2d12/ffffff?text=Bathhouse',
-        lat: 35.0116,
-        lng: 135.7681,
+        lat: 33.8521,
+        lng: 132.7864,
         billboards: [
           {
             id: 'bathhouse-1',

@@ -28,19 +28,23 @@ export const calculateScreenPosition = (panorama, point) => {
   return { x, y };
 };
 
-export const createBillboard = (point) => {
-  const billboard = document.createElement('div');
-  billboard.className = 'story-billboard';
+export const createBillboard = (billboard) => {
+  const billboardDiv = document.createElement('div');
+  billboardDiv.className = 'story-billboard';
   
   const arrow = document.createElement('div');
   arrow.className = 'billboard-arrow';
   
-  billboard.innerHTML = `
-    <img src="${point.image}" alt="${point.text}" class="billboard-image">
-    <h3 class="billboard-title">${point.text}</h3>
-    <p class="billboard-description">${point.description}</p>
+  // Use the correct billboard properties
+  billboardDiv.innerHTML = `
+    ${billboard.image ? `<img src="${billboard.image}" alt="${billboard.title}" class="billboard-image">` : ''}
+    <div class="billboard-icon">${billboard.icon || '📋'}</div>
+    <h3 class="billboard-title">${billboard.title}</h3>
+    <p class="billboard-description">${billboard.content}</p>
+    ${billboard.quote ? `<blockquote class="billboard-quote">"${billboard.quote}"</blockquote>` : ''}
+    ${billboard.details ? `<div class="billboard-details">${billboard.details}</div>` : ''}
   `;
   
-  billboard.appendChild(arrow);
-  return billboard;
+  billboardDiv.appendChild(arrow);
+  return billboardDiv;
 };

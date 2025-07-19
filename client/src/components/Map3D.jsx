@@ -1,7 +1,7 @@
-// Enhanced Map3D.jsx with smooth story point navigation
+// Enhanced Map3D.jsx with smooth story point navigation and back to 3D support
 import { createBillboard } from '../utils/mapUtils';
 import { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useGoogleMaps } from '../hooks/useGoogleMaps';
 import StoryList from './StoryList';
 
@@ -10,6 +10,7 @@ function Map3D({ locations = [] }) {
   const containerRef = useRef(null);
   const map3DRef = useRef(null);
   const navigate = useNavigate();
+  const location = useLocation(); // Get navigation state
   const [selectedLocationId, setSelectedLocationId] = useState(null);
   const [isAnimating, setIsAnimating] = useState(false);
   const [showStoryList, setShowStoryList] = useState(false);
@@ -17,6 +18,7 @@ function Map3D({ locations = [] }) {
   const [currentLocation, setCurrentLocation] = useState(null);
   const [currentStory, setCurrentStory] = useState(null);
   const [currentStoryPointIndex, setCurrentStoryPointIndex] = useState(0);
+  const [pendingNavigation, setPendingNavigation] = useState(null);
   const markersRef = useRef(new Map());
 
   // Default globe view settings
@@ -25,6 +27,91 @@ function Map3D({ locations = [] }) {
     range: 5814650,
     tilt: 33,
     heading: 0,
+  };
+
+  // Handle navigation state from Location component
+  useEffect(() => {
+    if (location.state && locations.length > 0) {
+      const { selectedLocationId, viewMode, shouldExplore, storyPointIndex } = location.state;
+      
+      if (selectedLocationId && shouldExplore) {
+        const targetLocation = locations.find(loc => loc.id === selectedLocationId);
+        if (targetLocation) {
+          if (map3DRef.current) {
+            // Map is ready, execute immediately
+            executeNavigationState(targetLocation, storyPointIndex || 0);
+          } else {
+            // Map not ready, store for later
+            setPendingNavigation({
+              targetLocation,
+              storyPointIndex: storyPointIndex || 0
+            });
+          }
+        }
+      }
+
+      // Clear the navigation state to prevent re-triggering
+      navigate(location.pathname, { replace: true });
+    }
+  }, [location.state, locations]);
+
+  // Execute pending navigation when map becomes available
+  useEffect(() => {
+    if (pendingNavigation && map3DRef.current) {
+      executeNavigationState(pendingNavigation.targetLocation, pendingNavigation.storyPointIndex);
+      setPendingNavigation(null);
+    }
+  }, [pendingNavigation, map3DRef.current]);
+
+  // Function to execute the navigation state
+  const executeNavigationState = (targetLocation, storyPointIndex) => {
+    // Set the state first
+    setSelectedLocationId(targetLocation.id);
+    setCurrentLocation(targetLocation);
+    setCurrentStory(targetLocation);
+    setCurrentStoryPointIndex(storyPointIndex);
+    setViewMode('zoomed');
+
+    // Then perform the exploration with a small delay to ensure state is set
+    setTimeout(() => {
+      handleExploreFromState(targetLocation, storyPointIndex);
+    }, 200);
+  };
+
+  // Special explore function for handling state navigation
+  const handleExploreFromState = async (targetLocation, storyPointIndex = 0) => {
+    if (!map3DRef.current || isAnimating) return;
+
+    setIsAnimating(true);
+
+    try {
+      // Determine which story point to fly to
+      const targetStoryPoint = targetLocation.storyPoints?.[storyPointIndex] || targetLocation.storyPoints?.[0];
+      const targetPoint = targetStoryPoint || targetLocation;
+      
+      map3DRef.current.flyCameraTo({
+        endCamera: {
+          center: { 
+            lat: targetPoint.lat, 
+            lng: targetPoint.lng, 
+            altitude: targetLocation.altitude || 60 
+          },
+          tilt: targetStoryPoint?.pitch ? Math.abs(targetStoryPoint.pitch) + 65 : 75,
+          range: targetStoryPoint?.range || 150,
+          heading: targetStoryPoint?.heading || 0,
+        },
+        durationMillis: 2000,
+      });
+
+      setTimeout(() => {
+        addStoryPointMarkers(targetLocation);
+        setIsAnimating(false);
+      }, 2000);
+
+    } catch (error) {
+      console.error('Error during explore from state animation:', error);
+      setIsAnimating(false);
+    }
   };
 
   const handleLocationSelect = async (location) => {

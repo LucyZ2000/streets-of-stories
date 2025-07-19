@@ -1,7 +1,7 @@
 // Enhanced Location.jsx with billboard support
 import { useEffect, useState } from 'react';
 import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
-import { LOCATIONS } from '../data/locations';
+import { LOCATIONS } from '../data/Locations';
 import StreetViewPanorama from '../components/StreetViewPanorama';
 import '../styles/Location.css';
 
@@ -21,7 +21,7 @@ function Location() {
   useEffect(() => {
     const found = LOCATIONS.find((loc) => loc.id === id);
     setLocation(found);
-    
+
     // Check if there's a story point index in the URL
     const pointIndex = searchParams.get('point');
     if (pointIndex !== null) {
@@ -35,7 +35,7 @@ function Location() {
   // Helper function to calculate distance between two points
   const calculateDistance = (point1, point2) => {
     if (!point1 || !point2) return 15; // Default medium distance
-    
+
     const R = 6371; // Earth's radius in km
     const dLat = (point2.lat - point1.lat) * Math.PI / 180;
     const dLon = (point2.lng - point1.lng) * Math.PI / 180;
@@ -49,15 +49,15 @@ function Location() {
   // Enhanced transition with user feedback
   const performTransition = async (newIndex, direction = 'next') => {
     if (!location || !location.storyPoints || isTransitioning) return;
-    
+
     const currentPoint = location.storyPoints[currentStoryPointIndex];
     const nextPoint = location.storyPoints[newIndex];
-    
+
     if (!nextPoint) return;
 
     setIsTransitioning(true);
     setActiveBillboard(null); // Close any active billboard during transition
-    
+
     // Calculate distance and provide appropriate feedback
     const distance = calculateDistance(currentPoint, nextPoint);
     let message = '';
@@ -75,44 +75,53 @@ function Location() {
     }
 
     setTransitionMessage(message);
-    
+
     // Update the story point index and URL
     setCurrentStoryPointIndex(newIndex);
     setSearchParams({ point: newIndex.toString() });
-    
+
     // Simulate transition time based on distance
     await new Promise(resolve => setTimeout(resolve, duration));
-    
+
     setTransitionMessage('');
     setIsTransitioning(false);
   };
 
   const handleNextStoryPoint = async () => {
     if (!location || !location.storyPoints || isTransitioning) return;
-    
+
     const nextIndex = (currentStoryPointIndex + 1) % location.storyPoints.length;
     await performTransition(nextIndex, 'next');
   };
 
   const handlePrevStoryPoint = async () => {
     if (!location || !location.storyPoints || isTransitioning) return;
-    
-    const prevIndex = currentStoryPointIndex === 0 
-      ? location.storyPoints.length - 1 
+
+    const prevIndex = currentStoryPointIndex === 0
+      ? location.storyPoints.length - 1
       : currentStoryPointIndex - 1;
     await performTransition(prevIndex, 'prev');
   };
 
   const handleJumpToStoryPoint = async (index) => {
     if (!location || !location.storyPoints || isTransitioning || index === currentStoryPointIndex) return;
-    
+
     await performTransition(index, 'jump');
   };
 
   const handleBackTo3D = () => {
     // Navigate back to the home page with the current location selected
-    navigate('/', { state: { selectedLocationId: id, viewMode: 'zoomed' } });
+    navigate('/', {
+      state: {
+        selectedLocationId: id,
+        viewMode: 'zoomed',
+        shouldExplore: true,
+        storyPointIndex: currentStoryPointIndex
+      }
+    });
   };
+
+
 
   const toggleInfo = () => {
     setShowInfo(!showInfo);
@@ -143,8 +152,8 @@ function Location() {
   return (
     <div className="location-fullscreen-container">
       {/* Full Screen Street View Panorama */}
-      <StreetViewPanorama 
-        location={location} 
+      <StreetViewPanorama
+        location={location}
         currentStoryPointIndex={currentStoryPointIndex}
         isTransitioning={isTransitioning}
       />
@@ -163,8 +172,8 @@ function Location() {
       )}
 
       {/* Top Controls */}
-      <div className="location-top-controls">
-        <button 
+      <div className="map-controls">
+        <button
           className="control-button back-to-3d-button"
           onClick={handleBackTo3D}
           title="Back to 3D View"
@@ -172,8 +181,8 @@ function Location() {
         >
           ← 3D View
         </button>
-        
-        <button 
+
+        <button
           className="control-button info-toggle-button"
           onClick={toggleInfo}
           title={showInfo ? 'Hide Info' : 'Show Info'}
@@ -182,7 +191,7 @@ function Location() {
           {showInfo ? 'Hide Info' : 'Show Info'}
         </button>
 
-        <button 
+        <button
           className={`control-button billboards-toggle-button ${billboardsVisible ? 'active' : ''}`}
           onClick={toggleBillboards}
           title={billboardsVisible ? 'Hide Billboards' : 'Show Billboards'}
@@ -204,7 +213,10 @@ function Location() {
               disabled={isTransitioning}
               style={{
                 transform: `rotate(${billboard.heading || 0}deg)`,
-                right: `${80 + (index * 60)}px`
+                right: `${20 + (index * 70)}px`,
+                top: '35px',
+                position: 'absolute',
+                zIndex: 1000 + index,                 
               }}
             >
               <div className="billboard-icon">
@@ -229,7 +241,7 @@ function Location() {
                 )}
                 {currentBillboards[activeBillboard].title}
               </h3>
-              <button 
+              <button
                 className="billboard-close-button"
                 onClick={closeBillboard}
                 title="Close Billboard"
@@ -237,32 +249,39 @@ function Location() {
                 ×
               </button>
             </div>
-            
+
             <div className="billboard-content">
               {currentBillboards[activeBillboard].image && (
                 <div className="billboard-image">
-                  <img 
-                    src={currentBillboards[activeBillboard].image} 
+                  <img
+                    src={currentBillboards[activeBillboard].image}
                     alt={currentBillboards[activeBillboard].title}
                   />
                 </div>
               )}
-              
+
               <div className="billboard-text">
                 <p className="billboard-description">
-                  {currentBillboards[activeBillboard].description}
+                  {currentBillboards[activeBillboard].content}
                 </p>
-                
+
                 {currentBillboards[activeBillboard].details && (
                   <div className="billboard-details">
-                    {currentBillboards[activeBillboard].details.map((detail, detailIndex) => (
-                      <div key={detailIndex} className="billboard-detail-item">
-                        <strong>{detail.label}:</strong> {detail.value}
+                    {/* This part looks correct, but make sure your data structure matches */}
+                    {typeof currentBillboards[activeBillboard].details === 'string' ? (
+                      <div className="billboard-detail-item">
+                        {currentBillboards[activeBillboard].details}
                       </div>
-                    ))}
+                    ) : (
+                      currentBillboards[activeBillboard].details.map((detail, detailIndex) => (
+                        <div key={detailIndex} className="billboard-detail-item">
+                          <strong>{detail.label}:</strong> {detail.value}
+                        </div>
+                      ))
+                    )}
                   </div>
                 )}
-                
+
                 {currentBillboards[activeBillboard].quote && (
                   <blockquote className="billboard-quote">
                     "{currentBillboards[activeBillboard].quote}"
@@ -273,7 +292,7 @@ function Location() {
                 )}
               </div>
             </div>
-            
+
             {currentBillboards[activeBillboard].actions && (
               <div className="billboard-actions">
                 {currentBillboards[activeBillboard].actions.map((action, actionIndex) => (
@@ -297,7 +316,7 @@ function Location() {
       {/* Enhanced Story Navigation Controls */}
       {location.storyPoints && location.storyPoints.length > 1 && (
         <div className="story-navigation-street">
-          <button 
+          <button
             className="story-nav-button-street prev-button"
             onClick={handlePrevStoryPoint}
             disabled={isTransitioning}
@@ -305,7 +324,7 @@ function Location() {
           >
             ← Previous
           </button>
-          
+
           <div className="story-point-counter-street">
             <span className="current-point">{currentStoryPointIndex + 1}</span>
             <span className="separator">/</span>
@@ -316,8 +335,8 @@ function Location() {
               </span>
             )}
           </div>
-          
-          <button 
+
+          <button
             className="story-nav-button-street next-button"
             onClick={handleNextStoryPoint}
             disabled={isTransitioning}
@@ -336,7 +355,7 @@ function Location() {
             <p className="location-author">by {location.author} ({location.year})</p>
             <span className="location-genre">{location.genre}</span>
           </div>
-          
+
           <div className="location-description">
             <p>{location.description}</p>
           </div>
@@ -346,7 +365,7 @@ function Location() {
             <div className="current-story-point">
               <h3 className="story-point-title">{currentStoryPoint.text}</h3>
               <p className="story-point-description">{currentStoryPoint.description}</p>
-              
+
               {/* Billboard Summary */}
               {currentBillboards.length > 0 && (
                 <div className="billboards-summary">
@@ -370,7 +389,7 @@ function Location() {
                   </div>
                 </div>
               )}
-              
+
               {/* Distance indicator for context */}
               {location.storyPoints.length > 1 && (
                 <div className="story-point-context">
@@ -395,10 +414,10 @@ function Location() {
               </div>
               <div className="story-points-grid">
                 {location.storyPoints.map((point, index) => {
-                  const distance = index !== currentStoryPointIndex ? 
+                  const distance = index !== currentStoryPointIndex ?
                     calculateDistance(currentStoryPoint, point) : 0;
                   const billboardCount = point.billboards?.length || 0;
-                  
+
                   return (
                     <button
                       key={index}
@@ -433,7 +452,7 @@ function Location() {
           {/* Compact Navigation - also enhanced */}
           {location.storyPoints && location.storyPoints.length > 1 && (
             <div className="story-navigation-compact">
-              <button 
+              <button
                 className="story-nav-button-compact prev-button"
                 onClick={handlePrevStoryPoint}
                 disabled={isTransitioning}
@@ -441,12 +460,12 @@ function Location() {
               >
                 ←
               </button>
-              
+
               <div className="story-point-counter">
                 {currentStoryPointIndex + 1} / {location.storyPoints.length}
               </div>
-              
-              <button 
+
+              <button
                 className="story-nav-button-compact next-button"
                 onClick={handleNextStoryPoint}
                 disabled={isTransitioning}

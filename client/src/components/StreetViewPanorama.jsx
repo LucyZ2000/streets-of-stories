@@ -26,7 +26,7 @@ function StreetViewPanorama({ location, currentStoryPointIndex, isTransitioning 
 
     try {
       // Get the target position (current story point or main location)
-      const targetPosition = location.storyPoints && location.storyPoints[currentStoryPointIndex] 
+      const targetPosition = location.storyPoints && location.storyPoints[currentStoryPointIndex]
         ? location.storyPoints[currentStoryPointIndex]
         : location;
 
@@ -34,13 +34,13 @@ function StreetViewPanorama({ location, currentStoryPointIndex, isTransitioning 
       const panoramaInstance = new window.google.maps.StreetViewPanorama(
         panoramaRef.current,
         {
-          position: { 
-            lat: targetPosition.lat, 
-            lng: targetPosition.lng 
+          position: {
+            lat: targetPosition.lat,
+            lng: targetPosition.lng
           },
-          pov: { 
-            heading: targetPosition.heading || 0, 
-            pitch: targetPosition.pitch || 0 
+          pov: {
+            heading: targetPosition.heading || 0,
+            pitch: targetPosition.pitch || 0
           },
           zoom: targetPosition.zoom || 1,
           visible: true,
@@ -156,8 +156,8 @@ function StreetViewPanorama({ location, currentStoryPointIndex, isTransitioning 
 
   return (
     <div className="panorama-wrapper">
-      <div 
-        ref={panoramaRef} 
+      <div
+        ref={panoramaRef}
         className="panorama-container"
         style={{
           width: '100%',
@@ -168,7 +168,7 @@ function StreetViewPanorama({ location, currentStoryPointIndex, isTransitioning 
           zIndex: 1
         }}
       />
-      
+
       {/* Show loading overlay during transitions */}
       {isTransitioning && (
         <div className="panorama-transition-overlay">
@@ -183,8 +183,7 @@ function StreetViewPanorama({ location, currentStoryPointIndex, isTransitioning 
           <StoryOverlay
             panorama={panorama}
             panoramaElement={panoramaRef.current}
-            storyPoints={location?.storyPoints}
-            currentBillboards={currentBillboards}  // Pass only current billboards
+            currentBillboards={currentBillboards}  // Only pass currentBillboards, remove storyPoints
           />
           <NavigationIndicators
             panorama={panorama}

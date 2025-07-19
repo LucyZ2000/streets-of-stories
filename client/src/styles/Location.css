@@ -172,10 +172,10 @@
 /* Info Overlay */
 .location-info-overlay {
   position: absolute;
-  top: 20px;
+  top: 80px;
   right: 20px;
   width: 350px;
-  max-height: 70vh;
+  max-height: 65vh;
   background: rgba(0, 0, 0, 0.9);
   color: white;
   padding: 20px;
@@ -230,10 +230,15 @@
 }
 
 .story-point-title {
-  font-size: 1.1rem;
+  font-size: 0.9rem;
   font-weight: 600;
   margin: 0 0 8px 0;
   color: #3b82f6;
+  
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: unset !important;
+  word-break: break-word;
 }
 
 .story-point-description {
@@ -501,8 +506,7 @@
 }
 
 .billboards-toggle-button.active {
-  background: rgba(34, 197, 94, 0.8);
-  border-color: rgba(34, 197, 94, 1);
+  border-color: black;
 }
 
 /* Billboard Indicators */
@@ -869,4 +873,4 @@
   
   .billboard-content {
     padding: 16px;
-  }
+  }}
