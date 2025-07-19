@@ -211,7 +211,7 @@ html, body, #root {
   display: flex;
   align-items: center;
   gap: 20px;
-  background: rgba(255, 255, 255, 0.95);
+  background: #000000B3;
   backdrop-filter: blur(10px);
   border-radius: 16px;
   padding: 16px 24px;
@@ -223,7 +223,7 @@ html, body, #root {
   background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
   color: white;
   border: none;
-  border-radius: 12px;
+  border-radius: 10px;
   padding: 12px 20px;
   font-size: 14px;
   font-weight: 600;
@@ -248,19 +248,19 @@ html, body, #root {
 .story-point-indicator {
   text-align: center;
   padding: 0 20px;
-  border-left: 2px solid #e5e7eb;
-  border-right: 2px solid #e5e7eb;
+  /* border-left: 2px solid #e5e7eb;
+  border-right: 2px solid #e5e7eb; */
 }
 
 .story-point-indicator {
   font-size: 18px;
   font-weight: 700;
-  color: #1a1a1a;
+  color: white;
   margin-bottom: 4px;
 }
 
 .story-point-title {
-  font-size: 14px;
+  font-size: 5px;
   color: #6b7280;
   margin: 0;
   max-width: 200px;
@@ -396,7 +396,7 @@ html, body, #root {
 }
 
 .story-point-title {
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   color: #ffffff;
   margin: 0 0 8px 0;
   font-weight: 700;
