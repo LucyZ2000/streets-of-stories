@@ -48,3 +48,34 @@ export const createBillboard = (billboard) => {
   billboardDiv.appendChild(arrow);
   return billboardDiv;
 };
+
+
+export const handleHomeReset = (map3DRef, setIsAnimating, setSelectedLocationId, setCurrentLocation, setCurrentStory, setCurrentStoryPointIndex, setViewMode, clearStoryPointMarkers, defaultGlobeView) => {
+  if (!map3DRef.current || isAnimating) return;
+
+  setIsAnimating(true);
+  setSelectedLocationId(null);
+  setCurrentLocation(null);
+  setCurrentStory(null);
+  setCurrentStoryPointIndex(0);
+  setViewMode('globe');
+
+  // Clear story point markers when returning to globe view
+  clearStoryPointMarkers();
+
+  try {
+    // Reset to default globe view
+    map3DRef.current.flyCameraTo({
+      endCamera: defaultGlobeView,
+      durationMillis: 2000,
+    });
+
+    setTimeout(() => {
+      setIsAnimating(false);
+    }, 2000);
+
+  } catch (error) {
+    console.error('Error during home reset:', error);
+    setIsAnimating(false);
+  }
+};

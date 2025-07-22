@@ -1,8 +1,10 @@
-// Enhanced Location.jsx with billboard support
+// Enhanced Location.jsx with consistent map controls
 import { useEffect, useState } from 'react';
 import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
 import { LOCATIONS } from '../data/Locations';
 import StreetViewPanorama from '../components/StreetViewPanorama';
+import StoryList from '../components/StoryList';
+
 import '../styles/Location.css';
 
 function Location() {
@@ -16,6 +18,7 @@ function Location() {
   const [transitionMessage, setTransitionMessage] = useState('');
   const [activeBillboard, setActiveBillboard] = useState(null);
   const [billboardsVisible, setBillboardsVisible] = useState(true);
+  const [showStoryList, setShowStoryList] = useState(false);
 
 
   useEffect(() => {
@@ -44,6 +47,9 @@ function Location() {
       Math.sin(dLon / 2) * Math.sin(dLon / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     return R * c; // Distance in km
+  };
+  const handleHomeReset = () => {
+    navigate('/');
   };
 
   // Enhanced transition with user feedback
@@ -121,19 +127,6 @@ function Location() {
     });
   };
 
-
-
-  const toggleInfo = () => {
-    setShowInfo(!showInfo);
-  };
-
-  const toggleBillboards = () => {
-    setBillboardsVisible(!billboardsVisible);
-    if (!billboardsVisible) {
-      setActiveBillboard(null); // Close active billboard when hiding all
-    }
-  };
-
   const handleBillboardClick = (index) => {
     setActiveBillboard(activeBillboard === index ? null : index);
   };
@@ -171,33 +164,34 @@ function Location() {
         </div>
       )}
 
-      {/* Top Controls */}
+      {/* Consistent Top Navigation Controls */}
       <div className="map-controls">
+        {/* Home Button */}
         <button
-          className="control-button back-to-3d-button"
+          className="control-button home-button"
+          onClick={handleHomeReset}
+          disabled={isTransitioning}
+        >
+          Home
+        </button>
+
+        {/* Story List Toggle Button */}
+        <button
+          className="control-button story-list-toggle"
+          onClick={() => setShowStoryList(!showStoryList)}
+          disabled={isTransitioning}
+        >
+          Stories
+        </button>
+
+        {/* Back to 3D View Button (replaces view toggle) */}
+        <button
+          className="control-button view-toggle"
           onClick={handleBackTo3D}
+          disabled={isTransitioning}
           title="Back to 3D View"
-          disabled={isTransitioning}
         >
-          ← 3D View
-        </button>
-
-        <button
-          className="control-button info-toggle-button"
-          onClick={toggleInfo}
-          title={showInfo ? 'Hide Info' : 'Show Info'}
-          disabled={isTransitioning}
-        >
-          {showInfo ? 'Hide Info' : 'Show Info'}
-        </button>
-
-        <button
-          className={`control-button billboards-toggle-button ${billboardsVisible ? 'active' : ''}`}
-          onClick={toggleBillboards}
-          title={billboardsVisible ? 'Hide Billboards' : 'Show Billboards'}
-          disabled={isTransitioning}
-        >
-          📋 Billboards
+          3D View
         </button>
       </div>
 
@@ -267,7 +261,6 @@ function Location() {
 
                 {currentBillboards[activeBillboard].details && (
                   <div className="billboard-details">
-                    {/* This part looks correct, but make sure your data structure matches */}
                     {typeof currentBillboards[activeBillboard].details === 'string' ? (
                       <div className="billboard-detail-item">
                         {currentBillboards[activeBillboard].details}
@@ -313,41 +306,49 @@ function Location() {
         </div>
       )}
 
-      {/* Enhanced Story Navigation Controls */}
+      {/* Story Navigation Controls - Bottom Position (like Map3D) */}
       {location.storyPoints && location.storyPoints.length > 1 && (
-        <div className="story-navigation-street">
+        <div className="story-navigation">
           <button
-            className="story-nav-button-street prev-button"
+            className="story-nav-button prev-button"
             onClick={handlePrevStoryPoint}
             disabled={isTransitioning}
             title="Previous Story Point"
           >
-            ← Previous
+            ← Previous Story Point
           </button>
 
-          <div className="story-point-counter-street">
-            <span className="current-point">{currentStoryPointIndex + 1}</span>
-            <span className="separator">/</span>
-            <span className="total-points">{location.storyPoints.length}</span>
-            {currentBillboards.length > 0 && (
-              <span className="billboard-count" title={`${currentBillboards.length} billboards available`}>
-                📋 {currentBillboards.length}
-              </span>
-            )}
+          <div className="story-point-indicator">
+            {currentStoryPointIndex + 1} / {location.storyPoints.length}
+            <div className="story-point-title">
+              {location.storyPoints[currentStoryPointIndex]?.text}
+            </div>
           </div>
 
           <button
-            className="story-nav-button-street next-button"
+            className="story-nav-button next-button"
             onClick={handleNextStoryPoint}
             disabled={isTransitioning}
             title="Next Story Point"
           >
-            Next →
+            Next Story Point→
           </button>
         </div>
       )}
-
-      {/* Corner Info Box */}
+      {/* Story List - appears when showStoryList is true */}
+      {showStoryList && (
+        <div className="story-list-overlay">
+          <StoryList
+            locations={LOCATIONS}
+            onLocationSelect={(location) => {
+              navigate(`/location/${location.id}`);
+              setShowStoryList(false);
+            }}
+          />
+        </div>
+      )}
+      
+      {/* Corner Info Box - Only show when showInfo is true */}
       {showInfo && (
         <div className="location-info-overlay">
           <div className="info-header">
@@ -448,33 +449,6 @@ function Location() {
               </div>
             </div>
           )}
-
-          {/* Compact Navigation - also enhanced */}
-          {location.storyPoints && location.storyPoints.length > 1 && (
-            <div className="story-navigation-compact">
-              <button
-                className="story-nav-button-compact prev-button"
-                onClick={handlePrevStoryPoint}
-                disabled={isTransitioning}
-                title="Previous Story Point"
-              >
-                ←
-              </button>
-
-              <div className="story-point-counter">
-                {currentStoryPointIndex + 1} / {location.storyPoints.length}
-              </div>
-
-              <button
-                className="story-nav-button-compact next-button"
-                onClick={handleNextStoryPoint}
-                disabled={isTransitioning}
-                title="Next Story Point"
-              >
-                →
-              </button>
-            </div>
-          )}
         </div>
       )}
 
@@ -495,6 +469,14 @@ function Location() {
           )}
         </div>
       </div>
+
+      {/* Loading indicator for transitions (like Map3D) */}
+      {isTransitioning && (
+        <div className="transition-indicator">
+          <div className="loading-spinner"></div>
+          <p>Transitioning to story point...</p>
+        </div>
+      )}
     </div>
   );
 }

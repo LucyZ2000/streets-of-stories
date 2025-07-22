@@ -1,3 +1,8 @@
+import SpiritedAwayImage from '../assets/img/SpiritedAway.png';
+import SherlockImage from '../assets/img/Sherlock.png';
+import GatsbyImage from '../assets/img/Gatsby.png';
+import HarryImage from '../assets/img/Harry.png';
+
 export const LOCATIONS = [
   {
     id: '1',
@@ -9,6 +14,7 @@ export const LOCATIONS = [
     author: 'F. Scott Fitzgerald',
     year: 1925,
     genre: 'Classic Literature',
+    image: GatsbyImage,
     storyPoints: [
       {
         heading: 165,
@@ -99,6 +105,7 @@ export const LOCATIONS = [
     author: 'J.K. Rowling',
     year: 1997,
     genre: 'Fantasy',
+    image: HarryImage,
     storyPoints: [
       {
         heading: 45,
@@ -188,6 +195,7 @@ export const LOCATIONS = [
     author: 'Arthur Conan Doyle',
     year: 1887,
     genre: 'Mystery',
+    image: SherlockImage,
     storyPoints: [
       {
         heading: 90,
@@ -235,63 +243,64 @@ export const LOCATIONS = [
       },
     ],
   },
-  {
-    id: '4',
-    title: 'Lion King',
-    lat: -0.915404,
-    lng: 36.316911,
-    altitude: 60,
-    description: 'Hells Gate Gorge – The dramatic red cliffs that inspired Pride Rock in *The Lion King*',
-    author: 'Disney (inspired by East African landscapes)',
-    year: 1994,
-    genre: 'Animated Adventure',
-    storyPoints: [
-      {
-        heading: 90,
-        pitch: -10,
-        text: "Hell's Gate",
-        description: 'Hells Gate Gorge – The dramatic red cliffs that inspired Pride Rock in *The Lion King*',
-        image: 'https://via.placeholder.com/200x120/8b5cf6/ffffff?',
-        lat: -0.915404,
-        lng: 36.316911,
-        billboards: [
-          {
-            id: 'pride-rock-1',
-            heading: 90,
-            pitch: -10,
-            title: 'Pride Rock Summit',
-            content: 'The majestic peak where the Lion King surveys his kingdom and presents his heir.',
-            type: 'location',
-            icon: '🦁',
-            quote: '"Everything the light touches is our kingdom."',
-            details: 'The highest point of Pride Rock, offering a commanding view of the African savanna.'
-          },
-          {
-            id: 'pride-rock-2',
-            heading: 120,
-            pitch: 0,
-            title: 'The Presentation Circle',
-            content: 'The sacred spot where newborn cubs are presented to the pride and the animal kingdom.',
-            type: 'ceremony',
-            icon: '🌅',
-            quote: '"The Circle of Life moves us all."',
-            details: 'All the animals of the Pride Lands gather below to witness the presentation ceremony.'
-          },
-          {
-            id: 'pride-rock-3',
-            heading: 60,
-            pitch: 5,
-            title: 'The King\'s Den',
-            content: 'The royal family\'s dwelling within the rock formation.',
-            type: 'home',
-            icon: '🏔️',
-            quote: '"A king\'s time as ruler rises and falls like the sun."',
-            details: 'Carved chambers within Pride Rock that serve as the royal family\'s home.'
-          }
-        ]
-      }
-    ],
-  },
+  // {
+  //   id: '4',
+  //   title: 'Lion King',
+  //   lat: -0.915404,
+  //   lng: 36.316911,
+  //   altitude: 60,
+  //   description: 'Hells Gate Gorge – The dramatic red cliffs that inspired Pride Rock in *The Lion King*',
+  //   author: 'Disney (inspired by East African landscapes)',
+  //   year: 1994,
+  //   genre: 'Animated Adventure',
+  //   image: LionKingImage,
+  //   storyPoints: [
+  //     {
+  //       heading: 90,
+  //       pitch: -10,
+  //       text: "Hell's Gate",
+  //       description: 'Hells Gate Gorge – The dramatic red cliffs that inspired Pride Rock in *The Lion King*',
+  //       image: 'https://via.placeholder.com/200x120/8b5cf6/ffffff?',
+  //       lat: -0.915404,
+  //       lng: 36.316911,
+  //       billboards: [
+  //         {
+  //           id: 'pride-rock-1',
+  //           heading: 90,
+  //           pitch: -10,
+  //           title: 'Pride Rock Summit',
+  //           content: 'The majestic peak where the Lion King surveys his kingdom and presents his heir.',
+  //           type: 'location',
+  //           icon: '🦁',
+  //           quote: '"Everything the light touches is our kingdom."',
+  //           details: 'The highest point of Pride Rock, offering a commanding view of the African savanna.'
+  //         },
+  //         {
+  //           id: 'pride-rock-2',
+  //           heading: 120,
+  //           pitch: 0,
+  //           title: 'The Presentation Circle',
+  //           content: 'The sacred spot where newborn cubs are presented to the pride and the animal kingdom.',
+  //           type: 'ceremony',
+  //           icon: '🌅',
+  //           quote: '"The Circle of Life moves us all."',
+  //           details: 'All the animals of the Pride Lands gather below to witness the presentation ceremony.'
+  //         },
+  //         {
+  //           id: 'pride-rock-3',
+  //           heading: 60,
+  //           pitch: 5,
+  //           title: 'The King\'s Den',
+  //           content: 'The royal family\'s dwelling within the rock formation.',
+  //           type: 'home',
+  //           icon: '🏔️',
+  //           quote: '"A king\'s time as ruler rises and falls like the sun."',
+  //           details: 'Carved chambers within Pride Rock that serve as the royal family\'s home.'
+  //         }
+  //       ]
+  //     }
+  //   ],
+  // },
   {
     id: '5',
     title: 'Spirited Away',
@@ -302,6 +311,7 @@ export const LOCATIONS = [
     author: 'Hayao Miyazaki',
     year: 2001,
     genre: 'Animated Fantasy',
+    image: SpiritedAwayImage,
     storyPoints: [
       {
         heading: 45,
@@ -402,13 +412,22 @@ export const LOCATIONS = [
           }
         ]
       },
+      {
+        heading: 45,
+        pitch: -8,
+        text: 'Fushimi Inari Shrine',
+        description: 'The thousands of vermillion torii gates that inspired the tunnel entrance to the spirit world.',
+        image: 'https://via.placeholder.com/200x120/dc2626/ffffff?text=Torii+Gates',
+        lat: 25.1099,
+        lng: 121.8452,
+      }
     ],
   },
   {
     id: '6',
     title: 'Journey to the West (Monkey King)',
-    lat: 34.3416,
-    lng: 108.9398,
+    lat: 34.35,
+    lng: 119.20,
     altitude: 120,
     description: 'Mount Huashan, China - The legendary mountain where the Monkey King began his journey',
     author: 'Wu Cheng\'en',

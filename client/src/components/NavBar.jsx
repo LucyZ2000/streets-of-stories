@@ -9,10 +9,6 @@ function NavBar() {
   return (
     <nav className={`navbar ${isStreetViewPage ? 'navbar-solid' : 'navbar-transparent'}`}>
       <div className="navbar-logo">Streets of Stories</div>
-      <div className="navbar-links">
-        <Link to="/">Home</Link>
-        <Link to="/about">About</Link>
-      </div>
     </nav>
   );
 }

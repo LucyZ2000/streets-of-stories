@@ -1,33 +1,38 @@
 /* Map Controls */
 .map-controls {
   position: fixed;
-  top: 80px;
-  left: 20px;
+  top: 50px;
+  left: 10px;
   z-index: 1000;
+  background: transparent;
+  border: none;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 12px;
+  border-radius: 12px;
+  padding: 12px;
 }
 
 .control-button {
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.9);
   border: none;
-  border-radius: 12px;
-  padding: 12px 20px;
-  font-size: 16px;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-size: 14px;
   font-weight: 600;
   color: #1a1a1a;
   cursor: pointer;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(10px);
   transition: all 0.3s ease;
-  min-width: 120px;
+  min-width: auto;
+  white-space: nowrap;
 }
 
 .control-button:hover:not(:disabled) {
   background: rgba(255, 255, 255, 1);
   transform: translateY(-2px);
-  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
 .control-button:disabled {
@@ -35,28 +40,8 @@
   cursor: not-allowed;
 }
 
-.home-button {
-  background: rgba(255, 255, 255, 1);
-  color: black;
-}
-
-.home-button:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 1);
-  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.2);
-}
-
 .story-list-toggle {
-  background: rgba(255, 255, 255, 0.95);
-}
-
-.street-view-toggle {
-  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-  color: white;
-}
-
-.street-view-toggle:hover:not(:disabled) {
-  background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
-  box-shadow: 0 6px 25px rgba(245, 158, 11, 0.3);
+  background: rgba(255, 255, 255, 0.9);
 }
 
 /* View Mode Indicator */
@@ -88,13 +73,14 @@
 }
 
 .story-list-overlay {
+  border-radius: 16px;
   position: fixed;
-  top: 0;
+  top: 120px;
   left: 0;
   width: 400px;
-  height: 100vh;
+  height: calc(100vh - 120px); /* Changed from 100vh */
   backdrop-filter: blur(20px);
-  z-index: 999;
+  z-index: 1001;
   box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
   animation: slideInLeft 0.3s ease-out;
 }
@@ -117,7 +103,7 @@
 }
 
 .story-list-header {
-  margin-top: 175px;
+  margin-top: 20px;
   margin-bottom: 30px;
   padding-bottom: 20px;
   border-bottom: 2px solid #e5e7eb;
@@ -301,32 +287,34 @@
 
 /* Mobile Responsiveness */
 @media (max-width: 768px) {
-  .map-controls {
-    flex-direction: row;
-    flex-wrap: wrap;
-    top: 10px;
-    left: 10px;
-    right: 10px;
-    justify-content: space-between;
+  /* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .map-controls {
+      flex-wrap: wrap;
+      top: 10px;
+      left: 10px;
+      right: 10px;
+      justify-content: center;
+      padding: 8px;
+    }
+
+    .control-button {
+      padding: 8px 12px;
+      font-size: 12px;
+      flex: 1 1 auto;
+    }
+
+    .view-mode-indicator {
+      top: 70px;
+      right: 10px;
+      left: 10px;
+      padding: 12px 16px;
+    }
   }
 
-  .control-button {
-    flex: 1;
-    min-width: auto;
-    padding: 10px 16px;
-    font-size: 14px;
-  }
-
-  .view-mode-indicator {
-    top: 70px;
-    right: 10px;
-    left: 10px;
-    padding: 12px 16px;
-  }
 
   .story-list-overlay {
-    width: 100%;
-    background: rgba(255, 255, 255, 0.98);
+    height: calc(100vh - 70px); /* Adjusted for mobile header */
   }
   
   .story-list-container {
@@ -346,4 +334,51 @@
   .story-title {
     font-size: 16px;
   }
+}
+
+/* Search Container */
+.search-container {
+  position: relative;
+  margin-bottom: 16px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 12px 40px 12px 16px;
+  border: none;
+  border-radius: 25px;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  font-size: 14px;
+  outline: none;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+.search-input::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.search-input:focus {
+  background: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.4);
+}
+
+.search-icon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: rgba(255, 255, 255, 0.7);
+  pointer-events: none;
+  font-size: 16px;
+}
+
+/* Search Results Info */
+.search-results-info {
+  text-align: center;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.8);
+  margin: 0;
+  padding: 0;
 }

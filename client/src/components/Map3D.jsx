@@ -3,7 +3,9 @@ import { createBillboard } from '../utils/mapUtils';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useGoogleMaps } from '../hooks/useGoogleMaps';
+import { handleHomeReset } from '../utils/mapUtils';
 import StoryList from './StoryList';
+
 
 function Map3D({ locations = [] }) {
   const { isLoaded, error } = useGoogleMaps();
@@ -62,6 +64,77 @@ function Map3D({ locations = [] }) {
       setPendingNavigation(null);
     }
   }, [pendingNavigation, map3DRef.current]);
+
+const handleHomeReset = () => {
+    if (!map3DRef.current || isAnimating) return;
+
+    setIsAnimating(true);
+    setSelectedLocationId(null);
+    setCurrentLocation(null);
+    setCurrentStory(null);
+    setCurrentStoryPointIndex(0);
+    setViewMode('globe');
+
+    // Clear story point markers when returning to globe view
+    clearStoryPointMarkers();
+
+    try {
+      // Reset to default globe view
+      map3DRef.current.flyCameraTo({
+        endCamera: defaultGlobeView,
+        durationMillis: 2000,
+      });
+
+      setTimeout(() => {
+        setIsAnimating(false);
+      }, 2000);
+
+    } catch (error) {
+      console.error('Error during home reset:', error);
+      setIsAnimating(false);
+    }
+  };
+
+// Add this new function to Map3D.jsx
+const handleImmediatePosition = (targetLocation, storyPointIndex) => {
+  // Set the state immediately
+  setSelectedLocationId(targetLocation.id);
+  setCurrentLocation(targetLocation);
+  setCurrentStory(targetLocation);
+  setCurrentStoryPointIndex(storyPointIndex);
+  setViewMode('zoomed');
+
+  // Position camera immediately without animation using flyCameraTo with 0 duration
+  const targetStoryPoint = targetLocation.storyPoints?.[storyPointIndex] || targetLocation.storyPoints?.[0];
+  const targetPoint = targetStoryPoint || targetLocation;
+  
+  // Use flyCameraTo with 0 duration for instant positioning
+  try {
+    map3DRef.current.flyCameraTo({
+      endCamera: {
+        center: { 
+          lat: targetPoint.lat, 
+          lng: targetPoint.lng, 
+          altitude: targetLocation.altitude || 60 
+        },
+        tilt: targetStoryPoint?.pitch ? Math.abs(targetStoryPoint.pitch) + 65 : 75,
+        range: targetStoryPoint?.range || 150,
+        heading: targetStoryPoint?.heading || 0,
+      },
+      durationMillis: 0, // Instant positioning
+    });
+
+    // Add story point markers immediately
+    setTimeout(() => {
+      addStoryPointMarkers(targetLocation);
+    }, 100); // Small delay to ensure camera is positioned
+
+  } catch (error) {
+    console.error('Error setting immediate position:', error);
+    // Fallback to animated transition if immediate fails
+    executeNavigationState(targetLocation, storyPointIndex);
+  }
+};
 
   // Function to execute the navigation state
   const executeNavigationState = (targetLocation, storyPointIndex) => {
@@ -274,45 +347,15 @@ function Map3D({ locations = [] }) {
     });
   };
 
-  const handleHomeReset = () => {
-    if (!map3DRef.current || isAnimating) return;
-
-    setIsAnimating(true);
-    setSelectedLocationId(null);
-    setCurrentLocation(null);
-    setCurrentStory(null);
-    setCurrentStoryPointIndex(0);
-    setViewMode('globe');
-
-    // Clear story point markers when returning to globe view
-    clearStoryPointMarkers();
-
-    try {
-      // Reset to default globe view
-      map3DRef.current.flyCameraTo({
-        endCamera: defaultGlobeView,
-        durationMillis: 2000,
-      });
-
-      setTimeout(() => {
-        setIsAnimating(false);
-      }, 2000);
-
-    } catch (error) {
-      console.error('Error during home reset:', error);
-      setIsAnimating(false);
-    }
-  };
-
   const handleViewToggle = () => {
     if (!currentLocation) return;
 
     if (viewMode === 'street') {
-      // Switch back to zoomed aerial view
+      // Now uses the new smooth transition
       setViewMode('zoomed');
-      handleExplore(currentLocation);
+      handleReturnFromStreetView(currentLocation, currentStoryPointIndex);
     } else {
-      // Switch to street view
+      // Switch to street view (unchanged)
       setViewMode('street');
       navigate(`/location/${currentLocation.id}?point=${currentStoryPointIndex}`);
     }
@@ -431,7 +474,7 @@ function Map3D({ locations = [] }) {
         popoverContent.className = 'story-popover-content';
         popoverContent.innerHTML = `
           <div class="popover-header">
-            <img src="${location.storyPoints?.[0]?.image || 'https://via.placeholder.com/200x120/6366f1/ffffff?text=Story'}" 
+            <img src="${location.image}" 
                  alt="${location.title}" class="popover-image">
             <div class="popover-title-section">
               <h3 class="popover-title">${location.title}</h3>
@@ -568,7 +611,7 @@ function Map3D({ locations = [] }) {
             disabled={isAnimating}
             title="Previous Story Point"
           >
-            ← Previous
+            ← Previous Story Point
           </button>
 
           <div className="story-point-indicator">
@@ -584,7 +627,7 @@ function Map3D({ locations = [] }) {
             disabled={isAnimating}
             title="Next Story Point"
           >
-            Next →
+            Next Story Point→
           </button>
         </div>
       )}
