@@ -2,6 +2,7 @@ import SpiritedAwayImage from '../assets/img/SpiritedAway.png';
 import SherlockImage from '../assets/img/Sherlock.png';
 import GatsbyImage from '../assets/img/Gatsby.png';
 import HarryImage from '../assets/img/Harry.png';
+import GatsbyMusic from '../assets/music/Jazz.mp3';
 
 export const LOCATIONS = [
   {
@@ -15,6 +16,7 @@ export const LOCATIONS = [
     year: 1925,
     genre: 'Classic Literature',
     image: GatsbyImage,
+    music: GatsbyMusic,
     storyPoints: [
       {
         heading: 165,
@@ -60,46 +62,13 @@ export const LOCATIONS = [
           }
         ]
       },
-      {
-        heading: 95,
-        pitch: -5,
-        text: 'The Green Light',
-        description: 'The mysterious green light at the end of Daisy\'s dock, symbolizing hope and the American Dream.',
-        image: 'https://via.placeholder.com/200x120/10b981/ffffff?text=Green+Light',
-        lat: 40.8295,
-        lng: -73.4470,
-        billboards: [
-          {
-            id: 'green-light-1',
-            heading: 95,
-            pitch: -5,
-            title: 'The Beacon of Hope',
-            content: 'The green light that Gatsby reached toward every night, representing his longing for Daisy.',
-            type: 'symbol',
-            icon: '💚',
-            quote: '"Gatsby believed in the green light, the orgastic future that year by year recedes before us."',
-            details: 'A simple dock light that became the most powerful symbol in American literature.'
-          },
-          {
-            id: 'green-light-2',
-            heading: 110,
-            pitch: 0,
-            title: 'Daisy\'s Dock',
-            content: 'The Buchanan estate dock where the green light burned every night.',
-            type: 'location',
-            icon: '🛥️',
-            quote: '"And as I sat there brooding on the old, unknown world, I thought of Gatsby\'s wonder when he first picked out the green light."',
-            details: 'Located across the bay from Gatsby\'s mansion, representing the distance between dream and reality.'
-          }
-        ]
-      },
     ],
   },
   {
     id: '2',
     title: 'Harry Potter',
-    lat: 51.531,
-    lng: -0.124,
+    lat: 51.5316,
+    lng: 0.1236,
     altitude: 100,
     description: 'King\'s Cross Station - Gateway to the wizarding world',
     author: 'J.K. Rowling',
@@ -113,8 +82,8 @@ export const LOCATIONS = [
         text: 'Platform 9¾',
         description: 'The magical platform where young witches and wizards board the Hogwarts Express to begin their journey.',
         image: 'https://via.placeholder.com/200x120/dc2626/ffffff?text=Platform+9%C2%BE',
-        lat: 51.5318,
-        lng: -0.1239,
+        lat: 51.5314,
+        lng: -0.123854,
         billboards: [
           {
             id: 'platform-1',

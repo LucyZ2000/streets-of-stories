@@ -1,5 +1,5 @@
-// Enhanced Location.jsx with consistent map controls
-import { useEffect, useState } from 'react';
+// Enhanced Location.jsx with music support for atmospheric audio
+import { useEffect, useState, useRef } from 'react';
 import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
 import { LOCATIONS } from '../data/Locations';
 import StreetViewPanorama from '../components/StreetViewPanorama';
@@ -19,7 +19,12 @@ function Location() {
   const [activeBillboard, setActiveBillboard] = useState(null);
   const [billboardsVisible, setBillboardsVisible] = useState(true);
   const [showStoryList, setShowStoryList] = useState(false);
-
+  
+  // Music-related state
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [volume, setVolume] = useState(0.3);
+  const [showMusicControls, setShowMusicControls] = useState(false);
+  const audioRef = useRef(null);
 
   useEffect(() => {
     const found = LOCATIONS.find((loc) => loc.id === id);
@@ -33,7 +38,84 @@ function Location() {
         setCurrentStoryPointIndex(index);
       }
     }
+
+    // Initialize music if location has music
+    if (found && found.music) {
+      initializeMusic(found.music);
+    }
+
+    // Cleanup music when component unmounts
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+    };
   }, [id, searchParams]);
+
+  // Initialize and manage background music
+  const initializeMusic = (musicSrc) => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+    }
+
+    const audio = new Audio(musicSrc);
+    audio.loop = true;
+    audio.volume = volume;
+    audioRef.current = audio;
+
+    // Show music controls if music is available
+    setShowMusicControls(true);
+
+    // Auto-play music with a slight delay (respecting browser autoplay policies)
+    setTimeout(() => {
+      playMusic();
+    }, 1000);
+
+    // Handle audio events
+    audio.addEventListener('canplaythrough', () => {
+      console.log('Music loaded and ready to play');
+    });
+
+    audio.addEventListener('error', (e) => {
+      console.error('Error loading music:', e);
+      setShowMusicControls(false);
+    });
+  };
+
+  const playMusic = async () => {
+    if (audioRef.current && !isPlaying) {
+      try {
+        await audioRef.current.play();
+        setIsPlaying(true);
+      } catch (error) {
+        console.log('Autoplay blocked. User interaction required.');
+        // Music will be played when user clicks the play button
+      }
+    }
+  };
+
+  const pauseMusic = () => {
+    if (audioRef.current && isPlaying) {
+      audioRef.current.pause();
+      setIsPlaying(false);
+    }
+  };
+
+  const toggleMusic = async () => {
+    if (isPlaying) {
+      pauseMusic();
+    } else {
+      await playMusic();
+    }
+  };
+
+  const handleVolumeChange = (newVolume) => {
+    setVolume(newVolume);
+    if (audioRef.current) {
+      audioRef.current.volume = newVolume;
+    }
+  };
 
   // Helper function to calculate distance between two points
   const calculateDistance = (point1, point2) => {
@@ -48,7 +130,10 @@ function Location() {
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     return R * c; // Distance in km
   };
+
   const handleHomeReset = () => {
+    // Pause music when leaving
+    pauseMusic();
     navigate('/');
   };
 
@@ -116,6 +201,8 @@ function Location() {
   };
 
   const handleBackTo3D = () => {
+    // Pause music when switching to 3D view
+    pauseMusic();
     // Navigate back to the home page with the current location selected
     navigate('/', {
       state: {
@@ -193,7 +280,35 @@ function Location() {
         >
           3D View
         </button>
+
+        {/* Music Controls - Only show if location has music */}
+        {showMusicControls && (
+          <div className="music-controls">
+            <button
+              className={`control-button music-toggle ${isPlaying ? 'playing' : 'paused'}`}
+              onClick={toggleMusic}
+              disabled={isTransitioning}
+              title={isPlaying ? 'Pause Music' : 'Play Music'}
+            >
+              {isPlaying ? '🔊' : '🔇'}
+            </button>
+          </div>
+        )}
       </div>
+
+      {/* Music Status Indicator */}
+      {showMusicControls && isPlaying && (
+        <div className="music-status-indicator">
+          <div className="music-visualizer">
+            <div className="bar"></div>
+            <div className="bar"></div>
+            <div className="bar"></div>
+          </div>
+          <span className="music-title">
+            {location.title} - Atmospheric Music
+          </span>
+        </div>
+      )}
 
       {/* Billboard Indicators */}
       {billboardsVisible && currentBillboards.length > 0 && (
@@ -335,6 +450,7 @@ function Location() {
           </button>
         </div>
       )}
+
       {/* Story List - appears when showStoryList is true */}
       {showStoryList && (
         <div className="story-list-overlay">
@@ -355,6 +471,7 @@ function Location() {
             <h1 className="location-title">{location.title}</h1>
             <p className="location-author">by {location.author} ({location.year})</p>
             <span className="location-genre">{location.genre}</span>
+                      
           </div>
 
           <div className="location-description">
@@ -461,6 +578,9 @@ function Location() {
           )}
           {currentBillboards.length > 0 && (
             <span> Click billboard icons (📋) for detailed information.</span>
+          )}
+          {showMusicControls && (
+            <span> Enjoy the atmospheric music while exploring!</span>
           )}
           {isTransitioning && (
             <div className="instructions-status">

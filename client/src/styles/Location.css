@@ -81,9 +81,11 @@
 }
 
 .control-button {
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(16, 43, 91, 0.901);
   color: white;
   border: none;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1), /* Inner white outline */
+              0 2px 8px rgba(0, 0, 0, 0.2); /* Soft drop shadow */
   padding: 10px 15px;
   border-radius: 8px;
   cursor: pointer;
@@ -91,10 +93,13 @@
   font-weight: 500;
   transition: all 0.2s ease;
   backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  gap: 8px; /* space between icon and text */
 }
 
 .control-button:hover:not(:disabled) {
-  background: rgba(0, 0, 0, 0.9);
+  background: rgba(16, 44, 76, 0.9);
   transform: translateY(-2px);
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
@@ -870,3 +875,8 @@
   .billboard-content {
     padding: 16px;
   }}
+
+
+.material-icons, .home-icon {
+  font-size: 18px; /* adjust icon size */
+}

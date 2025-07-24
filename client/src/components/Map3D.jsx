@@ -3,7 +3,7 @@ import { createBillboard } from '../utils/mapUtils';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useGoogleMaps } from '../hooks/useGoogleMaps';
-import { handleHomeReset } from '../utils/mapUtils';
+
 import StoryList from './StoryList';
 
 
@@ -193,6 +193,15 @@ const handleImmediatePosition = (targetLocation, storyPointIndex) => {
     setIsAnimating(true);
     setSelectedLocationId(location.id);
     setShowStoryList(false);
+    
+    // Reset exploration state when selecting a new location from the list
+    setCurrentLocation(null);
+    setCurrentStory(null);
+    setCurrentStoryPointIndex(0);
+    setViewMode('globe');
+    
+    // Clear any existing story point markers
+    clearStoryPointMarkers();
 
     try {
       // Fly to the location but keep it in global view - higher altitude and range
@@ -439,7 +448,7 @@ const handleImmediatePosition = (targetLocation, storyPointIndex) => {
     if (!isLoaded || !containerRef.current) return;
 
     try {
-      const { Map3DElement, Marker3DInteractiveElement, PopoverElement } = await google.maps.importLibrary("maps3d");
+      const { Map3DElement, Marker3DElement, Marker3DInteractiveElement, PopoverElement } = await google.maps.importLibrary("maps3d");
       const { PinElement } = await google.maps.importLibrary("marker");
 
       const map3D = new Map3DElement(defaultGlobeView);
@@ -459,8 +468,7 @@ const handleImmediatePosition = (targetLocation, storyPointIndex) => {
 
         // Create custom pin with story number
         const pin = new PinElement({
-          glyph: `${index + 1}`,
-          scale: 1.5,
+          scale: 2.5,
           glyphColor: "#FFFFFF",
           background: "#3b82f6",
           borderColor: "#1d4ed8",
@@ -469,13 +477,13 @@ const handleImmediatePosition = (targetLocation, storyPointIndex) => {
         // Create popover with story information
         const popover = new PopoverElement();
 
-        // Create popover content - simplified with just explore button
+        // Create popover content
         const popoverContent = document.createElement('div');
         popoverContent.className = 'story-popover-content';
         popoverContent.innerHTML = `
           <div class="popover-header">
             <img src="${location.image}" 
-                 alt="${location.title}" class="popover-image">
+                alt="${location.title}" class="popover-image">
             <div class="popover-title-section">
               <h3 class="popover-title">${location.title}</h3>
               <p class="popover-author">by ${location.author} (${location.year})</p>
@@ -497,10 +505,13 @@ const handleImmediatePosition = (targetLocation, storyPointIndex) => {
 
         popover.append(popoverContent);
 
-        // Create interactive marker
+        // Create interactive marker with label
         const interactiveMarker = new Marker3DInteractiveElement({
           title: `${location.title} - ${location.author}`,
           position: { lat: location.lat, lng: location.lng, altitude: location.altitude || 60 },
+          altitudeMode: "ABSOLUTE",
+          extruded: false,
+          label: location.title, // Add the label here
           gmpPopoverTargetElement: popover
         });
 
@@ -578,7 +589,8 @@ const handleImmediatePosition = (targetLocation, storyPointIndex) => {
           onClick={handleHomeReset}
           disabled={isAnimating}
         >
-          Home
+          <span className="material-icons">home</span>
+          <span>Home</span>
         </button>
 
         {/* Story List Toggle Button */}
@@ -586,7 +598,8 @@ const handleImmediatePosition = (targetLocation, storyPointIndex) => {
           className="control-button story-list-toggle"
           onClick={() => setShowStoryList(!showStoryList)}
         >
-          Stories
+          <span className="material-icons">menu</span>
+          <span>Stories</span>
         </button>
 
         {/* View Toggle Button - show when exploring a location */}
