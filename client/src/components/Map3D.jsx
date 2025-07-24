@@ -5,6 +5,8 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useGoogleMaps } from '../hooks/useGoogleMaps';
 
 import StoryList from './StoryList';
+import '../styles/App.css';
+import '../styles/storylist.css';
 
 
 function Map3D({ locations = [] }) {
@@ -585,7 +587,7 @@ const handleImmediatePosition = (targetLocation, storyPointIndex) => {
       <div className="map-controls">
         {/* Home Button */}
         <button
-          className="control-button home-button"
+          className="control-button"
           onClick={handleHomeReset}
           disabled={isAnimating}
         >
@@ -595,7 +597,7 @@ const handleImmediatePosition = (targetLocation, storyPointIndex) => {
 
         {/* Story List Toggle Button */}
         <button
-          className="control-button story-list-toggle"
+          className="control-button"
           onClick={() => setShowStoryList(!showStoryList)}
         >
           <span className="material-icons">menu</span>

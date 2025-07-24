@@ -1,0 +1,75 @@
+/* Floating Info Toggle Button - Overlapping the info box */
+.info-toggle-button-floating {
+  position: fixed;
+  top: 140px; /* Slightly below the top of the info box */
+  right: 30px; /* Overlapping the right edge of the info box */
+  background: rgba(0, 0, 0, 0.9);
+  border: none;
+  border-radius: 6px 0 0 6px; /* Rounded on left side only */
+  padding: 8px 12px;
+  cursor: pointer;
+  z-index: 1001; /* Higher than info box (z-index: 100) */
+  transition: all 0.3s ease;
+  color: white;
+  font-size: 12px;
+  font-weight: 500;
+  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-right: none; /* No border on the right since it's overlapping */
+}
+
+.info-toggle-button-floating:hover {
+  background: rgba(0, 0, 0, 1);
+  right: 25px; /* Slide out slightly on hover */
+  box-shadow: -4px 0 12px rgba(0, 0, 0, 0.4);
+}
+
+.info-toggle-button-floating:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.toggle-icon {
+  font-size: 16px;
+  transition: transform 0.3s ease;
+}
+
+.toggle-text {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.info-toggle-button-floating:hover .toggle-icon {
+  transform: scale(1.1);
+}
+
+/* Alternative: Compact circular button */
+.info-toggle-button-floating.compact {
+  padding: 12px;
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  justify-content: center;
+}
+
+.info-toggle-button-floating.compact .toggle-text {
+  display: none;
+}
+
+/* Alternative: Position on the right side */
+.info-toggle-button-floating.right {
+  left: auto;
+  right: 20px;
+}
+
+/* Alternative: Position based on info box location */
+.info-toggle-button-floating.above-info {
+  top: auto;
+  bottom: calc(100vh - 200px); /* Adjust based on your info box position */
+  left: 20px;
+}
