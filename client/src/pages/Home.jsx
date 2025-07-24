@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import Map3D from '../components/Map3D';
-import { LOCATIONS } from '../data/locations';
+import { LOCATIONS } from '../data/Locations';
 
 function Home() {
   const [locations, setLocations] = useState([]);

@@ -1,22 +1,20 @@
-/* Map Controls */
 .map-controls {
   position: fixed;
   top: 50px;
   left: 10px;
   z-index: 1000;
   background: transparent;
-  border: none;
   display: flex;
   flex-direction: row;
   gap: 12px;
   border-radius: 12px;
-  padding: 12px;
+  padding: 15px;
 }
 
 .control-button {
   background: rgba(255, 255, 255, 0.9);
-  border: none;
   border-radius: 8px;
+  border: 2px solid white;
   padding: 10px 16px;
   font-size: 14px;
   font-weight: 600;
@@ -27,7 +25,7 @@
   transition: all 0.3s ease;
   min-width: auto;
   white-space: nowrap;
-}
+} 
 
 .control-button:hover:not(:disabled) {
   background: rgba(255, 255, 255, 1);
@@ -38,10 +36,11 @@
 .control-button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
-}
+} 
 
 .story-list-toggle {
   background: rgba(255, 255, 255, 0.9);
+  border: 2px solid white; 
 }
 
 /* View Mode Indicator */
@@ -298,11 +297,11 @@
       padding: 8px;
     }
 
-    .control-button {
+    /* .control-button {
       padding: 8px 12px;
       font-size: 12px;
       flex: 1 1 auto;
-    }
+     } */
 
     .view-mode-indicator {
       top: 70px;

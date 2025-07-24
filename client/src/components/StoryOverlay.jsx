@@ -37,7 +37,6 @@ function StoryOverlay({ panorama, currentBillboards }) {
         if (!projection) return;
 
         // Use billboard coordinates if they exist, otherwise fall back to panorama position
-        // Note: Your billboard data might not have lat/lng, so you might need to handle this differently
         const lat = billboard.lat || panorama.getPosition()?.lat();
         const lng = billboard.lng || panorama.getPosition()?.lng();
         

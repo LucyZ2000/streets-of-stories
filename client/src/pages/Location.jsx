@@ -4,7 +4,7 @@ import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
 import { LOCATIONS } from '../data/Locations';
 import StreetViewPanorama from '../components/StreetViewPanorama';
 import StoryList from '../components/StoryList';
-
+import '../styles/Toggle.css';
 import '../styles/Location.css';
 
 function Location() {
@@ -93,6 +93,11 @@ function Location() {
     setIsTransitioning(false);
   };
 
+  const toggleInfo = () => {
+    setShowInfo(!showInfo);
+  };
+
+
   const handleNextStoryPoint = async () => {
     if (!location || !location.storyPoints || isTransitioning) return;
 
@@ -149,6 +154,7 @@ function Location() {
         location={location}
         currentStoryPointIndex={currentStoryPointIndex}
         isTransitioning={isTransitioning}
+        onBillboardClick={handleBillboardClick}
       />
 
       {/* Transition Overlay */}
@@ -210,7 +216,7 @@ function Location() {
                 right: `${20 + (index * 70)}px`,
                 top: '35px',
                 position: 'absolute',
-                zIndex: 1000 + index,                 
+                zIndex: 1000 + index,
               }}
             >
               <div className="billboard-icon">
@@ -228,11 +234,11 @@ function Location() {
           <div className="billboard-modal" onClick={(e) => e.stopPropagation()}>
             <div className="billboard-header">
               <h3 className="billboard-title">
-                {currentBillboards[activeBillboard].icon && (
+                {/* {currentBillboards[activeBillboard].icon && (
                   <span className="billboard-title-icon">
                     {currentBillboards[activeBillboard].icon}
                   </span>
-                )}
+                )} */}
                 {currentBillboards[activeBillboard].title}
               </h3>
               <button
@@ -347,7 +353,23 @@ function Location() {
           />
         </div>
       )}
-      
+
+      {/* Separated Info Toggle Button - Always visible */}
+      <button
+        className="info-toggle-button-floating"
+        onClick={toggleInfo}
+        title={showInfo ? 'Hide Info Panel' : 'Show Info Panel'}
+        disabled={isTransitioning}
+      >
+        <span className="toggle-icon">
+          {showInfo ? '◀' : '▶'}
+        </span>
+        <span className="toggle-text">
+          {showInfo ? 'Hide' : 'Info'}
+        </span>
+      </button>
+
+
       {/* Corner Info Box - Only show when showInfo is true */}
       {showInfo && (
         <div className="location-info-overlay">
@@ -451,7 +473,6 @@ function Location() {
           )}
         </div>
       )}
-
       {/* Enhanced Instructions Panel */}
       <div className="instructions-overlay">
         <div className="instructions-content">
