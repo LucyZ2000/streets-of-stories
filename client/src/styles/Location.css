@@ -227,15 +227,14 @@
   padding: 15px;
   background: rgba(59, 130, 246, 0.1);
   border-radius: 8px;
-  border-left: 4px solid #3b82f6;
+  border-left: 4px solid #1f5e75;
 }
 
 .story-point-title {
   font-size: 0.9rem;
   font-weight: 600;
   margin: 0 0 8px 0;
-  color: #3b82f6;
-  
+  color: #6ca6f2;
   white-space: normal !important;
   overflow: visible !important;
   text-overflow: unset !important;
@@ -635,7 +634,7 @@
   align-items: center;
   padding: 20px 24px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-  background: rgba(0, 0, 0, 0.8);
+  background: rgb(57, 110, 80);
   color: white;
 }
 
@@ -877,6 +876,4 @@
   }}
 
 
-.material-icons, .home-icon {
-  font-size: 18px; /* adjust icon size */
-}
+

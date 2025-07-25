@@ -189,13 +189,57 @@ const handleImmediatePosition = (targetLocation, storyPointIndex) => {
     }
   };
 
-  const handleLocationSelect = async (location) => {
+  // Updated handleLocationSelect to accept optional storyPointIndex
+  const handleLocationSelect = async (location, storyPointIndex = null) => {
     if (!map3DRef.current || isAnimating) return;
 
     setIsAnimating(true);
     setSelectedLocationId(location.id);
     setShowStoryList(false);
     
+    // If a specific story point is selected, go directly to exploration mode
+    if (storyPointIndex !== null) {
+      setCurrentLocation(location);
+      setCurrentStory(location);
+      setCurrentStoryPointIndex(storyPointIndex);
+      setViewMode('zoomed');
+      
+      // Clear any existing story point markers
+      clearStoryPointMarkers();
+
+      try {
+        // Fly directly to the specific story point
+        const targetStoryPoint = location.storyPoints?.[storyPointIndex] || location.storyPoints?.[0];
+        const targetPoint = targetStoryPoint || location;
+        
+        map3DRef.current.flyCameraTo({
+          endCamera: {
+            center: { 
+              lat: targetPoint.lat, 
+              lng: targetPoint.lng, 
+              altitude: location.altitude || 60 
+            },
+            tilt: targetStoryPoint?.pitch ? Math.abs(targetStoryPoint.pitch) + 65 : 75,
+            range: targetStoryPoint?.range || 150,
+            heading: targetStoryPoint?.heading || 0,
+          },
+          durationMillis: 2000,
+        });
+
+        setTimeout(() => {
+          addStoryPointMarkers(location);
+          setIsAnimating(false);
+        }, 2000);
+
+      } catch (error) {
+        console.error('Error during story point navigation:', error);
+        setIsAnimating(false);
+      }
+      
+      return; // Exit early since we handled the story point navigation
+    }
+    
+    // Original logic for location selection (without specific story point)
     // Reset exploration state when selecting a new location from the list
     setCurrentLocation(null);
     setCurrentStory(null);
@@ -682,4 +726,4 @@ const handleImmediatePosition = (targetLocation, storyPointIndex) => {
   );
 }
 
-export default Map3D;
+export default Map3D;  

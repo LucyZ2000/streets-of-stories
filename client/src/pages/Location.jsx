@@ -261,20 +261,20 @@ function Location() {
       <div className="map-controls">
         {/* Home Button */}
         <button
-          className="control-button home-button"
+          className="control-button"
           onClick={handleHomeReset}
-          disabled={isTransitioning}
         >
-          Home
+          <span className="material-icons">home</span>
+          <span>Home</span>
         </button>
 
         {/* Story List Toggle Button */}
         <button
-          className="control-button story-list-toggle"
+          className="control-button"
           onClick={() => setShowStoryList(!showStoryList)}
-          disabled={isTransitioning}
         >
-          Stories
+          <span className="material-icons">menu</span>
+          <span>Stories</span>
         </button>
 
         {/* Back to 3D View Button (replaces view toggle) */}
@@ -509,7 +509,7 @@ function Location() {
               {/* Billboard Summary */}
               {currentBillboards.length > 0 && (
                 <div className="billboards-summary">
-                  <h4>📋 Available Information</h4>
+                  <h4>Available Information</h4>
                   <div className="billboards-list">
                     {currentBillboards.map((billboard, index) => (
                       <button
@@ -518,9 +518,6 @@ function Location() {
                         onClick={() => handleBillboardClick(billboard, index)}
                         disabled={isTransitioning}
                       >
-                        <span className="billboard-summary-icon">
-                          {billboard.icon || '📋'}
-                        </span>
                         <span className="billboard-summary-title">
                           {billboard.title}
                         </span>
@@ -572,12 +569,12 @@ function Location() {
                         <div className="story-point-meta">
                           {distance > 0 && (
                             <div className="story-point-distance">
-                              {distance > 1 ? `${distance.toFixed(1)}km` : `${(distance * 1000).toFixed(0)}m`}
+                              {`${distance.toFixed(1)}km`}
                             </div>
                           )}
                           {billboardCount > 0 && (
                             <div className="story-point-billboards">
-                              📋 {billboardCount}
+                              {billboardCount}
                             </div>
                           )}
                         </div>
