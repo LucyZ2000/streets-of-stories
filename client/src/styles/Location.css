@@ -170,99 +170,6 @@
   color: rgba(255, 255, 255, 0.8);
 }
 
-/* Info Overlay */
-.location-info-overlay {
-  position: absolute;
-  top: 80px;
-  right: 20px;
-  width: 350px;
-  max-height: 65vh;
-  background: rgba(0, 0, 0, 0.9);
-  color: white;
-  padding: 20px;
-  border-radius: 12px;
-  z-index: 100;
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  overflow-y: auto;
-}
-
-.info-header {
-  margin-bottom: 15px;
-  padding-bottom: 15px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.location-title {
-  font-size: 1.5rem;
-  font-weight: 700;
-  margin: 0 0 5px 0;
-  color: #3b82f6;
-}
-
-.location-author {
-  font-size: 0.9rem;
-  color: rgba(255, 255, 255, 0.8);
-  margin: 0 0 8px 0;
-}
-
-.location-genre {
-  background: #3b82f6;
-  color: white;
-  padding: 4px 8px;
-  border-radius: 12px;
-  font-size: 0.8rem;
-  font-weight: 500;
-}
-
-.location-description {
-  margin-bottom: 15px;
-  font-size: 0.9rem;
-  line-height: 1.4;
-  color: rgba(255, 255, 255, 0.9);
-}
-
-.current-story-point {
-  margin-bottom: 20px;
-  padding: 15px;
-  background: rgba(59, 130, 246, 0.1);
-  border-radius: 8px;
-  border-left: 4px solid #1f5e75;
-}
-
-.story-point-title {
-  font-size: 0.9rem;
-  font-weight: 600;
-  margin: 0 0 8px 0;
-  color: #6ca6f2;
-  white-space: normal !important;
-  overflow: visible !important;
-  text-overflow: unset !important;
-  word-break: break-word;
-}
-
-.story-point-description {
-  font-size: 0.9rem;
-  line-height: 1.4;
-  margin: 0 0 10px 0;
-  color: rgba(255, 255, 255, 0.9);
-}
-
-.story-point-context {
-  display: flex;
-  align-items: center;
-  margin-top: 10px;
-}
-
-.story-point-badge {
-  background: rgba(59, 130, 246, 0.2);
-  color: #3b82f6;
-  padding: 4px 8px;
-  border-radius: 10px;
-  font-size: 0.8rem;
-  font-weight: 500;
-}
-
 /* Enhanced Quick Navigation */
 .story-points-quick-nav-enhanced {
   margin-bottom: 20px;
@@ -484,106 +391,6 @@
 }
 
 /* Billboard Styles - Add these to your existing Location.css */
-
-/* Billboard Toggle Button */
-.billboards-toggle-button {
-  background: rgba(0, 0, 0, 0.7);
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  color: white;
-  padding: 8px 12px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-size: 14px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.billboards-toggle-button:hover {
-  background: rgba(0, 0, 0, 0.9);
-  border-color: rgba(255, 255, 255, 0.5);
-}
-
-.billboards-toggle-button.active {
-  border-color: black;
-}
-
-/* Billboard Indicators */
-.billboard-indicators {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  display: flex;
-  gap: 10px;
-  z-index: 1000;
-}
-
-.billboard-indicator {
-  position: relative;
-  background: rgba(59, 130, 246, 0.9);
-  border: 2px solid rgba(255, 255, 255, 0.8);
-  border-radius: 50%;
-  width: 48px;
-  height: 48px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-size: 18px;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-}
-
-.billboard-indicator:hover {
-  background: rgba(59, 130, 246, 1);
-  transform: scale(1.1);
-  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.4);
-}
-
-.billboard-indicator.active {
-  background: rgba(34, 197, 94, 0.9);
-  border-color: rgba(34, 197, 94, 1);
-  transform: scale(1.15);
-  box-shadow: 0 6px 30px rgba(34, 197, 94, 0.5);
-}
-
-.billboard-indicator .billboard-icon {
-  font-size: 20px;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
-}
-
-.billboard-pulse {
-  position: absolute;
-  top: -4px;
-  left: -4px;
-  right: -4px;
-  bottom: -4px;
-  border: 2px solid rgba(59, 130, 246, 0.6);
-  border-radius: 50%;
-  animation: billboard-pulse 2s infinite;
-}
-
-.billboard-indicator.active .billboard-pulse {
-  border-color: rgba(34, 197, 94, 0.6);
-}
-
-@keyframes billboard-pulse {
-  0% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  50% {
-    transform: scale(1.2);
-    opacity: 0.5;
-  }
-  100% {
-    transform: scale(1.4);
-    opacity: 0;
-  }
-}
 
 /* Billboard Modal */
 .billboard-modal-overlay {
@@ -874,6 +681,60 @@
   .billboard-content {
     padding: 16px;
   }}
+
+/* Enhanced 3D View Button - matches Street View button style */
+.control-button.view-toggle {
+  background: #4285F4;
+  color: white;
+  border: none;
+  border-radius: 24px;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 500;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.control-button.view-toggle:hover {
+  background: #3367D6;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.control-button.view-toggle:active {
+  transform: translateY(0);
+}
+
+.control-button.view-toggle::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255,255,255,0.1);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.control-button.view-toggle:hover::before {
+  opacity: 1;
+}
+
+/* If you want the pulsing animation like in Map3D */
+@keyframes subtlePulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.03); }
+  100% { transform: scale(1); }
+}
+
+.control-button.view-toggle.pulse {
+  animation: subtlePulse 2s infinite;
+}
 
 
 

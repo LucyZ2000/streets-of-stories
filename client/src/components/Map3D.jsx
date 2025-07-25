@@ -1,4 +1,4 @@
-// Enhanced Map3D.jsx with smooth story point navigation and back to 3D support
+// Enhanced Map3D.jsx with location-info-overlay instead of view-mode-indicator
 import { createBillboard } from '../utils/mapUtils';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -7,6 +7,7 @@ import { useGoogleMaps } from '../hooks/useGoogleMaps';
 import StoryList from './StoryList';
 import '../styles/App.css';
 import '../styles/storylist.css';
+import '../styles/Toggle.css';
 
 
 function Map3D({ locations = [] }) {
@@ -23,6 +24,7 @@ function Map3D({ locations = [] }) {
   const [currentStory, setCurrentStory] = useState(null);
   const [currentStoryPointIndex, setCurrentStoryPointIndex] = useState(0);
   const [pendingNavigation, setPendingNavigation] = useState(null);
+  const [showInfo, setShowInfo] = useState(true); // Add showInfo state for info panel toggle
   const markersRef = useRef(new Map());
 
   // Default globe view settings
@@ -490,6 +492,28 @@ const handleImmediatePosition = (targetLocation, storyPointIndex) => {
     return R * c; // Distance in km
   };
 
+  // Add toggle function for info panel
+  const toggleInfo = () => {
+    setShowInfo(!showInfo);
+  };
+
+  // Add function to handle jumping to story points
+  const handleJumpToStoryPoint = async (index) => {
+    if (!currentLocation || !currentLocation.storyPoints || isAnimating || index === currentStoryPointIndex) return;
+
+    setIsAnimating(true);
+    setCurrentStoryPointIndex(index);
+
+    try {
+      const targetPoint = currentLocation.storyPoints[index];
+      await flyToStoryPoint(targetPoint, currentLocation, 2000);
+    } catch (error) {
+      console.error('Error jumping to story point:', error);
+    } finally {
+      setIsAnimating(false);
+    }
+  };
+
   const initializeMap = async () => {
     if (!isLoaded || !containerRef.current) return;
 
@@ -514,7 +538,7 @@ const handleImmediatePosition = (targetLocation, storyPointIndex) => {
 
         // Create custom pin with story number
         const pin = new PinElement({
-          scale: 2.5,
+          scale: 3,
           glyphColor: "#FFFFFF",
           background: "#3b82f6",
           borderColor: "#1d4ed8",
@@ -651,12 +675,15 @@ const handleImmediatePosition = (targetLocation, storyPointIndex) => {
         {/* View Toggle Button - show when exploring a location */}
         {(viewMode === 'zoomed' || viewMode === 'street') && currentLocation && (
           <button
-            className="control-button view-toggle"
+            className="control-button view-toggle pulse" /* Make sure this matches */
             onClick={handleViewToggle}
             disabled={isAnimating}
             title={viewMode === 'street' ? 'Switch to 3D View' : 'Switch to Street View'}
           >
-            {viewMode === 'street' ? '3D View' : 'Street View'}
+            <span className="material-icons">
+              {viewMode === 'street' ? 'public' : 'streetview'}
+            </span>
+            <span>{viewMode === 'street' ? '3D View' : 'Walk the Streets'}</span>
           </button>
         )}
       </div>
@@ -702,19 +729,92 @@ const handleImmediatePosition = (targetLocation, storyPointIndex) => {
         </div>
       )}
 
-      {/* View Mode Indicator */}
+
+      {/* Location Info Overlay - Replaces view-mode-indicator */}
       {viewMode !== 'globe' && currentLocation && (
-        <div className="view-mode-indicator">
-          <div className="location-info">
-            <h3>{currentLocation.title}</h3>
-            <p>by {currentLocation.author} ({currentLocation.year})</p>
-            <div className="view-mode-badge">
-              {viewMode === 'street' ? 'Street View' : '3D View'}
-            </div>
+  <div className={`location-info-overlay ${showInfo ? 'expanded' : ''}`}>
+    {/* Header - always visible */}
+    <div className="info-header" onClick={toggleInfo}>
+      <h1 className="location-title">{currentLocation.title}</h1>
+      <p className="location-author">by {currentLocation.author} ({currentLocation.year})</p>
+      <span className="location-genre">{currentLocation.genre}</span>
+      
+      {/* Toggle button with arrows */}
+      <button
+        className="info-collapse-toggle"
+        onClick={(e) => {
+          e.stopPropagation();
+          toggleInfo();
+        }}
+        title={showInfo ? 'Collapse info panel' : 'Expand info panel'}
+      >
+        <span className="collapse-arrow"></span>
+      </button>
+    </div>
+
+    {/* Collapsible content area */}
+    <div className="info-collapsible-content">
+      {/* Location description */}
+      <div className="location-description">
+        <p>{currentLocation.description}</p>
+      </div>
+
+      {/* Current story point */}
+      {currentStory?.storyPoints?.[currentStoryPointIndex] && (
+        <div className="current-story-point">
+          <h3 className="story-point-title">
+            {currentStory.storyPoints[currentStoryPointIndex].text}
+          </h3>
+          <p className="story-point-description">
+            {currentStory.storyPoints[currentStoryPointIndex].description}
+          </p>
+          <div className="story-point-context">
+            <span className="story-point-badge">
+              Point {currentStoryPointIndex + 1} of {currentStory.storyPoints.length}
+            </span>
           </div>
         </div>
       )}
 
+      {/* Story points navigation */}
+      {currentLocation?.storyPoints?.length > 1 && (
+        <div className="story-points-quick-nav-enhanced">
+          <div className="nav-header">
+            <h4>Story Points</h4>
+          </div>
+          <div className="story-points-grid">
+            {currentLocation.storyPoints.map((point, index) => {
+              const currentPoint = currentLocation.storyPoints[currentStoryPointIndex];
+              const distance = index !== currentStoryPointIndex 
+                ? calculateDistance(currentPoint, point) 
+                : 0;
+
+              return (
+                <button
+                  key={index}
+                  className={`story-point-card ${index === currentStoryPointIndex ? 'active' : ''}`}
+                  onClick={() => handleJumpToStoryPoint(index)}
+                  disabled={isAnimating || index === currentStoryPointIndex}
+                  title={`${point.text}${distance > 0 ? ` (${distance.toFixed(1)}km away)` : ''}`}
+                >
+                  <div className="story-point-number">{index + 1}</div>
+                  <div className="story-point-info">
+                    <div className="story-point-name">{point.text}</div>
+                    {distance > 0 && (
+                      <div className="story-point-distance">
+                        {`${distance.toFixed(1)}km`}
+                      </div>
+                    )}
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+    </div>
+  </div>
+)}
       {/* Loading indicator for transitions */}
       {isAnimating && (
         <div className="transition-indicator">
@@ -726,4 +826,4 @@ const handleImmediatePosition = (targetLocation, storyPointIndex) => {
   );
 }
 
-export default Map3D;  
+export default Map3D;

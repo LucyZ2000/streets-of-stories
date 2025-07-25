@@ -14,10 +14,8 @@ function Location() {
   const [location, setLocation] = useState(null);
   const [currentStoryPointIndex, setCurrentStoryPointIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
-  const [showInfo, setShowInfo] = useState(true);
   const [transitionMessage, setTransitionMessage] = useState('');
   const [activeBillboard, setActiveBillboard] = useState(null);
-  const [billboardsVisible, setBillboardsVisible] = useState(true);
   const [showStoryList, setShowStoryList] = useState(false);
   
   // Music-related state
@@ -178,8 +176,10 @@ function Location() {
     setIsTransitioning(false);
   };
 
+  const [isExpanded, setIsExpanded] = useState(true);
+
   const toggleInfo = () => {
-    setShowInfo(!showInfo);
+    setIsExpanded(!isExpanded);
   };
 
 
@@ -221,10 +221,6 @@ function Location() {
 
   const handleBillboardClick = (index) => {
     setActiveBillboard(activeBillboard === index ? null : index);
-  };
-
-  const closeBillboard = () => {
-    setActiveBillboard(null);
   };
 
   if (!location) {
@@ -279,12 +275,13 @@ function Location() {
 
         {/* Back to 3D View Button (replaces view toggle) */}
         <button
-          className="control-button view-toggle"
+          className="control-button view-toggle pulse" /* Add 'pulse' class if you want the animation */
           onClick={handleBackTo3D}
           disabled={isTransitioning}
           title="Back to 3D View"
         >
-          3D View
+          <span className="material-icons">public</span> {/* or "3d_rotation" */}
+          <span>Back to 3D View</span>
         </button>
 
         {/* Music Controls - Only show if location has music */}
@@ -316,116 +313,6 @@ function Location() {
         </div>
       )}
 
-      {/* Billboard Indicators */}
-      {billboardsVisible && currentBillboards.length > 0 && (
-        <div className="billboard-indicators">
-          {currentBillboards.map((billboard, index) => (
-            <button
-              key={index}
-              className={`billboard-indicator ${activeBillboard === index ? 'active' : ''}`}
-              onClick={() => handleBillboardClick(index)}
-              title={billboard.title}
-              disabled={isTransitioning}
-              style={{
-                transform: `rotate(${billboard.heading || 0}deg)`,
-                right: `${20 + (index * 70)}px`,
-                top: '35px',
-                position: 'absolute',
-                zIndex: 1000 + index,
-              }}
-            >
-              <div className="billboard-icon">
-                {billboard.icon || '📋'}
-              </div>
-              <div className="billboard-pulse"></div>
-            </button>
-          ))}
-        </div>
-      )}
-
-      {/* Active Billboard Modal */}
-      {activeBillboard !== null && currentBillboards[activeBillboard] && (
-        <div className="billboard-modal-overlay" onClick={closeBillboard}>
-          <div className="billboard-modal" onClick={(e) => e.stopPropagation()}>
-            <div className="billboard-header">
-              <h3 className="billboard-title">
-                {/* {currentBillboards[activeBillboard].icon && (
-                  <span className="billboard-title-icon">
-                    {currentBillboards[activeBillboard].icon}
-                  </span>
-                )} */}
-                {currentBillboards[activeBillboard].title}
-              </h3>
-              <button
-                className="billboard-close-button"
-                onClick={closeBillboard}
-                title="Close Billboard"
-              >
-                ×
-              </button>
-            </div>
-
-            <div className="billboard-content">
-              {currentBillboards[activeBillboard].image && (
-                <div className="billboard-image">
-                  <img
-                    src={currentBillboards[activeBillboard].image}
-                    alt={currentBillboards[activeBillboard].title}
-                  />
-                </div>
-              )}
-
-              <div className="billboard-text">
-                <p className="billboard-description">
-                  {currentBillboards[activeBillboard].content}
-                </p>
-
-                {currentBillboards[activeBillboard].details && (
-                  <div className="billboard-details">
-                    {typeof currentBillboards[activeBillboard].details === 'string' ? (
-                      <div className="billboard-detail-item">
-                        {currentBillboards[activeBillboard].details}
-                      </div>
-                    ) : (
-                      currentBillboards[activeBillboard].details.map((detail, detailIndex) => (
-                        <div key={detailIndex} className="billboard-detail-item">
-                          <strong>{detail.label}:</strong> {detail.value}
-                        </div>
-                      ))
-                    )}
-                  </div>
-                )}
-
-                {currentBillboards[activeBillboard].quote && (
-                  <blockquote className="billboard-quote">
-                    "{currentBillboards[activeBillboard].quote}"
-                    {currentBillboards[activeBillboard].quoteAuthor && (
-                      <cite>— {currentBillboards[activeBillboard].quoteAuthor}</cite>
-                    )}
-                  </blockquote>
-                )}
-              </div>
-            </div>
-
-            {currentBillboards[activeBillboard].actions && (
-              <div className="billboard-actions">
-                {currentBillboards[activeBillboard].actions.map((action, actionIndex) => (
-                  <button
-                    key={actionIndex}
-                    className="billboard-action-button"
-                    onClick={() => {
-                      if (action.onClick) action.onClick();
-                      if (action.closeAfter) closeBillboard();
-                    }}
-                  >
-                    {action.label}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-      )}
 
       {/* Story Navigation Controls - Bottom Position (like Map3D) */}
       {location.storyPoints && location.storyPoints.length > 1 && (
@@ -470,143 +357,122 @@ function Location() {
         </div>
       )}
 
-      {/* Separated Info Toggle Button - Always visible */}
-      <button
-        className="info-toggle-button-floating"
-        onClick={toggleInfo}
-        title={showInfo ? 'Hide Info Panel' : 'Show Info Panel'}
-        disabled={isTransitioning}
-      >
-        <span className="toggle-icon">
-          {showInfo ? '◀' : '▶'}
-        </span>
-        <span className="toggle-text">
-          {showInfo ? 'Hide' : 'Info'}
-        </span>
-      </button>
 
-
-      {/* Corner Info Box - Only show when showInfo is true */}
-      {showInfo && (
-        <div className="location-info-overlay">
-          <div className="info-header">
+      {/* Collapsible Info Overlay - Always visible but expandable */}
+        <div className={`location-info-overlay ${isExpanded ? 'expanded' : ''}`}>
+          {/* Header - always visible but clickable */}
+          <div className="info-header" onClick={toggleInfo}>
             <h1 className="location-title">{location.title}</h1>
             <p className="location-author">by {location.author} ({location.year})</p>
             <span className="location-genre">{location.genre}</span>
-                      
+            
+            {/* Your original toggle button with arrows */}
+            <button
+              className="info-collapse-toggle"
+              onClick={(e) => {
+                e.stopPropagation(); // Prevent double trigger
+                toggleInfo();
+              }}
+              title={isExpanded ? 'Collapse info panel' : 'Expand info panel'}
+            >
+              <span className="collapse-arrow"></span>
+            </button>
           </div>
 
-          <div className="location-description">
-            <p>{location.description}</p>
-          </div>
+          {/* Collapsible content */}
+          <div className="info-collapsible-content">
+            {/* All your existing content here */}
+            <div className="location-description">
+              <p>{location.description}</p>
+            </div>
 
-          {/* Current Story Point Info */}
-          {currentStoryPoint && (
-            <div className="current-story-point">
-              <h3 className="story-point-title">{currentStoryPoint.text}</h3>
-              <p className="story-point-description">{currentStoryPoint.description}</p>
+            {/* Current Story Point Info */}
+            {currentStoryPoint && (
+              <div className="current-story-point">
+                <h3 className="story-point-title">{currentStoryPoint.text}</h3>
+                <p className="story-point-description">{currentStoryPoint.description}</p>
 
-              {/* Billboard Summary */}
-              {currentBillboards.length > 0 && (
-                <div className="billboards-summary">
-                  <h4>Available Information</h4>
-                  <div className="billboards-list">
-                    {currentBillboards.map((billboard, index) => (
+                {/* Billboard Summary */}
+                {currentBillboards.length > 0 && (
+                  <div className="billboards-summary">
+                    <h4>Available Information</h4>
+                    <div className="billboards-list">
+                      {currentBillboards.map((billboard, index) => (
+                        <button
+                          key={index}
+                          className={`billboard-summary-item ${activeBillboard === index ? 'active' : ''}`}
+                          onClick={() => handleBillboardClick(billboard, index)}
+                          disabled={isTransitioning}
+                        >
+                          <span className="billboard-summary-title">
+                            {billboard.title}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Distance indicator for context */}
+                {location.storyPoints.length > 1 && (
+                  <div className="story-point-context">
+                    <span className="story-point-badge">
+                      Point {currentStoryPointIndex + 1} of {location.storyPoints.length}
+                    </span>
+                    {currentBillboards.length > 0 && (
+                      <span className="billboard-badge">
+                        {currentBillboards.length} info {currentBillboards.length === 1 ? 'point' : 'points'}
+                      </span>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Story Points Quick Navigation */}
+            {location.storyPoints && location.storyPoints.length > 1 && (
+              <div className="story-points-quick-nav-enhanced">
+                <div className="nav-header">
+                  <h4>Story Points</h4>
+                </div>
+                <div className="story-points-grid">
+                  {location.storyPoints.map((point, index) => {
+                    const distance = index !== currentStoryPointIndex ?
+                      calculateDistance(currentStoryPoint, point) : 0;
+                    const billboardCount = point.billboards?.length || 0;
+
+                    return (
                       <button
                         key={index}
-                        className={`billboard-summary-item ${activeBillboard === index ? 'active' : ''}`}
-                        onClick={() => handleBillboardClick(billboard, index)}
-                        disabled={isTransitioning}
+                        className={`story-point-card ${index === currentStoryPointIndex ? 'active' : ''}`}
+                        onClick={() => handleJumpToStoryPoint(index)}
+                        disabled={isTransitioning || index === currentStoryPointIndex}
+                        title={`${point.text}${distance > 0 ? ` (${distance.toFixed(1)}km away)` : ''}${billboardCount > 0 ? ` • ${billboardCount} info points` : ''}`}
                       >
-                        <span className="billboard-summary-title">
-                          {billboard.title}
-                        </span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Distance indicator for context */}
-              {location.storyPoints.length > 1 && (
-                <div className="story-point-context">
-                  <span className="story-point-badge">
-                    Point {currentStoryPointIndex + 1} of {location.storyPoints.length}
-                  </span>
-                  {currentBillboards.length > 0 && (
-                    <span className="billboard-badge">
-                      {currentBillboards.length} info {currentBillboards.length === 1 ? 'point' : 'points'}
-                    </span>
-                  )}
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Enhanced Story Points Quick Navigation */}
-          {location.storyPoints && location.storyPoints.length > 1 && (
-            <div className="story-points-quick-nav-enhanced">
-              <div className="nav-header">
-                <h4>Story Points</h4>
-              </div>
-              <div className="story-points-grid">
-                {location.storyPoints.map((point, index) => {
-                  const distance = index !== currentStoryPointIndex ?
-                    calculateDistance(currentStoryPoint, point) : 0;
-                  const billboardCount = point.billboards?.length || 0;
-
-                  return (
-                    <button
-                      key={index}
-                      className={`story-point-card ${index === currentStoryPointIndex ? 'active' : ''}`}
-                      onClick={() => handleJumpToStoryPoint(index)}
-                      disabled={isTransitioning || index === currentStoryPointIndex}
-                      title={`${point.text}${distance > 0 ? ` (${distance.toFixed(1)}km away)` : ''}${billboardCount > 0 ? ` • ${billboardCount} info points` : ''}`}
-                    >
-                      <div className="story-point-number">{index + 1}</div>
-                      <div className="story-point-info">
-                        <div className="story-point-name">{point.text}</div>
-                        <div className="story-point-meta">
-                          {distance > 0 && (
-                            <div className="story-point-distance">
-                              {`${distance.toFixed(1)}km`}
-                            </div>
-                          )}
-                          {billboardCount > 0 && (
-                            <div className="story-point-billboards">
-                              {billboardCount}
-                            </div>
-                          )}
+                        <div className="story-point-number">{index + 1}</div>
+                        <div className="story-point-info">
+                          <div className="story-point-name">{point.text}</div>
+                          <div className="story-point-meta">
+                            {distance > 0 && (
+                              <div className="story-point-distance">
+                                {`${distance.toFixed(1)}km`}
+                              </div>
+                            )}
+                            {billboardCount > 0 && (
+                              <div className="story-point-billboards">
+                                {billboardCount}
+                              </div>
+                            )}
+                          </div>
                         </div>
-                      </div>
-                    </button>
-                  );
-                })}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
-      )}
-      {/* Enhanced Instructions Panel */}
-      <div className="instructions-overlay">
-        <div className="instructions-content">
-          <strong>Instructions:</strong> Click and drag to explore the panoramic view.
-          {location.storyPoints && location.storyPoints.length > 1 && (
-            <span> Use navigation controls to travel between story points.</span>
-          )}
-          {currentBillboards.length > 0 && (
-            <span> Click billboard icons (📋) for detailed information.</span>
-          )}
-          {showMusicControls && (
-            <span> Enjoy the atmospheric music while exploring!</span>
-          )}
-          {isTransitioning && (
-            <div className="instructions-status">
-              <span className="status-dot"></span> Transitioning...
-            </div>
-          )}
-        </div>
-      </div>
 
       {/* Loading indicator for transitions (like Map3D) */}
       {isTransitioning && (
