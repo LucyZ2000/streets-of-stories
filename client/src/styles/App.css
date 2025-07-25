@@ -220,7 +220,7 @@ html, body, #root {
 }
 
 .story-nav-button {
-  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  background: rgb(80, 118, 168);
   color: white;
   border: none;
   border-radius: 10px;
@@ -234,7 +234,7 @@ html, body, #root {
 }
 
 .story-nav-button:hover:not(:disabled) {
-  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+  background: rgb(47, 69, 98);
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(59, 130, 246, 0.3);
 }
@@ -257,16 +257,6 @@ html, body, #root {
   font-weight: 700;
   color: white;
   margin-bottom: 4px;
-}
-
-.story-point-title {
-  font-size: 5px;
-  color: #6b7280;
-  margin: 0;
-  max-width: 200px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 /* View Toggle Button */
@@ -297,7 +287,7 @@ html, body, #root {
 
 .view-mode-badge {
   display: inline-block;
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  background: #0f7a56;
   color: white;
   padding: 4px 12px;
   border-radius: 20px;
@@ -374,100 +364,6 @@ html, body, #root {
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.story-point-info {
-  flex: 1;
-  text-align: center;
-}
 
-.story-point-counter {
-  font-size: 14px;
-  color: #a0a0a0;
-  margin-bottom: 8px;
-  font-weight: 600;
-}
 
-.story-point-title {
-  font-size: 1.2rem;
-  color: #ffffff;
-  margin: 0 0 8px 0;
-  font-weight: 700;
-}
 
-.story-point-description {
-  font-size: 1rem;
-  color: #cccccc;
-  margin: 0;
-  line-height: 1.4;
-}
-
-/* Story Points List */
-.story-points-list {
-  margin-top: 30px;
-  padding: 20px;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.story-points-list h3 {
-  color: #ffffff;
-  margin: 0 0 20px 0;
-  font-size: 1.3rem;
-}
-
-.story-points-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 16px;
-}
-
-.story-point-card {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 16px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 2px solid transparent;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.story-point-card:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: #3b82f6;
-  transform: translateY(-2px);
-}
-
-.story-point-card.active {
-  background: rgba(59, 130, 246, 0.1);
-  border-color: #3b82f6;
-  box-shadow: 0 4px 16px rgba(59, 130, 246, 0.2);
-}
-
-.story-point-number {
-  flex-shrink: 0;
-  width: 40px;
-  height: 40px;
-  background: #3b82f6;
-  color: white;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  font-size: 16px;
-}
-
-.story-point-content h4 {
-  margin: 0 0 4px 0;
-  color: #ffffff;
-  font-size: 1.1rem;
-}
-
-.story-point-content p {
-  margin: 0;
-  color: #cccccc;
-  font-size: 0.9rem;
-  line-height: 1.3;
-}

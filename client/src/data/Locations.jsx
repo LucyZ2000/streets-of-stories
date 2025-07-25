@@ -2,6 +2,7 @@ import SpiritedAwayImage from '../assets/img/SpiritedAway.png';
 import SherlockImage from '../assets/img/Sherlock.png';
 import GatsbyImage from '../assets/img/Gatsby.png';
 import HarryImage from '../assets/img/Harry.png';
+import GatsbyMusic from '../assets/music/Jazz.mp3';
 
 export const LOCATIONS = [
   {
@@ -15,6 +16,7 @@ export const LOCATIONS = [
     year: 1925,
     genre: 'Classic Literature',
     image: GatsbyImage,
+    music: GatsbyMusic,
     storyPoints: [
       {
         heading: 165,
@@ -32,7 +34,6 @@ export const LOCATIONS = [
             title: 'The Grand Entrance',
             content: 'Gatsby\'s mansion featured a marble entrance hall with a staircase that curved upward into the shadowy heights.',
             type: 'info',
-            icon: '🏛️',
             quote: '"I spent my Saturday nights in New York because those gleaming, dazzling parties of his were with me so vividly that I could still hear the music and the laughter."',
             details: 'The mansion was modeled after a Normandy château, complete with a tower and ivy-covered walls.',
             lat: 40.8287377346,
@@ -45,7 +46,6 @@ export const LOCATIONS = [
             title: 'The Party Grounds',
             content: 'The lawn and gardens where hundreds of guests danced under colored lights every weekend.',
             type: 'scene',
-            icon: '🎭',
             quote: '"In his blue gardens men and girls came and went like moths among the whisperings and the champagne and the stars."',
             details: 'Orchestra platforms, buffet tables, and a floating stage on the bay for entertainment.',
             lat: 40.8287377346300,
@@ -58,48 +58,10 @@ export const LOCATIONS = [
             title: 'Gatsby\'s Study',
             content: 'The private room where Gatsby planned his elaborate schemes to win back Daisy.',
             type: 'character',
-            icon: '📚',
             quote: '"He had come a long way to this blue lawn, and his dream must have seemed so close that he could hardly fail to grasp it."',
             details: 'Filled with books Gatsby never read, but kept to maintain his carefully constructed image.',
             lat: 40.8287377346259,
             lng: -73.44819177401200,
-          }
-        ]
-      },
-      {
-        heading: 95,
-        pitch: -5,
-        text: 'The Green Light',
-        description: 'The mysterious green light at the end of Daisy\'s dock, symbolizing hope and the American Dream.',
-        image: 'https://via.placeholder.com/200x120/10b981/ffffff?text=Green+Light',
-        lat: 40.8295,
-        lng: -73.4470,
-        billboards: [
-          {
-            id: 'green-light-1',
-            heading: 95,
-            pitch: -5,
-            title: 'The Beacon of Hope',
-            content: 'The green light that Gatsby reached toward every night, representing his longing for Daisy.',
-            type: 'symbol',
-            icon: '💚',
-            quote: '"Gatsby believed in the green light, the orgastic future that year by year recedes before us."',
-            details: 'A simple dock light that became the most powerful symbol in American literature.',
-            lat: 40.8295,
-            lng: -73.4470,
-          },
-          {
-            id: 'green-light-2',
-            heading: 110,
-            pitch: 0,
-            title: 'Daisy\'s Dock',
-            content: 'The Buchanan estate dock where the green light burned every night.',
-            type: 'location',
-            icon: '🛥️',
-            quote: '"And as I sat there brooding on the old, unknown world, I thought of Gatsby\'s wonder when he first picked out the green light."',
-            details: 'Located across the bay from Gatsby\'s mansion, representing the distance between dream and reality.',
-            lat: 40.8295,
-            lng: -73.4470,
           }
         ]
       },
@@ -133,7 +95,6 @@ export const LOCATIONS = [
             title: 'Hogwarts Castle',
             content: 'Alnwick Castle served as the iconic Hogwarts exterior in early Harry Potter films.',
             type: 'location',
-            icon: '🏰',
             quote: '"Welcome to Hogwarts School of Witchcraft and Wizardry!"',
             details: 'Used for scenes such as students arriving by carriage and walking into the castle.',
             lat: 55.41568633288,
@@ -146,7 +107,6 @@ export const LOCATIONS = [
             title: 'Madam Hooch’s First Flying Lesson',
             content: 'The castle’s courtyard was the filming location for Harry’s first broomstick lesson.',
             type: 'scene',
-            icon: '🧹',
             quote: '"Up! Everyone mount their brooms!"',
             details: 'The training ground where Neville loses control and Harry’s flying skills first emerge.',
             lat: 55.41568633289001,
@@ -170,7 +130,6 @@ export const LOCATIONS = [
             title: 'Hogwarts Great Hall',
             content: 'Christ Church’s dining hall inspired the design of the Great Hall at Hogwarts.',
             type: 'location',
-            icon: '🍽️',
             quote: '"The enchanted ceiling mirrored the night sky above."',
             details: 'A real-life inspiration for countless sorting ceremonies and feasts.',
             lat: 51.75003266,
@@ -183,7 +142,6 @@ export const LOCATIONS = [
             title: 'Stairs to the Great Hall',
             content: 'The grand staircase appears in scenes where students enter Hogwarts.',
             type: 'architecture',
-            icon: '🪜',
             quote: '"Harry climbed the stone stairs, wide-eyed with wonder."',
             details: 'Used multiple times throughout the films for dramatic entrances and transitions.',
             lat: 51.75,
@@ -207,7 +165,6 @@ export const LOCATIONS = [
             title: 'Hogsmeade Station',
             content: 'Goathland Station was used as Hogsmeade in the Harry Potter films.',
             type: 'transport',
-            icon: '🚉',
             quote: '"The train slowed as it approached the tiny station surrounded by mist."',
             details: 'Students disembarked here before being ferried across the lake to Hogwarts.',
             lat: 54.400607439017726,
@@ -220,7 +177,6 @@ export const LOCATIONS = [
             title: 'Hogwarts Express',
             content: 'The iconic red train featured in nearly every Harry Potter film.',
             type: 'icon',
-            icon: '🚂',
             quote: '"It was a scarlet steam engine, puffing smoke into the sky."',
             details: 'Filmed using the Jacobite Steam Train on the West Highland Line.',
             lat: 54.400607439017726,
@@ -258,7 +214,6 @@ export const LOCATIONS = [
             title: 'The Front Door',
             content: 'The famous black door of 221B Baker Street, entrance to the world\'s most famous detective\'s flat.',
             type: 'location',
-            icon: '🚪',
             quote: '"Come, Watson, come! The game is afoot!"',
             details: 'Mrs. Hudson, the landlady, lived downstairs and often brought up visitors.'
           },
@@ -269,7 +224,6 @@ export const LOCATIONS = [
             title: 'Holmes\' Study',
             content: 'The cluttered study where Holmes conducted his investigations and received clients.',
             type: 'scene',
-            icon: '🔍',
             quote: '"You see, but you do not observe."',
             details: 'Filled with chemical apparatus, case files, and Holmes\' famous pipe and violin.'
           },
@@ -280,7 +234,6 @@ export const LOCATIONS = [
             title: 'The Gaslight',
             content: 'The Victorian gas lamp that illuminated the foggy London street.',
             type: 'atmosphere',
-            icon: '🏮',
             quote: '"The gas-lamps shone dimly through the fog, and the ground was greasy with moisture."',
             details: 'Baker Street was lit by gas lamps, creating the perfect atmosphere for mysterious encounters.'
           }
@@ -374,7 +327,6 @@ export const LOCATIONS = [
             title: 'The Thousand Gates',
             content: 'Endless vermillion torii gates that create a tunnel between the human and spirit worlds.',
             type: 'portal',
-            icon: '⛩️',
             quote: '"The tunnel seemed to go on forever, lit by the warm glow of vermillion."',
             details: 'Over 10,000 torii gates donated by individuals and businesses line the mountain paths.'
           },
@@ -385,7 +337,6 @@ export const LOCATIONS = [
             title: 'The Spirit Passage',
             content: 'The mystical pathway where Chihiro first entered the world of spirits.',
             type: 'journey',
-            icon: '🌸',
             quote: '"Don\'t look back, no matter what happens."',
             details: 'The passage that transforms from a mundane tunnel into a magical gateway.'
           }
@@ -407,7 +358,6 @@ export const LOCATIONS = [
             title: 'The Boiler Room',
             content: 'Kamaji\'s domain where the bathhouse\'s magic is powered by coal and ancient spirits.',
             type: 'workshop',
-            icon: '🔥',
             quote: '"These coal pieces are the bathhouse\'s life force."',
             details: 'Six-armed Kamaji tends to the boilers with help from soot sprites carrying coal.'
           },
@@ -418,7 +368,6 @@ export const LOCATIONS = [
             title: 'The Main Bath',
             content: 'The grand bathing hall where spirits come to cleanse themselves.',
             type: 'sanctuary',
-            icon: '🛁',
             quote: '"Welcome to the bathhouse. Enjoy your stay."',
             details: 'Ornate baths filled with healing waters, tended by bathhouse workers.'
           }
@@ -440,7 +389,6 @@ export const LOCATIONS = [
             title: 'The Whispering Grove',
             content: 'Ancient bamboo stalks that whisper secrets and guide lost souls.',
             type: 'mystical',
-            icon: '🎋',
             quote: '"The bamboo speaks to those who listen with their hearts."',
             details: 'The rustling bamboo creates a natural symphony that spirits find comforting.'
           },
@@ -451,7 +399,6 @@ export const LOCATIONS = [
             title: 'The Hidden Path',
             content: 'Secret pathways through the bamboo that lead to magical destinations.',
             type: 'secret',
-            icon: '🗾',
             quote: '"Follow the path, but be careful not to lose your way."',
             details: 'Narrow paths wind through the bamboo, known only to spirits and forest guardians.'
           }
@@ -495,7 +442,6 @@ export const LOCATIONS = [
             title: 'The Stone Monkey\'s Birth',
             content: 'The magical stone from which Sun Wukong was born, infused with cosmic energy.',
             type: 'origin',
-            icon: '🐒',
             quote: '"From the stone came forth a stone monkey, who could walk and run the moment he was born."',
             details: 'The stone absorbed the essence of heaven and earth for countless years before giving birth to the Monkey King.'
           },
@@ -506,7 +452,6 @@ export const LOCATIONS = [
             title: 'The Immortal Peach Grove',
             content: 'Magical peach trees that grant immortality to those who eat their fruit.',
             type: 'treasure',
-            icon: '🍑',
             quote: '"These peaches ripen once every 3,000 years and grant eternal life."',
             details: 'The most precious treasure of Flower Fruit Mountain, coveted by gods and demons alike.'
           },
@@ -517,7 +462,6 @@ export const LOCATIONS = [
             title: 'The Water Curtain Cave',
             content: 'The hidden paradise behind the waterfall where the Monkey King established his throne.',
             type: 'palace',
-            icon: '💎',
             quote: '"Behind the waterfall lies a cave of wonders, fit for a king."',
             details: 'A magnificent cave palace hidden behind a waterfall, serving as the Monkey King\'s royal court.'
           }
@@ -539,7 +483,6 @@ export const LOCATIONS = [
             title: 'The Jade Emperor\'s Garden',
             content: 'The most sacred garden in heaven, tended by immortal gardeners.',
             type: 'divine',
-            icon: '🌸',
             quote: '"Even in heaven, no garden was more beautiful than this."',
             details: 'The crown jewel of the celestial realm, where the gods\' most precious peaches grow.'
           },
@@ -550,7 +493,6 @@ export const LOCATIONS = [
             title: 'The Great Feast Preparation',
             content: 'Where the immortal peaches were prepared for the Jade Emperor\'s grand banquet.',
             type: 'event',
-            icon: '🍽️',
             quote: '"The peaches were being prepared for the grandest feast in heaven."',
             details: 'The Monkey King discovered he wasn\'t invited to the feast and decided to eat all the peaches himself.'
           }
@@ -572,7 +514,6 @@ export const LOCATIONS = [
             title: 'Buddha\'s Prison',
             content: 'The massive rock seal that held the Monkey King captive for five centuries.',
             type: 'prison',
-            icon: '⛰️',
             quote: '"Not even your 72 transformations can free you from this mountain."',
             details: 'Buddha\'s hand transformed into a mountain, trapping the rebellious Monkey King beneath.'
           },
@@ -583,7 +524,6 @@ export const LOCATIONS = [
             title: 'The Liberation',
             content: 'Where Tang Sanzang freed the Monkey King to begin their journey to the west.',
             type: 'freedom',
-            icon: '🔓',
             quote: '"Master, you have freed me from my 500-year imprisonment!"',
             details: 'The monk\'s compassion and mission freed the Monkey King, beginning their epic journey.'
           }

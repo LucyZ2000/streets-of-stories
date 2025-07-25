@@ -5,8 +5,14 @@ function StoryList({ locations, onLocationSelect, selectedLocationId }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState(-1);
+  const [expandedStoryId, setExpandedStoryId] = useState(null);
   const searchInputRef = useRef(null);
   const suggestionsRef = useRef(null);
+
+  // Toggle story points visibility
+  const toggleStoryPoints = (storyId) => {
+    setExpandedStoryId(expandedStoryId === storyId ? null : storyId);
+  };
 
   // Filter locations based on search query
   const filteredLocations = useMemo(() => {
@@ -30,7 +36,6 @@ function StoryList({ locations, onLocationSelect, selectedLocationId }) {
     const suggestionSet = new Set();
     
     locations.forEach(location => {
-      // Add matching titles
       if (location.title.toLowerCase().includes(query)) {
         suggestionSet.add({
           type: 'title',
@@ -39,7 +44,6 @@ function StoryList({ locations, onLocationSelect, selectedLocationId }) {
         });
       }
       
-      // Add matching authors
       if (location.author.toLowerCase().includes(query)) {
         suggestionSet.add({
           type: 'author',
@@ -48,7 +52,6 @@ function StoryList({ locations, onLocationSelect, selectedLocationId }) {
         });
       }
       
-      // Add matching genres
       if (location.genre.toLowerCase().includes(query)) {
         suggestionSet.add({
           type: 'genre',
@@ -57,7 +60,6 @@ function StoryList({ locations, onLocationSelect, selectedLocationId }) {
         });
       }
       
-      // Add matching years
       if (location.year.toString().includes(query)) {
         suggestionSet.add({
           type: 'year',
@@ -67,7 +69,7 @@ function StoryList({ locations, onLocationSelect, selectedLocationId }) {
       }
     });
     
-    return Array.from(suggestionSet).slice(0, 8); // Limit to 8 suggestions
+    return Array.from(suggestionSet).slice(0, 8);
   }, [locations, searchQuery]);
 
   // Handle search input change
@@ -141,24 +143,12 @@ function StoryList({ locations, onLocationSelect, selectedLocationId }) {
     searchInputRef.current?.focus();
   };
 
-  // Get suggestion icon based on type
-  const getSuggestionIcon = (type) => {
-    switch (type) {
-      case 'title': return '📖';
-      case 'author': return '👤';
-      case 'genre': return '🏷️';
-      case 'year': return '📅';
-      default: return '🔍';
-    }
-  };
 
   return (
     <div className="story-list-container">
       <div className="story-list-header">
-        <h2>Literary Locations</h2>
-        <p>Explore the real places behind great stories</p>
+        <h2>Stories</h2>
         
-        {/* Search Container */}
         <div className="search-container" ref={suggestionsRef}>
           <input
             ref={searchInputRef}
@@ -181,9 +171,8 @@ function StoryList({ locations, onLocationSelect, selectedLocationId }) {
             </button>
           )}
           
-          <div className="search-icon">🔍</div>
+          <span className="search-icon material-icons">search</span>
           
-          {/* Autocomplete Suggestions */}
           {showSuggestions && suggestions.length > 0 && (
             <div className="search-suggestions">
               {suggestions.map((suggestion, index) => (
@@ -192,9 +181,7 @@ function StoryList({ locations, onLocationSelect, selectedLocationId }) {
                   className={`suggestion-item ${selectedSuggestionIndex === index ? 'selected' : ''}`}
                   onClick={() => handleSuggestionClick(suggestion)}
                 >
-                  <span className="suggestion-icon">
-                    {getSuggestionIcon(suggestion.type)}
-                  </span>
+
                   <div className="suggestion-content">
                     <div className="suggestion-text">{suggestion.text}</div>
                     <div className="suggestion-meta">
@@ -208,7 +195,6 @@ function StoryList({ locations, onLocationSelect, selectedLocationId }) {
           )}
         </div>
         
-        {/* Search Results Info */}
         {searchQuery && (
           <p className="search-results-info">
             {filteredLocations.length} of {locations.length} stories
@@ -222,21 +208,55 @@ function StoryList({ locations, onLocationSelect, selectedLocationId }) {
             <div 
               key={location.id}
               className={`story-item ${selectedLocationId === location.id ? 'selected' : ''}`}
-              onClick={() => onLocationSelect(location)}
             >
-              <div className="story-item-image">
-                <img 
-                  src={location.image} 
-                  alt={location.title}
-                />
+              <div 
+                className="story-item-main"
+                onClick={() => onLocationSelect(location)}
+              >
+                <div className="story-item-image">
+                  <img 
+                    src={location.image} 
+                    alt={location.title}
+                  />
+                </div>
+                
+                <div className="story-item-content">
+                  <h3 className="story-title">{location.title}</h3>
+                  <p className="story-author">by {location.author}</p>
+                  <p className="story-year">{location.year}</p>
+                  <span className="story-genre">{location.genre}</span>
+                </div>
               </div>
               
-              <div className="story-item-content">
-                <h3 className="story-title">{location.title}</h3>
-                <p className="story-author">by {location.author}</p>
-                <p className="story-year">{location.year}</p>
-                <span className="story-genre">{location.genre}</span>
-              </div>
+              {location.storyPoints && location.storyPoints.length > 0 && (
+                <div className="story-points-list-section">
+                  <button 
+                    className="story-points-list-toggle"
+                    onClick={() => toggleStoryPoints(location.id)}
+                  >
+                    Story Points
+                    <span className="toggle-icon">
+                      {expandedStoryId === location.id ? '▲' : '▼'}
+                    </span>
+                  </button>
+                  
+                  {expandedStoryId === location.id && (
+                    <div className="story-points-list">
+                      {location.storyPoints.map((point, index) => (
+                        <div 
+                          key={`${location.id}-${index}`}
+                          className="story-point"
+                          onClick={() => onLocationSelect(location, index)}
+                        >
+                          <h4 className="story-point-list-title">
+                             {point.text}
+                          </h4>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           ))
         ) : (

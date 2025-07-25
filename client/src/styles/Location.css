@@ -81,9 +81,11 @@
 }
 
 .control-button {
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(16, 43, 91, 0.901);
   color: white;
   border: none;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1), /* Inner white outline */
+              0 2px 8px rgba(0, 0, 0, 0.2); /* Soft drop shadow */
   padding: 10px 15px;
   border-radius: 8px;
   cursor: pointer;
@@ -91,10 +93,13 @@
   font-weight: 500;
   transition: all 0.2s ease;
   backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  gap: 8px; /* space between icon and text */
 }
 
 .control-button:hover:not(:disabled) {
-  background: rgba(0, 0, 0, 0.9);
+  background: rgba(16, 44, 76, 0.9);
   transform: translateY(-2px);
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
@@ -222,15 +227,14 @@
   padding: 15px;
   background: rgba(59, 130, 246, 0.1);
   border-radius: 8px;
-  border-left: 4px solid #3b82f6;
+  border-left: 4px solid #1f5e75;
 }
 
 .story-point-title {
   font-size: 0.9rem;
   font-weight: 600;
   margin: 0 0 8px 0;
-  color: #3b82f6;
-  
+  color: #6ca6f2;
   white-space: normal !important;
   overflow: visible !important;
   text-overflow: unset !important;
@@ -630,7 +634,7 @@
   align-items: center;
   padding: 20px 24px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-  background: rgba(0, 0, 0, 0.8);
+  background: rgb(57, 110, 80);
   color: white;
 }
 
@@ -870,3 +874,6 @@
   .billboard-content {
     padding: 16px;
   }}
+
+
+
