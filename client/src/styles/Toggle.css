@@ -1,75 +1,267 @@
-/* Floating Info Toggle Button - Overlapping the info box */
-.info-toggle-button-floating {
+/* Toggle.css - Complete Version */
+.location-info-overlay {
   position: fixed;
-  top: 140px; /* Slightly below the top of the info box */
-  right: 30px; /* Overlapping the right edge of the info box */
-  background: rgba(0, 0, 0, 0.9);
-  border: none;
-  border-radius: 6px 0 0 6px; /* Rounded on left side only */
-  padding: 8px 12px;
+  top: 100px;
+  right: 20px;
+  width: 350px;
+  background: rgba(15, 23, 42, 0.95);
+  border-radius: 14px;
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+  z-index: 100;
+  font-family: 'Inter', -apple-system, sans-serif;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.location-info-overlay.expanded {
+  max-height: 70vh;
+}
+
+.location-info-overlay:not(.expanded) {
+  max-height: 120px;
+}
+
+.info-header {
+  padding: 18px 24px;
+  position: relative;
+  background: linear-gradient(
+    to bottom,
+    rgba(30, 41, 59, 0.8),
+    rgba(15, 23, 42, 0.6)
+  );
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   cursor: pointer;
-  z-index: 1001; /* Higher than info box (z-index: 100) */
+}
+
+.location-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: white;
+  margin: 0 0 6px 0;
+  line-height: 1.3;
+  padding-right: 50px;
+}
+
+.location-author {
+  font-size: 14px;
+  color: rgba(200, 210, 255, 0.8);
+  margin: 0 0 8px 0;
+}
+
+.location-genre {
+  display: inline-block;
+  background: rgba(59, 130, 246, 0.15);
+  color: #93c5fd;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.info-collapse-toggle {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  border-radius: 10px;
+  width: 36px;
+  height: 36px;
+  cursor: pointer;
   transition: all 0.3s ease;
   color: white;
-  font-size: 12px;
-  font-weight: 500;
-  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.3);
   display: flex;
   align-items: center;
-  gap: 6px;
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-right: none; /* No border on the right since it's overlapping */
+  justify-content: center;
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  z-index: 10;
 }
 
-.info-toggle-button-floating:hover {
-  background: rgba(0, 0, 0, 1);
-  right: 25px; /* Slide out slightly on hover */
-  box-shadow: -4px 0 12px rgba(0, 0, 0, 0.4);
+.info-collapse-toggle:hover {
+  background: rgba(255, 255, 255, 0.2);
 }
 
-.info-toggle-button-floating:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  transform: none;
-}
-
-.toggle-icon {
+.collapse-arrow::before {
+  content: "▼";
   font-size: 16px;
   transition: transform 0.3s ease;
 }
 
-.toggle-text {
+.location-info-overlay.expanded .collapse-arrow::before {
+  content: "▲";
+}
+
+.info-collapsible-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s cubic-bezier(0.33, 1, 0.68, 1);
+  opacity: 0;
+}
+
+.location-info-overlay.expanded .info-collapsible-content {
+  max-height: 60vh;
+  opacity: 1;
+  overflow-y: auto;
+}
+
+/* Content Sections */
+.location-description {
+  padding: 20px;
+  color: rgba(220, 230, 255, 0.9);
+  font-size: 15px;
+  line-height: 1.6;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.current-story-point {
+  padding: 18px 20px;
+  background: rgba(30, 41, 59, 0.3);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.story-point-title {
+  color: #93c5fd;
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 12px 0;
+}
+
+.story-point-description {
+  color: rgba(220, 230, 255, 0.8);
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 0 0 12px 0;
+}
+
+.story-point-context {
+  display: flex;
+  gap: 8px;
+}
+
+.story-point-badge {
+  background: rgba(34, 197, 94, 0.15);
+  color: #86efac;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 500;
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+/* Enhanced Story Points Section */
+.story-points-quick-nav-enhanced {
+  padding: 20px;
+  background: rgba(30, 41, 59, 0.2);
+}
+
+.nav-header h4 {
+  color: #93c5fd;
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0 0 16px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.story-points-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.story-point-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  background: rgba(51, 65, 85, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  color: rgba(220, 230, 255, 0.9);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.story-point-card:hover:not(:disabled) {
+  background: rgba(51, 65, 85, 0.5);
+  border-color: rgba(59, 130, 246, 0.4);
+}
+
+.story-point-card.active {
+  background: rgba(59, 130, 246, 0.2);
+  border-color: rgba(59, 130, 246, 0.6);
+  color: white;
+}
+
+.story-point-card:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.story-point-number {
+  background: rgba(59, 130, 246, 0.3);
+  color: white;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.story-point-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.story-point-name {
   font-size: 14px;
   font-weight: 500;
+  margin-bottom: 4px;
+  line-height: 1.3;
 }
 
-.info-toggle-button-floating:hover .toggle-icon {
-  transform: scale(1.1);
+.story-point-meta {
+  display: flex;
+  gap: 10px;
+  font-size: 12px;
+  color: rgba(156, 163, 175, 0.8);
 }
 
-/* Alternative: Compact circular button */
-.info-toggle-button-floating.compact {
-  padding: 12px;
-  border-radius: 50%;
-  width: 48px;
-  height: 48px;
-  justify-content: center;
+
+/* Scrollbar */
+.info-collapsible-content::-webkit-scrollbar {
+  width: 6px;
 }
 
-.info-toggle-button-floating.compact .toggle-text {
-  display: none;
+.info-collapsible-content::-webkit-scrollbar-thumb {
+  background-color: rgba(59, 130, 246, 0.5);
+  border-radius: 3px;
 }
 
-/* Alternative: Position on the right side */
-.info-toggle-button-floating.right {
-  left: auto;
-  right: 20px;
-}
-
-/* Alternative: Position based on info box location */
-.info-toggle-button-floating.above-info {
-  top: auto;
-  bottom: calc(100vh - 200px); /* Adjust based on your info box position */
-  left: 20px;
+/* Responsive */
+@media (max-width: 768px) {
+  .location-info-overlay {
+    width: calc(100% - 40px);
+    right: 20px;
+    top: 80px;
+  }
+  
+  .story-points-grid {
+    gap: 10px;
+  }
+  
+  .story-point-card {
+    padding: 12px 14px;
+    gap: 12px;
+  }
 }

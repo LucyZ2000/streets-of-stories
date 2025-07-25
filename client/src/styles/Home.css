@@ -1,0 +1,143 @@
+/* Home.css - Styles for onboarding and home page */
+
+/* Onboarding Homepage Styles */
+.onboarding-container {
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.onboarding-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background:#23242468;
+  backdrop-filter: blur(10px);  opacity: 0.6;
+}
+
+.onboarding-pattern {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-size: 40px 40px;
+  opacity: 0.3;
+}
+
+.onboarding-content {
+  position: relative;
+  z-index: 10;
+  text-align: center;
+  padding: 2rem;
+  color: white;
+  animation: fadeInUp 0.8s ease-out;
+}
+
+.onboarding-title {
+  font-size: 3.5rem;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+  color: white;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.onboarding-description {
+  font-size: 1.25rem;
+  color: #e2e8f0;
+  max-width: 600px;
+  margin: 0 auto 3rem auto;
+  line-height: 1.6;
+}
+
+.onboarding-button {
+  display: inline-flex;
+  align-items: center;
+  padding: 1rem 2rem;
+  font-size: 1.125rem;
+  font-weight: 500;
+  color: white;
+  background: #3b82f6;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.onboarding-button:hover {
+  background: #2563eb;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+}
+
+.onboarding-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Fade out animation for transition */
+.onboarding-fade-out {
+  animation: fadeOut 0.3s ease-in forwards;
+}
+
+/* Map page styles */
+.map-page {
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .onboarding-title {
+    font-size: 2.5rem;
+  }
+  
+  .onboarding-description {
+    font-size: 1rem;
+    padding: 0 1rem;
+  }
+  
+  .onboarding-content {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .onboarding-title {
+    font-size: 2rem;
+  }
+  
+  .onboarding-button {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+  }
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeOut {
+  to {
+    opacity: 0;
+  }
+}
