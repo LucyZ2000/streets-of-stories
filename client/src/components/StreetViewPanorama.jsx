@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useGoogleMaps } from '../hooks/useGoogleMaps';
-import StoryOverlay from './StoryOverlay';
+import StreetViewPins from './StreetViewPins';
 import NavigationIndicators from './NavigationIndicators';
 
 function StreetViewPanorama({ location, currentStoryPointIndex, isTransitioning, onBillboardClick }) {
@@ -144,155 +144,6 @@ function StreetViewPanorama({ location, currentStoryPointIndex, isTransitioning,
       console.error('Error updating panorama:', error);
     }
   }, [panorama, currentStoryPointIndex, location, isTransitioning]);
-  // Add billboard markers effect with distance-based scaling
-  useEffect(() => {
-    if (!panorama || !isInitialized || !currentBillboards.length) {
-      return;
-    }
-
-    // Clear existing markers
-    billboardMarkers.forEach(marker => {
-      marker.setMap(null);
-    });
-
-    // Function to calculate distance between two lat/lng points (in meters)
-    const calculateDistance = (lat1, lng1, lat2, lng2) => {
-      const R = 6371e3; // Earth's radius in meters
-      const φ1 = lat1 * Math.PI / 180;
-      const φ2 = lat2 * Math.PI / 180;
-      const Δφ = (lat2 - lat1) * Math.PI / 180;
-      const Δλ = (lng2 - lng1) * Math.PI / 180;
-
-      const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
-        Math.cos(φ1) * Math.cos(φ2) *
-        Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
-      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
-      return R * c; // Distance in meters
-    };
-
-    // Function to calculate marker size based on distance
-    const calculateMarkerSize = (distance) => {
-      // Define your scaling parameters
-      const minSize = 20;  // Minimum marker size (pixels)
-      const maxSize = 80;  // Maximum marker size (pixels)
-      const minDistance = 10;  // Distance at which marker is largest (meters)
-      const maxDistance = 500; // Distance at which marker is smallest (meters)
-
-      // Clamp distance to our range
-      const clampedDistance = Math.max(minDistance, Math.min(maxDistance, distance));
-
-      // Calculate size using inverse relationship (closer = bigger)
-      const normalizedDistance = (clampedDistance - minDistance) / (maxDistance - minDistance);
-      const size = maxSize - (normalizedDistance * (maxSize - minSize));
-
-      return Math.round(size);
-    };
-
-    // Function to update marker sizes based on current position
-    const updateMarkerSizes = () => {
-      const currentPosition = panorama.getPosition();
-      if (!currentPosition) return;
-
-      const currentLat = currentPosition.lat();
-      const currentLng = currentPosition.lng();
-
-      newMarkers.forEach((marker, index) => {
-        const billboard = currentBillboards[index];
-        const distance = calculateDistance(
-          currentLat,
-          currentLng,
-          billboard.lat,
-          billboard.lng
-        );
-
-        const newSize = calculateMarkerSize(distance);
-
-        // Update the marker icon with new size
-        const updatedIcon = {
-          url: billboard.icon,
-          scaledSize: new window.google.maps.Size(newSize, newSize),
-          anchor: new window.google.maps.Point(newSize / 2, newSize / 2)
-        };
-
-        marker.setIcon(updatedIcon);
-      });
-    };
-
-    // Create new markers for current billboards
-    const newMarkers = currentBillboards.map((billboard, index) => {
-      // Get current Street View position
-      const currentPosition = panorama.getPosition();
-      let initialSize = 36; // Default size
-
-      if (currentPosition) {
-        const distance = calculateDistance(
-          currentPosition.lat(),
-          currentPosition.lng(),
-          billboard.lat,
-          billboard.lng
-        );
-        initialSize = calculateMarkerSize(distance);
-      }
-
-      // Create custom icon for billboard markers with calculated size
-      const billboardIcon = {
-        url: billboard.icon,
-        scaledSize: new window.google.maps.Size(initialSize, initialSize),
-        anchor: new window.google.maps.Point(initialSize / 2, initialSize / 2)
-      };
-
-      const marker = new window.google.maps.Marker({
-        position: {
-          lat: billboard.lat,
-          lng: billboard.lng
-        },
-        map: panorama,
-        title: billboard.title || billboard.name || `Billboard ${index + 1}`,
-        icon: billboardIcon,
-        zIndex: 1000 + index
-      });
-
-      // Add click listener for billboard interaction
-      marker.addListener('click', () => {
-        console.log('Billboard clicked:', billboard);
-
-        if (onBillboardClick) {
-          onBillboardClick(index);
-        }
-
-        if (billboard.onClick && typeof billboard.onClick === 'function') {
-          billboard.onClick(billboard);
-        }
-      });
-
-      return marker;
-    });
-
-    setBillboardMarkers(newMarkers);
-
-    // Listen for Street View position changes to update marker sizes
-    const positionChangedListener = panorama.addListener('position_changed', () => {
-      updateMarkerSizes();
-    });
-
-    // Optional: Also listen for POV changes for more responsive updates
-    const povChangedListener = panorama.addListener('pov_changed', () => {
-      updateMarkerSizes();
-    });
-
-    // Cleanup function
-    return () => {
-      // Remove listeners
-      window.google.maps.event.removeListener(positionChangedListener);
-      window.google.maps.event.removeListener(povChangedListener);
-
-      // Remove markers
-      newMarkers.forEach(marker => {
-        marker.setMap(null);
-      });
-    };
-  }, [panorama, isInitialized, currentBillboards]);
 
   // Cleanup markers when component unmounts
   useEffect(() => {
@@ -359,11 +210,13 @@ function StreetViewPanorama({ location, currentStoryPointIndex, isTransitioning,
       {/* Only render overlays when panorama is initialized */}
       {isInitialized && panorama && (
         <>
-          <StoryOverlay
+          <StreetViewPins
             panorama={panorama}
-            panoramaElement={panoramaRef.current}
+            isInitialized={isInitialized}
             currentBillboards={currentBillboards}
+            onBillboardClick={onBillboardClick}
           />
+
           <NavigationIndicators
             panorama={panorama}
             storyPoints={location?.storyPoints}
