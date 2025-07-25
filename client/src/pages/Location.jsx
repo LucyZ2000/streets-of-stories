@@ -341,6 +341,7 @@ function Location() {
           </button>
         </div>
       )}
+      
       {/* Story List - appears when showStoryList is true */}
       {showStoryList && (
         <div className="story-list-overlay">
