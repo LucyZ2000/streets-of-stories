@@ -1,0 +1,202 @@
+/* Dialog animations */
+@keyframes dialogSlideIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -80%) scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -100%) scale(1);
+  }
+}
+
+@keyframes dialogSlideOut {
+  from {
+    opacity: 1;
+    transform: translate(-50%, -100%) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translate(-50%, -80%) scale(0.8);
+  }
+}
+
+/* Location dialog base styles */
+/* Dialog animations */
+@keyframes dialogSlideIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -80%) scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -100%) scale(1);
+  }
+}
+
+@keyframes dialogSlideOut {
+  from {
+    opacity: 1;
+    transform: translate(-50%, -100%) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translate(-50%, -80%) scale(0.8);
+  }
+}
+
+/* Location dialog base styles */
+.location-dialog {
+  position: absolute;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  padding: 20px;
+  max-width: 480px;
+  min-width: 420px;
+  width: 450px;
+  z-index: 9999;
+  transform: translate(-50%, -100%);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  border: 2px solid #e0e0e0;
+  animation: dialogSlideIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  margin-bottom: 15px;
+}
+
+.location-dialog.closing {
+  animation: dialogSlideOut 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+/* Dialog close button */
+.dialog-close-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(0, 0, 0, 0.1);
+  color: #666;
+  border: none;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.dialog-close-btn:hover {
+  background: rgba(0, 0, 0, 0.2);
+  color: #333;
+}
+
+/* Dialog arrow pointer */
+.dialog-arrow {
+  position: absolute;
+  bottom: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  border-top: 12px solid white;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+/* Dialog content styles */
+.dialog-content {
+  margin-bottom: 16px;
+}
+
+.dialog-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.dialog-icon {
+  width: 28px;
+  height: 28px;
+  background: #4285f4;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 12px;
+  font-size: 16px;
+}
+
+.dialog-title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #1a1a1a;
+  flex: 1;
+}
+
+.dialog-type-badge {
+  display: inline-block;
+  background: #f0f7ff;
+  color: #1565c0;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.dialog-description {
+  margin: 0 0 16px 0;
+  font-size: 15px;
+  color: #4a4a4a;
+  line-height: 1.5;
+}
+
+.dialog-quote {
+  margin: 16px 0;
+  padding: 16px 20px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-left: 4px solid #4285f4;
+  font-style: italic;
+  color: #2c2c2c;
+  border-radius: 8px;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.dialog-details {
+  margin-top: 16px;
+  padding: 16px;
+  background: #f8fffe;
+  border: 1px solid #d1fae5;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #065f46;
+  line-height: 1.4;
+}
+
+.dialog-details-label {
+  color: #047857;
+  font-weight: bold;
+}
+
+/* Marker pin styles */
+.marker-pin {
+  position: relative;
+  cursor: pointer;
+  transform: translate(-50%, -50%);
+}
+
+.marker-pin-circle {
+  background-color: #4285f4;
+  border: 2px solid white;
+  border-radius: 50%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}

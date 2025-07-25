@@ -121,13 +121,14 @@ export const LOCATIONS = [
         ]
       },
       {
+        // 51.749844,-1.2558267
         heading: 60,
         pitch: -8,
         text: 'Christ Church, Oxford',
         description: 'Inspired the Hogwarts Great Hall and grand staircase.',
         image: 'https://via.placeholder.com/200x120/f59e0b/ffffff?text=Christ+Church',
-        lat: 51.750032689925554,
-        lng: -1.2558821117596277,
+        lat: 51.749844,
+        lng: -1.2558267,
         billboards: [
           {
             id: 'christchurch-1',
@@ -138,8 +139,8 @@ export const LOCATIONS = [
             type: 'location',
             quote: '"The enchanted ceiling mirrored the night sky above."',
             details: 'A real-life inspiration for countless sorting ceremonies and feasts.',
-            lat: 51.75003266,
-            lng: -1.255882116,
+            lat: 51.750215081072824,
+            lng: -1.2547261028732304,
           },
           {
             id: 'christchurch-2',
