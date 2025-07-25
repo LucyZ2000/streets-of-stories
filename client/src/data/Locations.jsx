@@ -2,7 +2,12 @@ import SpiritedAwayImage from '../assets/img/SpiritedAway.png';
 import SherlockImage from '../assets/img/Sherlock.png';
 import GatsbyImage from '../assets/img/Gatsby.png';
 import HarryImage from '../assets/img/Harry.png';
+
 import GatsbyMusic from '../assets/music/Jazz.mp3';
+import HarryMusic from '../assets/music/Wizard.mp3';
+import SherlockMusic from '../assets/music/Mystery.mp3';
+import SpiritedAwayMusic from '../assets/music/Fantasy.mp3';
+import MonkeyKingMusic from '../assets/music/Adventure.mp3';
 
 export const LOCATIONS = [
   {
@@ -78,6 +83,7 @@ export const LOCATIONS = [
     year: 1997,
     genre: 'Fantasy',
     image: HarryImage,
+    music: HarryMusic,
     storyPoints: [
       {
         heading: 90,
@@ -197,6 +203,7 @@ export const LOCATIONS = [
     year: 1887,
     genre: 'Mystery',
     image: SherlockImage,
+    music: SherlockMusic,
     storyPoints: [
       {
         heading: 90,
@@ -241,82 +248,24 @@ export const LOCATIONS = [
       },
     ],
   },
-  // {
-  //   id: '4',
-  //   title: 'Lion King',
-  //   lat: -0.915404,
-  //   lng: 36.316911,
-  //   altitude: 60,
-  //   description: 'Hells Gate Gorge – The dramatic red cliffs that inspired Pride Rock in *The Lion King*',
-  //   author: 'Disney (inspired by East African landscapes)',
-  //   year: 1994,
-  //   genre: 'Animated Adventure',
-  //   image: LionKingImage,
-  //   storyPoints: [
-  //     {
-  //       heading: 90,
-  //       pitch: -10,
-  //       text: "Hell's Gate",
-  //       description: 'Hells Gate Gorge – The dramatic red cliffs that inspired Pride Rock in *The Lion King*',
-  //       image: 'https://via.placeholder.com/200x120/8b5cf6/ffffff?',
-  //       lat: -0.915404,
-  //       lng: 36.316911,
-  //       billboards: [
-  //         {
-  //           id: 'pride-rock-1',
-  //           heading: 90,
-  //           pitch: -10,
-  //           title: 'Pride Rock Summit',
-  //           content: 'The majestic peak where the Lion King surveys his kingdom and presents his heir.',
-  //           type: 'location',
-  //           icon: '🦁',
-  //           quote: '"Everything the light touches is our kingdom."',
-  //           details: 'The highest point of Pride Rock, offering a commanding view of the African savanna.'
-  //         },
-  //         {
-  //           id: 'pride-rock-2',
-  //           heading: 120,
-  //           pitch: 0,
-  //           title: 'The Presentation Circle',
-  //           content: 'The sacred spot where newborn cubs are presented to the pride and the animal kingdom.',
-  //           type: 'ceremony',
-  //           icon: '🌅',
-  //           quote: '"The Circle of Life moves us all."',
-  //           details: 'All the animals of the Pride Lands gather below to witness the presentation ceremony.'
-  //         },
-  //         {
-  //           id: 'pride-rock-3',
-  //           heading: 60,
-  //           pitch: 5,
-  //           title: 'The King\'s Den',
-  //           content: 'The royal family\'s dwelling within the rock formation.',
-  //           type: 'home',
-  //           icon: '🏔️',
-  //           quote: '"A king\'s time as ruler rises and falls like the sun."',
-  //           details: 'Carved chambers within Pride Rock that serve as the royal family\'s home.'
-  //         }
-  //       ]
-  //     }
-  //   ],
-  // },
   {
     id: '5',
     title: 'Spirited Away',
     lat: 35.0116,
     lng: 135.7681,
     altitude: 80,
-    description: 'Kyoto, Japan - The historic city that inspired the magical world of Spirited Away',
+    description: 'Animated Japanese film by Studio Ghibli',
     author: 'Hayao Miyazaki',
     year: 2001,
     genre: 'Animated Fantasy',
     image: SpiritedAwayImage,
+    music: SpiritedAwayMusic,
     storyPoints: [
       {
         heading: 45,
         pitch: -8,
         text: 'Fushimi Inari Shrine',
         description: 'The thousands of vermillion torii gates that inspired the tunnel entrance to the spirit world.',
-        image: 'https://via.placeholder.com/200x120/dc2626/ffffff?text=Torii+Gates',
         lat: 34.9671,
         lng: 135.7727,
         billboards: [
@@ -425,6 +374,7 @@ export const LOCATIONS = [
     author: 'Wu Cheng\'en',
     year: 1592,
     genre: 'Classical Chinese Literature',
+    music: MonkeyKingMusic,
     storyPoints: [
       {
         heading: 0,
