@@ -80,13 +80,13 @@ export const LOCATIONS = [
     image: HarryImage,
     storyPoints: [
       {
-        heading: 90,
-        pitch: -5,
         text: 'Alnwick Castle',
         description: 'The real-world location used for exterior shots of Hogwarts, including flying lessons.',
         image: 'https://via.placeholder.com/200x120/2563eb/ffffff?text=Alnwick+Castle',
         lat: 55.415379,
         lng: -1.705285,
+        heading: 290,
+        pitch: 1,
         billboards: [
           {
             id: 'alnwick-1',
@@ -115,14 +115,13 @@ export const LOCATIONS = [
         ]
       },
       {
-        // 51.749844,-1.2558267
-        heading: 60,
-        pitch: -8,
         text: 'Christ Church, Oxford',
         description: 'Inspired the Hogwarts Great Hall and grand staircase.',
         image: 'https://via.placeholder.com/200x120/f59e0b/ffffff?text=Christ+Church',
         lat: 51.749844,
         lng: -1.2558267,
+        heading: 80,
+        pitch: 10,
         billboards: [
           {
             id: 'christchurch-1',
@@ -242,64 +241,6 @@ export const LOCATIONS = [
       },
     ],
   },
-  // {
-  //   id: '4',
-  //   title: 'Lion King',
-  //   lat: -0.915404,
-  //   lng: 36.316911,
-  //   altitude: 60,
-  //   description: 'Hells Gate Gorge – The dramatic red cliffs that inspired Pride Rock in *The Lion King*',
-  //   author: 'Disney (inspired by East African landscapes)',
-  //   year: 1994,
-  //   genre: 'Animated Adventure',
-  //   image: LionKingImage,
-  //   storyPoints: [
-  //     {
-  //       heading: 90,
-  //       pitch: -10,
-  //       text: "Hell's Gate",
-  //       description: 'Hells Gate Gorge – The dramatic red cliffs that inspired Pride Rock in *The Lion King*',
-  //       image: 'https://via.placeholder.com/200x120/8b5cf6/ffffff?',
-  //       lat: -0.915404,
-  //       lng: 36.316911,
-  //       billboards: [
-  //         {
-  //           id: 'pride-rock-1',
-  //           heading: 90,
-  //           pitch: -10,
-  //           title: 'Pride Rock Summit',
-  //           content: 'The majestic peak where the Lion King surveys his kingdom and presents his heir.',
-  //           type: 'location',
-  //           icon: '🦁',
-  //           quote: '"Everything the light touches is our kingdom."',
-  //           details: 'The highest point of Pride Rock, offering a commanding view of the African savanna.'
-  //         },
-  //         {
-  //           id: 'pride-rock-2',
-  //           heading: 120,
-  //           pitch: 0,
-  //           title: 'The Presentation Circle',
-  //           content: 'The sacred spot where newborn cubs are presented to the pride and the animal kingdom.',
-  //           type: 'ceremony',
-  //           icon: '🌅',
-  //           quote: '"The Circle of Life moves us all."',
-  //           details: 'All the animals of the Pride Lands gather below to witness the presentation ceremony.'
-  //         },
-  //         {
-  //           id: 'pride-rock-3',
-  //           heading: 60,
-  //           pitch: 5,
-  //           title: 'The King\'s Den',
-  //           content: 'The royal family\'s dwelling within the rock formation.',
-  //           type: 'home',
-  //           icon: '🏔️',
-  //           quote: '"A king\'s time as ruler rises and falls like the sun."',
-  //           details: 'Carved chambers within Pride Rock that serve as the royal family\'s home.'
-  //         }
-  //       ]
-  //     }
-  //   ],
-  // },
   {
     id: '5',
     title: 'Spirited Away',
@@ -419,27 +360,29 @@ export const LOCATIONS = [
   {
     id: '6',
     title: 'Journey to the West (Monkey King)',
-    lat: 34.35,
-    lng: 119.20,
-    altitude: 120,
-    description: 'Mount Huashan, China - The legendary mountain where the Monkey King began his journey',
+    lat: 29.5193785, 
+    lng: 103.3357148,
+    altitude: 10,
+    description: 'Mount Mei, China - The legendary mountain where the Monkey King began his journey',
     author: 'Wu Cheng\'en',
     year: 1592,
     genre: 'Classical Chinese Literature',
     storyPoints: [
       {
-        heading: 0,
+        heading: 240,
         pitch: -15,
-        text: 'Flower Fruit Mountain',
+        text: 'Yunnan Stone Forest',
         description: 'The mystical mountain home of Sun Wukong, the Monkey King, surrounded by magical peaches and immortal springs.',
         image: 'https://via.placeholder.com/200x120/f59e0b/ffffff?text=Flower+Fruit+Mountain',
-        lat: 34.3416,
-        lng: 108.9398,
+        lat: 24.8173631,
+        lng: 103.3255174,
         billboards: [
           {
             id: 'flower-fruit-1',
-            heading: 0,
-            pitch: -15,
+            lat: 24.81707,
+            lng: 103.3253,
+            heading: 90,
+            pitch: 2,
             title: 'The Stone Monkey\'s Birth',
             content: 'The magical stone from which Sun Wukong was born, infused with cosmic energy.',
             type: 'origin',
@@ -469,16 +412,19 @@ export const LOCATIONS = [
         ]
       },
       {
-        heading: 180,
+        heading: 0,
         pitch: -10,
-        text: 'Heavenly Peach Garden',
+        text: 'The Celestial',
         description: 'The celestial garden where the Monkey King caused havoc by eating the immortal peaches.',
         image: 'https://via.placeholder.com/200x120/ec4899/ffffff?text=Peach+Garden',
-        lat: 34.3500,
-        lng: 108.9450,
+        lat: 29.520252,
+        lng: 103.339445,
+        altitude: 5000,
         billboards: [
           {
             id: 'peach-garden-1',
+            lat: 29.52035,
+            lng: 103.33935,
             heading: 180,
             pitch: -10,
             title: 'The Jade Emperor\'s Garden',
@@ -505,13 +451,16 @@ export const LOCATIONS = [
         text: 'Five Elements Mountain',
         description: 'The sacred mountain where Buddha imprisoned the Monkey King for 500 years under a rock.',
         image: 'https://via.placeholder.com/200x120/6b7280/ffffff?text=Five+Elements+Mountain',
-        lat: 34.3300,
-        lng: 108.9300,
+        lat: 25.0682795,
+        lng: 103.3839497,
+        altitude: 200,
         billboards: [
           {
             id: 'five-elements-1',
             heading: 90,
             pitch: -5,
+            lat: 25.0682795,
+            lng: 103.3839497,
             title: 'Buddha\'s Prison',
             content: 'The massive rock seal that held the Monkey King captive for five centuries.',
             type: 'prison',

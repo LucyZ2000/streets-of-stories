@@ -6,7 +6,7 @@ import { useGoogleMaps } from '../hooks/useGoogleMaps';
 
 import StoryList from './StoryList';
 import '../styles/App.css';
-import '../styles/storylist.css';
+import '../styles/StoryList.css';
 import '../styles/Toggle.css';
 
 
@@ -165,7 +165,8 @@ const handleImmediatePosition = (targetLocation, storyPointIndex) => {
       // Determine which story point to fly to
       const targetStoryPoint = targetLocation.storyPoints?.[storyPointIndex] || targetLocation.storyPoints?.[0];
       const targetPoint = targetStoryPoint || targetLocation;
-      
+      console.log(targetPoint.lat)
+      console.log(targetPoint.lng)
       map3DRef.current.flyCameraTo({
         endCamera: {
           center: { 
