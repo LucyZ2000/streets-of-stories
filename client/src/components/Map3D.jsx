@@ -122,7 +122,7 @@ const handleImmediatePosition = (targetLocation, storyPointIndex) => {
           altitude: targetLocation.altitude || 60 
         },
         tilt: targetStoryPoint?.pitch ? Math.abs(targetStoryPoint.pitch) + 65 : 75,
-        range: targetStoryPoint?.range || 150,
+        range: targetStoryPoint?.range || 500, // Increased from 150 to 500 for more zoomed out view
         heading: targetStoryPoint?.heading || 0,
       },
       durationMillis: 0, // Instant positioning
@@ -174,7 +174,7 @@ const handleImmediatePosition = (targetLocation, storyPointIndex) => {
             altitude: targetLocation.altitude || 60 
           },
           tilt: targetStoryPoint?.pitch ? Math.abs(targetStoryPoint.pitch) + 65 : 75,
-          range: targetStoryPoint?.range || 150,
+          range: targetStoryPoint?.range || 500, // Increased from 150 to 500 for more zoomed out view
           heading: targetStoryPoint?.heading || 0,
         },
         durationMillis: 2000,
@@ -222,7 +222,7 @@ const handleImmediatePosition = (targetLocation, storyPointIndex) => {
               altitude: location.altitude || 60 
             },
             tilt: targetStoryPoint?.pitch ? Math.abs(targetStoryPoint.pitch) + 65 : 75,
-            range: targetStoryPoint?.range || 150,
+            range: targetStoryPoint?.range || 500, // Increased from 150 to 500 for more zoomed out view
             heading: targetStoryPoint?.heading || 0,
           },
           durationMillis: 2000,
@@ -305,7 +305,7 @@ const handleImmediatePosition = (targetLocation, storyPointIndex) => {
             altitude: location.altitude || 60 
           },
           tilt: firstStoryPoint?.pitch ? Math.abs(firstStoryPoint.pitch) + 65 : 75,
-          range: 150,
+          range: 500, // Increased from 150 to 500 for more zoomed out view
           heading: firstStoryPoint?.heading || 0,
         },
         durationMillis: 2000,
@@ -335,7 +335,7 @@ const handleImmediatePosition = (targetLocation, storyPointIndex) => {
             altitude: location.altitude || 60 
           },
           tilt: storyPoint.pitch ? Math.abs(storyPoint.pitch) + 65 : 75,
-          range: storyPoint.range || 150,
+          range: storyPoint.range || 500, // Increased from 150 to 500 for more zoomed out view
           heading: storyPoint.heading || 0,
         },
         durationMillis: duration,
