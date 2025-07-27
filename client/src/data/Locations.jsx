@@ -2,7 +2,12 @@ import SpiritedAwayImage from '../assets/img/SpiritedAway.png';
 import SherlockImage from '../assets/img/Sherlock.png';
 import GatsbyImage from '../assets/img/Gatsby.png';
 import HarryImage from '../assets/img/Harry.png';
+
 import GatsbyMusic from '../assets/music/Jazz.mp3';
+import HarryMusic from '../assets/music/Wizard.mp3';
+import SherlockMusic from '../assets/music/Mystery.mp3';
+import SpiritedAwayMusic from '../assets/music/Japanese.mp3';
+import MonkeyKingMusic from '../assets/music/Adventure.mp3';
 
 export const LOCATIONS = [
   {
@@ -78,6 +83,7 @@ export const LOCATIONS = [
     year: 1997,
     genre: 'Fantasy',
     image: HarryImage,
+    music: HarryMusic,
     storyPoints: [
       {
         text: 'Alnwick Castle',
@@ -104,11 +110,10 @@ export const LOCATIONS = [
             id: 'alnwick-2',
             heading: 100,
             pitch: 0,
-            title: 'Madam Hooch’s First Flying Lesson',
-            content: 'The castle’s courtyard was the filming location for Harry’s first broomstick lesson.',
+            title: 'Madam Hooch\'s First Flying Lesson',
+            content: 'The castle\'s courtyard was the filming location for Harry\'s first broomstick lesson.',
             type: 'scene',
-            quote: '"Up! Everyone mount their brooms!"',
-            details: 'The training ground where Neville loses control and Harry’s flying skills first emerge.',
+            details: 'The training ground where Neville loses control and Harry\'s flying skills first emerge.',
             lat: 55.41568633289001,
             lng: -1.7059471809636777,
           }
@@ -128,7 +133,7 @@ export const LOCATIONS = [
             heading: 60,
             pitch: -8,
             title: 'Hogwarts Great Hall',
-            content: 'Christ Church’s dining hall inspired the design of the Great Hall at Hogwarts.',
+            content: 'Christ Church\'s dining hall inspired the design of the Great Hall at Hogwarts.',
             type: 'location',
             quote: '"The enchanted ceiling mirrored the night sky above."',
             details: 'A real-life inspiration for countless sorting ceremonies and feasts.',
@@ -197,13 +202,13 @@ export const LOCATIONS = [
     year: 1887,
     genre: 'Mystery',
     image: SherlockImage,
+    music: SherlockMusic,
     storyPoints: [
       {
         heading: 90,
         pitch: 0,
         text: 'Baker Street',
         description: 'The iconic address where the world\'s greatest detective solved his cases.',
-        image: 'https://via.placeholder.com/200x120/8b5cf6/ffffff?text=Baker+Street',
         lat: 51.5237,
         lng: -0.1585,
         billboards: [
@@ -239,6 +244,14 @@ export const LOCATIONS = [
           }
         ]
       },
+      {
+        heading: 90,
+        pitch: 0,
+        text: 'Reichenbach Falls',
+        description: 'The dramatic waterfall where Holmes confronted his arch-nemesis Moriarty.',
+        lat: 46.7145,
+        lng: 8.1828,
+      },
     ],
   },
   {
@@ -247,18 +260,18 @@ export const LOCATIONS = [
     lat: 35.0116,
     lng: 135.7681,
     altitude: 80,
-    description: 'Kyoto, Japan - The historic city that inspired the magical world of Spirited Away',
+    description: 'Animated Japanese film by Studio Ghibli',
     author: 'Hayao Miyazaki',
     year: 2001,
     genre: 'Animated Fantasy',
     image: SpiritedAwayImage,
+    music: SpiritedAwayMusic,
     storyPoints: [
       {
         heading: 45,
         pitch: -8,
         text: 'Fushimi Inari Shrine',
         description: 'The thousands of vermillion torii gates that inspired the tunnel entrance to the spirit world.',
-        image: 'https://via.placeholder.com/200x120/dc2626/ffffff?text=Torii+Gates',
         lat: 34.9671,
         lng: 135.7727,
         billboards: [
@@ -269,18 +282,20 @@ export const LOCATIONS = [
             title: 'The Thousand Gates',
             content: 'Endless vermillion torii gates that create a tunnel between the human and spirit worlds.',
             type: 'portal',
-            quote: '"The tunnel seemed to go on forever, lit by the warm glow of vermillion."',
-            details: 'Over 10,000 torii gates donated by individuals and businesses line the mountain paths.'
+            details: 'Over 10,000 torii gates donated by individuals and businesses line the mountain paths.',
+            lat: 34.9671,
+            lng: 135.7727,
           },
           {
             id: 'torii-2',
             heading: 60,
-            pitch: 0,
-            title: 'The Spirit Passage',
-            content: 'The mystical pathway where Chihiro first entered the world of spirits.',
-            type: 'journey',
-            quote: '"Don\'t look back, no matter what happens."',
-            details: 'The passage that transforms from a mundane tunnel into a magical gateway.'
+            pitch: -5,
+            title: 'The Spirit Tunnel',
+            content: 'Chihiro and her parents walked through a similar tunnel that led them to the abandoned theme park.',
+            type: 'gateway',
+            details: 'The entrance to the spirit world, where humans must be careful not to eat the food of the spirits.',
+            lat: 34.9675,
+            lng: 135.7730,
           }
         ]
       },
@@ -289,7 +304,6 @@ export const LOCATIONS = [
         pitch: -5,
         text: 'Traditional Bathhouse',
         description: 'The historic bathhouses of Kyoto that inspired Yubaba\'s magical bathhouse for spirits.',
-        image: 'https://via.placeholder.com/200x120/7c2d12/ffffff?text=Bathhouse',
         lat: 33.8521,
         lng: 132.7864,
         billboards: [
@@ -297,64 +311,101 @@ export const LOCATIONS = [
             id: 'bathhouse-1',
             heading: 120,
             pitch: -5,
-            title: 'The Boiler Room',
-            content: 'Kamaji\'s domain where the bathhouse\'s magic is powered by coal and ancient spirits.',
-            type: 'workshop',
-            quote: '"These coal pieces are the bathhouse\'s life force."',
-            details: 'Six-armed Kamaji tends to the boilers with help from soot sprites carrying coal.'
+            title: 'Yubaba\'s Bathhouse',
+            content: 'The magnificent multi-story bathhouse where spirits come to cleanse themselves.',
+            type: 'building',
+            details: 'A luxurious establishment run by the witch Yubaba, employing humans and spirits alike.',
+            lat: 33.8521,
+            lng: 132.7864,
           },
           {
             id: 'bathhouse-2',
             heading: 140,
             pitch: 0,
-            title: 'The Main Bath',
-            content: 'The grand bathing hall where spirits come to cleanse themselves.',
-            type: 'sanctuary',
-            quote: '"Welcome to the bathhouse. Enjoy your stay."',
-            details: 'Ornate baths filled with healing waters, tended by bathhouse workers.'
+            title: 'The Boiler Room',
+            content: 'Kamaji\'s domain deep in the bathhouse, where he controls the magic that heats the baths.',
+            type: 'workspace',
+            details: 'A massive room filled with pipes, furnaces, and magical soot sprites who help with the work.',
+            lat: 33.8525,
+            lng: 132.7860,
+          },
+          {
+            id: 'bathhouse-3',
+            heading: 100,
+            pitch: 5,
+            title: 'The River Spirit\'s Bath',
+            content: 'The special bath where Chihiro helped cleanse the polluted River Spirit.',
+            type: 'healing',
+            details: 'The most challenging customer, revealed to be a powerful river spirit covered in human pollution.',
+            lat: 33.8518,
+            lng: 132.7867,
           }
         ]
       },
       {
         heading: 270,
         pitch: 0,
-        text: 'Bamboo Forest',
-        description: 'The enchanted bamboo groves where spirits roam and magic comes alive.',
-        image: 'https://via.placeholder.com/200x120/10b981/ffffff?text=Bamboo+Forest',
-        lat: 35.0170,
-        lng: 135.6711,
+        text: 'JR Shimonada Station',
+        description: 'Beautiful seaside train station that inspired the serene train ride in Spirited Away.',
+        lat: 33.6550,
+        lng: 132.5892,
         billboards: [
           {
-            id: 'bamboo-1',
+            id: 'train-station-1',
             heading: 270,
             pitch: 0,
-            title: 'The Whispering Grove',
-            content: 'Ancient bamboo stalks that whisper secrets and guide lost souls.',
-            type: 'mystical',
-            quote: '"The bamboo speaks to those who listen with their hearts."',
-            details: 'The rustling bamboo creates a natural symphony that spirits find comforting.'
+            title: 'The Spirit Train',
+            content: 'The magical train that glides over water, carrying spirits and lost souls.',
+            type: 'transport',
+            details: 'A transparent train that runs on tracks above the flooded landscape, connecting the spirit world.',
+            lat: 33.6550,
+            lng: 132.5892,
           },
           {
-            id: 'bamboo-2',
+            id: 'train-station-2',
             heading: 290,
-            pitch: -10,
-            title: 'The Hidden Path',
-            content: 'Secret pathways through the bamboo that lead to magical destinations.',
-            type: 'secret',
-            quote: '"Follow the path, but be careful not to lose your way."',
-            details: 'Narrow paths wind through the bamboo, known only to spirits and forest guardians.'
+            pitch: -3,
+            title: 'The Flooded World',
+            content: 'The mystical landscape where the train travels over endless water.',
+            type: 'landscape',
+            details: 'A dreamlike world where telephone poles rise from water and the train glides silently above.',
+            lat: 33.6547,
+            lng: 132.5888,
           }
         ]
       },
       {
         heading: 45,
         pitch: -8,
-        text: 'Fushimi Inari Shrine',
-        description: 'The thousands of vermillion torii gates that inspired the tunnel entrance to the spirit world.',
-        image: 'https://via.placeholder.com/200x120/dc2626/ffffff?text=Torii+Gates',
-        lat: 25.1099,
-        lng: 121.8452,
-      }
+        text: 'Jiu Fen Old Street',
+        description: 'The charming old street that inspired the bustling spirit town in Spirited Away.',
+        lat: 25.1084638,
+        lng: 121.84352,
+        billboards: [
+          {
+            id: 'old-street-1',
+            heading: 45,
+            pitch: -8,
+            title: 'The Spirit Market',
+            content: 'Narrow winding streets filled with food stalls and shops selling magical goods.',
+            type: 'marketplace',
+            details: 'Red lanterns illuminate the bustling streets where spirits shop and dine at night.',
+            lat: 25.1099,
+            lng: 121.8452,
+          },
+          {
+            id: 'old-street-2',
+            heading: 65,
+            pitch: 0,
+            title: 'The Abandoned Theme Park',
+            content: 'Where Chihiro\'s adventure began, a seemingly empty place that comes alive at night.',
+            type: 'beginning',
+            details: 'What appears to be an abandoned amusement park transforms into a thriving spirit town after dark.',
+            lat: 25.1102,
+            lng: 121.8455,
+          }
+        ]
+      },
     ],
   },
   {
@@ -367,6 +418,7 @@ export const LOCATIONS = [
     author: 'Wu Cheng\'en',
     year: 1592,
     genre: 'Classical Chinese Literature',
+    music: MonkeyKingMusic,
     storyPoints: [
       {
         heading: 240,

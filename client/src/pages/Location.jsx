@@ -293,7 +293,9 @@ function Location() {
               disabled={isTransitioning}
               title={isPlaying ? 'Pause Music' : 'Play Music'}
             >
-              {isPlaying ? '🔊' : '🔇'}
+              <span className="material-icons">
+                {isPlaying ? 'volume_up' : 'volume_off'}
+              </span>
             </button>
           </div>
         )}
