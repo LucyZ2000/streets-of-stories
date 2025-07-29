@@ -24,59 +24,53 @@ export const LOCATIONS = [
     music: GatsbyMusic,
     storyPoints: [
       {
-        heading: 165,
-        pitch: -5,
-        text: 'Gatsby\'s Mansion View',
-        description: 'The opulent mansion where Jay Gatsby threw his legendary parties, hoping to catch the attention of his lost love.',
-        image: 'https://via.placeholder.com/200x120/4f46e5/ffffff?text=Gatsby+Mansion',
-        lat: 40.8287377346249,
-        lng: -73.44819177401407,
+        heading: -50,
+        pitch: 0,
+        text: 'Oheka Castle',
+        description: 'The magnificent French Renaissance château that inspired Gatsby\'s West Egg estate, built on the highest point of Long Island\'s Gold Coast.',
+        lat: 40.8290054,
+        lng: -73.4486544,
         billboards: [
           {
-            id: 'gatsby-mansion-1',
-            heading: 165,
-            pitch: -5,
-            title: 'The Grand Entrance',
-            content: 'Gatsby\'s mansion featured a marble entrance hall with a staircase that curved upward into the shadowy heights.',
-            type: 'info',
-            quote: '"I spent my Saturday nights in New York because those gleaming, dazzling parties of his were with me so vividly that I could still hear the music and the laughter."',
-            details: 'The mansion was modeled after a Normandy château, complete with a tower and ivy-covered walls.',
-            lat: 40.8287377346,
-            lng: -73.4481917740,
-          },
-          {
-            id: 'gatsby-mansion-2',
-            heading: 180,
-            pitch: -10,
-            title: 'The Party Grounds',
-            content: 'The lawn and gardens where hundreds of guests danced under colored lights every weekend.',
-            type: 'scene',
-            quote: '"In his blue gardens men and girls came and went like moths among the whisperings and the champagne and the stars."',
-            details: 'Orchestra platforms, buffet tables, and a floating stage on the bay for entertainment.',
-            lat: 40.8287377346300,
-            lng: -73.44819177401500,
-          },
-          {
-            id: 'gatsby-mansion-3',
+            id: 'gatsby-mansion',
             heading: 140,
             pitch: 0,
-            title: 'Gatsby\'s Study',
-            content: 'The private room where Gatsby planned his elaborate schemes to win back Daisy.',
-            type: 'character',
-            quote: '"He had come a long way to this blue lawn, and his dream must have seemed so close that he could hardly fail to grasp it."',
-            details: 'Filled with books Gatsby never read, but kept to maintain his carefully constructed image.',
-            lat: 40.8287377346259,
-            lng: -73.44819177401200,
+            title: 'Gatsby\'s Mansion',
+            content: 'The real-life inspiration for Jay Gatsby\'s legendary estate and extravagant parties.',
+            type: 'architecture',
+            details: 'Built between 1914-1919 by financier Otto Hermann Kahn, Oheka Castle is the largest private home in New York with 127 rooms spanning over 109,000 square feet. This French Renaissance-style château cost $11 million to build (equivalent to $158 million today) and sits majestically on 443 acres at Long Island\'s highest point. F. Scott Fitzgerald visited this opulent Gold Coast mansion with Zelda, drawing inspiration from Kahn\'s lavish parties for the extravagant soirées described in The Great Gatsby.',
+            lat: 40.830,
+            lng: -73.452,
           }
         ]
-      },
+      }, {
+        heading: 80,
+        pitch: -5,
+        text: 'Gatsby\'s Study',
+        description: 'The private sanctuary where Gatsby retreated to plan his elaborate schemes and dream of recapturing the past.',
+        lat: 40.8291131,
+        lng: -73.4484051,
+        billboards: [
+          {
+            id: 'gatsby-study',
+            heading: 140,
+            pitch: 0,
+            title: 'Gatsby\'s Private Study',
+            content: 'The intimate space where Jay Gatsby contemplated his past and orchestrated his future.',
+            type: 'character',
+            details: 'This elegant room, filled with leather-bound books that Gatsby never read, served as his private retreat from the glittering parties below. Here, surrounded by the trappings of his carefully constructed persona, Gatsby would stare across the bay toward the green light on Daisy\'s dock, planning elaborate schemes to win back his lost love and believing he could repeat the past.',
+            lat: 40.8295,
+            lng: -73.4474,
+          }
+        ]
+      }
     ],
   },
   {
     id: '2',
     title: 'Harry Potter',
-    lat: 55.41568633289001,
-    lng: -1.7059471809636777,
+    lat: 51.749844,
+    lng: -1.2558267,
     altitude: 100,
     description: 'Iconic filming locations from the Harry Potter series.',
     author: 'J.K. Rowling',
@@ -85,10 +79,42 @@ export const LOCATIONS = [
     image: HarryImage,
     music: HarryMusic,
     storyPoints: [
+      
+      {
+        heading: 0,
+        pitch: -5,
+        text: 'Goathland Train Station',
+        description: 'The Victorian-era heritage railway station that became Hogsmeade Station in Harry Potter and the Philosopher\'s Stone.',
+        lat: 54.400607439017726,
+        lng: -0.7122201435207112,
+        billboards: [
+          {
+            id: 'goathland-1',
+            heading: 120,
+            pitch: -5,
+            title: 'Hogsmeade Station',
+            content: 'This authentic Victorian station doubled as the magical gateway to Hogwarts School.',
+            type: 'transport',
+            details: 'Built in 1865 by architect Thomas Prosser for the North Eastern Railway, Goathland Station retains its original Victorian charm with traditional stone buildings and period platform furnishings. The station served as Hogsmeade in the first Harry Potter film, where students disembarked from the Hogwarts Express before crossing the lake to reach the castle. Filming took place on October 2, 2000, capturing both Harry\'s arrival and Hagrid\'s farewell scene at the film\'s end.',
+            lat: 54.400607439017726,
+            lng: -0.7122201435207112,
+          },
+          {
+            id: 'goathland-2',
+            heading: 135,
+            pitch: 0,
+            title: 'Heritage Railway Magic',
+            content: 'Part of the North Yorkshire Moors Railway, where steam trains still traverse the stunning moorland.',
+            type: 'transport',
+            details: 'Goathland Station operates as part of the North Yorkshire Moors Railway, a heritage line running through the North York Moors National Park between Pickering and Whitby. The station has remained virtually unchanged since 1865, restored to represent a typical NER country station circa 1922. Beyond Harry Potter, it also gained fame as Aidensfield Station in the long-running TV series Heartbeat, making it one of Britain\'s most recognizable railway stations.',
+            lat: 54.400908,
+            lng: -0.7118,
+          }
+        ]
+      },
       {
         text: 'Alnwick Castle',
         description: 'The real-world location used for exterior shots of Hogwarts, including flying lessons.',
-        image: 'https://via.placeholder.com/200x120/2563eb/ffffff?text=Alnwick+Castle',
         lat: 55.415379,
         lng: -1.705285,
         heading: 290,
@@ -120,9 +146,8 @@ export const LOCATIONS = [
         ]
       },
       {
-        text: 'Christ Church, Oxford',
-        description: 'Inspired the Hogwarts Great Hall and grand staircase.',
-        image: 'https://via.placeholder.com/200x120/f59e0b/ffffff?text=Christ+Church',
+        text: 'Hogwarts Great Hall',
+        description: 'Inspired the Hogwarts Great Hall.',
         lat: 51.749844,
         lng: -1.2558267,
         heading: 80,
@@ -135,11 +160,19 @@ export const LOCATIONS = [
             title: 'Hogwarts Great Hall',
             content: 'Christ Church\'s dining hall inspired the design of the Great Hall at Hogwarts.',
             type: 'location',
-            quote: '"The enchanted ceiling mirrored the night sky above."',
-            details: 'A real-life inspiration for countless sorting ceremonies and feasts.',
+            details: 'Christ Church\'s Tudor dining hall features a stunning hammerbeam roof designed by master-carpenter Humphrey Coke, with eight bays supported by stone corbels carved with Henry VIII and Cardinal Wolsey\'s arms. The walls display a collection of portraits including famous alumni, with Henry VIII\'s portrait hanging above the High Table where dons dine. While actual Great Hall scenes were filmed on a replica set at Leavesden Studios, this 16th-century hall provided the visual inspiration for Hogwarts\' magical dining experiences.',
             lat: 51.750215081072824,
             lng: -1.2547261028732304,
           },
+        ]
+      }, {
+        text: 'Hogwards Grand Staircase',
+        description: 'This staircase in Christ Church, Oxford, inspired the Hogwarts grand staircase.',
+        lat: 51.7499414,
+        lng: -1.2549495,
+        heading: 210,
+        pitch: 15,
+        billboards: [
           {
             id: 'christchurch-2',
             heading: 75,
@@ -147,48 +180,11 @@ export const LOCATIONS = [
             title: 'Stairs to the Great Hall',
             content: 'The grand staircase appears in scenes where students enter Hogwarts.',
             type: 'architecture',
-            quote: '"Harry climbed the stone stairs, wide-eyed with wonder."',
-            details: 'Used multiple times throughout the films for dramatic entrances and transitions.',
-            lat: 51.75,
-            lng: -1.25,
-          }
-        ]
+            details: 'The Bodley Tower staircase at Christ Church College features stunning fan-vaulted ceilings installed in 1638. This architecture was used to film the iconic scene where Harry, Ron, and Hermione first enter Hogwarts and meet Professor McGonagall.',
+            lat: 51.7498,
+            lng: -1.25506,
+          }]
       },
-      {
-        heading: 120,
-        pitch: -5,
-        text: 'Goathland Train Station',
-        description: 'The real station behind Hogsmeade and the Hogwarts Express arrival.',
-        image: 'https://via.placeholder.com/200x120/10b981/ffffff?text=Goathland+Station',
-        lat: 54.400607439017726,
-        lng: -0.7122201435207112,
-        billboards: [
-          {
-            id: 'goathland-1',
-            heading: 120,
-            pitch: -5,
-            title: 'Hogsmeade Station',
-            content: 'Goathland Station was used as Hogsmeade in the Harry Potter films.',
-            type: 'transport',
-            quote: '"The train slowed as it approached the tiny station surrounded by mist."',
-            details: 'Students disembarked here before being ferried across the lake to Hogwarts.',
-            lat: 54.400607439017726,
-            lng: -0.7122201435207112,
-          },
-          {
-            id: 'goathland-2',
-            heading: 135,
-            pitch: 0,
-            title: 'Hogwarts Express',
-            content: 'The iconic red train featured in nearly every Harry Potter film.',
-            type: 'icon',
-            quote: '"It was a scarlet steam engine, puffing smoke into the sky."',
-            details: 'Filmed using the Jacobite Steam Train on the West Highland Line.',
-            lat: 54.400607439017726,
-            lng: -0.7122201435207112,
-          }
-        ]
-      }
     ]
   },
   {
@@ -411,9 +407,9 @@ export const LOCATIONS = [
   {
     id: '6',
     title: 'Journey to the West (Monkey King)',
-    lat: 29.5193785, 
-    lng: 103.3357148,
-    altitude: 10,
+    lat: 29.520252,
+    lng: 103.339445,
+    altitude: 1000,
     description: 'Mount Mei, China - The legendary mountain where the Monkey King began his journey',
     author: 'Wu Cheng\'en',
     year: 1592,
@@ -421,13 +417,37 @@ export const LOCATIONS = [
     music: MonkeyKingMusic,
     storyPoints: [
       {
+        heading: 0,
+        pitch: -10,
+        text: 'The Celestial Realm',
+        description: 'The magnificent heavenly domain of the Jade Emperor, where immortal gods reside above the clouds.',
+        lat: 29.520252,
+        lng: 103.339445,
+        altitude: 2000,
+        range: 10000,
+        billboards: [
+          {
+            id: 'celestial-realm-1',
+            lat: 29.52035,
+            lng: 103.33935,
+            heading: 180,
+            pitch: -10,
+            title: 'Heaven\'s Sacred Domain',
+            content: 'The supreme celestial palace where the Jade Emperor rules over all creation.',
+            type: 'divine',
+            details: 'This heavenly realm floats above the mortal world. Here dwell the immortal deities and celestial bureaucrats who govern the cosmic order under the Jade Emperor\'s supreme authority. Sun Wukong\'s appointments as Protector of the Horses and Guardian of the Peach Garden brought him into the Celestial.'
+          }
+        ]
+      },
+      {
         heading: 240,
         pitch: -15,
         text: 'Yunnan Stone Forest',
         description: 'The mystical mountain home of Sun Wukong, the Monkey King, surrounded by magical peaches and immortal springs.',
-        image: 'https://via.placeholder.com/200x120/f59e0b/ffffff?text=Flower+Fruit+Mountain',
         lat: 24.8173631,
         lng: 103.3255174,
+        altitude: 10000,
+        range: 10000,
         billboards: [
           {
             id: 'flower-fruit-1',
@@ -441,96 +461,31 @@ export const LOCATIONS = [
             quote: '"From the stone came forth a stone monkey, who could walk and run the moment he was born."',
             details: 'The stone absorbed the essence of heaven and earth for countless years before giving birth to the Monkey King.'
           },
-          {
-            id: 'flower-fruit-2',
-            heading: 20,
-            pitch: -5,
-            title: 'The Immortal Peach Grove',
-            content: 'Magical peach trees that grant immortality to those who eat their fruit.',
-            type: 'treasure',
-            quote: '"These peaches ripen once every 3,000 years and grant eternal life."',
-            details: 'The most precious treasure of Flower Fruit Mountain, coveted by gods and demons alike.'
-          },
-          {
-            id: 'flower-fruit-3',
-            heading: 340,
-            pitch: 0,
-            title: 'The Water Curtain Cave',
-            content: 'The hidden paradise behind the waterfall where the Monkey King established his throne.',
-            type: 'palace',
-            quote: '"Behind the waterfall lies a cave of wonders, fit for a king."',
-            details: 'A magnificent cave palace hidden behind a waterfall, serving as the Monkey King\'s royal court.'
-          }
         ]
       },
       {
-        heading: 0,
-        pitch: -10,
-        text: 'The Celestial',
-        description: 'The celestial garden where the Monkey King caused havoc by eating the immortal peaches.',
-        image: 'https://via.placeholder.com/200x120/ec4899/ffffff?text=Peach+Garden',
-        lat: 29.520252,
-        lng: 103.339445,
-        altitude: 5000,
+        heading: 200,
+        pitch: 0,
+        text: 'Daoist Mountains',
+        description: 'Sacred Qingcheng Mountain, where the Monkey King learned his supernatural powers from Patriarch Subodhi.',
+        lat: 30.8999325,
+        lng: 103.5709736,
+        range: 5000,
+        altitude: 1000,
         billboards: [
           {
-            id: 'peach-garden-1',
-            lat: 29.52035,
-            lng: 103.33935,
-            heading: 180,
-            pitch: -10,
-            title: 'The Jade Emperor\'s Garden',
-            content: 'The most sacred garden in heaven, tended by immortal gardeners.',
-            type: 'divine',
-            quote: '"Even in heaven, no garden was more beautiful than this."',
-            details: 'The crown jewel of the celestial realm, where the gods\' most precious peaches grow.'
-          },
-          {
-            id: 'peach-garden-2',
-            heading: 200,
-            pitch: 0,
-            title: 'The Great Feast Preparation',
-            content: 'Where the immortal peaches were prepared for the Jade Emperor\'s grand banquet.',
-            type: 'event',
-            quote: '"The peaches were being prepared for the grandest feast in heaven."',
-            details: 'The Monkey King discovered he wasn\'t invited to the feast and decided to eat all the peaches himself.'
-          }
-        ]
-      },
-      {
-        heading: 90,
-        pitch: -5,
-        text: 'Five Elements Mountain',
-        description: 'The sacred mountain where Buddha imprisoned the Monkey King for 500 years under a rock.',
-        image: 'https://via.placeholder.com/200x120/6b7280/ffffff?text=Five+Elements+Mountain',
-        lat: 25.0682795,
-        lng: 103.3839497,
-        altitude: 200,
-        billboards: [
-          {
-            id: 'five-elements-1',
+            id: 'daoist-mountains',
             heading: 90,
             pitch: -5,
-            lat: 25.0682795,
-            lng: 103.3839497,
-            title: 'Buddha\'s Prison',
-            content: 'The massive rock seal that held the Monkey King captive for five centuries.',
-            type: 'prison',
-            quote: '"Not even your 72 transformations can free you from this mountain."',
-            details: 'Buddha\'s hand transformed into a mountain, trapping the rebellious Monkey King beneath.'
-          },
-          {
-            id: 'five-elements-2',
-            heading: 110,
-            pitch: 5,
-            title: 'The Liberation',
-            content: 'Where Tang Sanzang freed the Monkey King to begin their journey to the west.',
-            type: 'freedom',
-            quote: '"Master, you have freed me from my 500-year imprisonment!"',
-            details: 'The monk\'s compassion and mission freed the Monkey King, beginning their epic journey.'
+            lat: 30.8989,
+            lng: 103.5710,
+            title: 'Qingcheng Mountain',
+            content: 'One of China\'s most sacred Daoist mountains and filming location for the 1986 Journey to the West.',
+            type: 'scenery',
+            details: 'Known as the "Mountain of Numinous Heart and Elixir Mind, Cave of the Slanted Moon and Three Stars," this mystical peak is where Sun Wukong learned his 72 transformations and cloud-somersaulting abilities from the immortal sage Patriarch Subodhi. The mountain\'s ancient temples and misty peaks provided the perfect backdrop for the classic 1986 television adaptation.'
           }
         ]
-      },
+      }
     ],
   },
-];
+]
