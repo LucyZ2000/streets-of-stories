@@ -35,6 +35,9 @@ function Map3D({ locations = [] }) {
     heading: 0,
   };
 
+  // Default zoomed exploration range - increased for farther out view
+  const defaultExplorationRange = 800; // Increased from 150 to 800 for farther zoom
+
   // Handle navigation state from Location component
   useEffect(() => {
     if (location.state && locations.length > 0) {
@@ -122,7 +125,7 @@ const handleImmediatePosition = (targetLocation, storyPointIndex) => {
           altitude: targetLocation.altitude || 60 
         },
         tilt: targetStoryPoint?.pitch ? Math.abs(targetStoryPoint.pitch) + 65 : 75,
-        range: targetStoryPoint?.range || 500, // Increased from 150 to 500 for more zoomed out view
+        range: targetStoryPoint?.range || defaultExplorationRange, // Use default exploration range
         heading: targetStoryPoint?.heading || 0,
       },
       durationMillis: 0, // Instant positioning
@@ -174,7 +177,7 @@ const handleImmediatePosition = (targetLocation, storyPointIndex) => {
             altitude: targetLocation.altitude || 60 
           },
           tilt: targetStoryPoint?.pitch ? Math.abs(targetStoryPoint.pitch) + 65 : 75,
-          range: targetStoryPoint?.range || 500, // Increased from 150 to 500 for more zoomed out view
+          range: targetStoryPoint?.range || defaultExplorationRange, // Use default exploration range
           heading: targetStoryPoint?.heading || 0,
         },
         durationMillis: 2000,
@@ -222,7 +225,7 @@ const handleImmediatePosition = (targetLocation, storyPointIndex) => {
               altitude: location.altitude || 60 
             },
             tilt: targetStoryPoint?.pitch ? Math.abs(targetStoryPoint.pitch) + 65 : 75,
-            range: targetStoryPoint?.range || 500, // Increased from 150 to 500 for more zoomed out view
+            range: targetStoryPoint?.range || defaultExplorationRange, // Use default exploration range
             heading: targetStoryPoint?.heading || 0,
           },
           durationMillis: 2000,
@@ -305,7 +308,7 @@ const handleImmediatePosition = (targetLocation, storyPointIndex) => {
             altitude: location.altitude || 60 
           },
           tilt: firstStoryPoint?.pitch ? Math.abs(firstStoryPoint.pitch) + 65 : 75,
-          range: 500, // Increased from 150 to 500 for more zoomed out view
+          range: defaultExplorationRange, // Use default exploration range instead of hardcoded 150
           heading: firstStoryPoint?.heading || 0,
         },
         durationMillis: 2000,
@@ -335,7 +338,7 @@ const handleImmediatePosition = (targetLocation, storyPointIndex) => {
             altitude: location.altitude || 60 
           },
           tilt: storyPoint.pitch ? Math.abs(storyPoint.pitch) + 65 : 75,
-          range: storyPoint.range || 500, // Increased from 150 to 500 for more zoomed out view
+          range: storyPoint.range || defaultExplorationRange, // Use default exploration range
           heading: storyPoint.heading || 0,
         },
         durationMillis: duration,

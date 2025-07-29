@@ -143,6 +143,11 @@ function StoryList({ locations, onLocationSelect, selectedLocationId }) {
     searchInputRef.current?.focus();
   };
 
+  // Handle explore from beginning
+  const handleExploreFromBeginning = (location, e) => {
+    e.stopPropagation(); // Prevent triggering the main story item click
+    onLocationSelect(location, 0); // Pass 0 as the story point index to start from beginning
+  };
 
   return (
     <div className="story-list-container">
@@ -181,7 +186,6 @@ function StoryList({ locations, onLocationSelect, selectedLocationId }) {
                   className={`suggestion-item ${selectedSuggestionIndex === index ? 'selected' : ''}`}
                   onClick={() => handleSuggestionClick(suggestion)}
                 >
-
                   <div className="suggestion-content">
                     <div className="suggestion-text">{suggestion.text}</div>
                     <div className="suggestion-meta">
@@ -228,13 +232,24 @@ function StoryList({ locations, onLocationSelect, selectedLocationId }) {
                 </div>
               </div>
               
+              {/* Explore from Beginning Button */}
+              <div className="story-explore-section">
+                <button 
+                  className="explore-from-beginning-btn"
+                  onClick={(e) => handleExploreFromBeginning(location, e)}
+                >
+                  <span className="explore-icon">▶</span>
+                  Explore from Beginning
+                </button>
+              </div>
+              
               {location.storyPoints && location.storyPoints.length > 0 && (
                 <div className="story-points-list-section">
                   <button 
                     className="story-points-list-toggle"
                     onClick={() => toggleStoryPoints(location.id)}
                   >
-                    Story Points
+                    Jump to Specific Point
                     <span className="toggle-icon">
                       {expandedStoryId === location.id ? '▲' : '▼'}
                     </span>
@@ -249,7 +264,7 @@ function StoryList({ locations, onLocationSelect, selectedLocationId }) {
                           onClick={() => onLocationSelect(location, index)}
                         >
                           <h4 className="story-point-list-title">
-                             {point.text}
+                            {point.text}
                           </h4>
                         </div>
                       ))}

@@ -2,6 +2,7 @@ import SpiritedAwayImage from '../assets/img/SpiritedAway.png';
 import SherlockImage from '../assets/img/Sherlock.png';
 import GatsbyImage from '../assets/img/Gatsby.png';
 import HarryImage from '../assets/img/Harry.png';
+import MonkeyImage from '../assets/img/Monkey.png';
 
 import GatsbyMusic from '../assets/music/Jazz.mp3';
 import HarryMusic from '../assets/music/Wizard.mp3';
@@ -198,7 +199,7 @@ export const LOCATIONS = [
     lat: 51.5237,
     lng: -0.1585,
     altitude: 50,
-    description: '221B Baker Street - The famous detective\'s residence',
+    description: 'The iconic locations from Arthur Conan Doyle\'s detective stories.',
     author: 'Arthur Conan Doyle',
     year: 1887,
     genre: 'Mystery',
@@ -209,7 +210,7 @@ export const LOCATIONS = [
         heading: 90,
         pitch: 0,
         text: 'Baker Street',
-        description: 'The iconic address where the world\'s greatest detective solved his cases.',
+        description: 'The address where the world\'s greatest detective solved his cases.',
         lat: 51.5237,
         lng: -0.1585,
         billboards: [
@@ -220,7 +221,6 @@ export const LOCATIONS = [
             title: 'The Front Door',
             content: 'The famous black door of 221B Baker Street, entrance to the world\'s most famous detective\'s flat.',
             type: 'location',
-            quote: '"Come, Watson, come! The game is afoot!"',
             details: 'Mrs. Hudson, the landlady, lived downstairs and often brought up visitors.'
           },
           {
@@ -242,7 +242,7 @@ export const LOCATIONS = [
             type: 'atmosphere',
             quote: '"The gas-lamps shone dimly through the fog, and the ground was greasy with moisture."',
             details: 'Baker Street was lit by gas lamps, creating the perfect atmosphere for mysterious encounters.'
-          }
+          },
         ]
       },
       {
@@ -250,9 +250,51 @@ export const LOCATIONS = [
         pitch: 0,
         text: 'Reichenbach Falls',
         description: 'The dramatic waterfall where Holmes confronted his arch-nemesis Moriarty.',
-        lat: 46.7145,
-        lng: 8.1828,
+        lat: 46.7143745,
+        lng: 8.1828709,
+        billboards: [
+          {
+            id: 'reichenbach-1',
+            heading: 90,
+            pitch: 0,
+            title: 'The Falls',
+            content: 'The majestic Reichenbach Falls in Switzerland, where Holmes and Moriarty had their final confrontation.',
+            type: 'climax',
+            details: 'Holmes and Moriarty struggled at the edge of the falls, leading to their fateful plunge.',
+            lat: 46.7143745,
+            lng: 8.1828709,
+          },
+        ]
       },
+      {
+        heading: 180,
+        pitch: -5,
+        text: 'Scotland Yard',
+        description: 'The headquarters of the Metropolitan Police, where Holmes often collaborated with Inspector Lestrade.',
+        lat: 51.5028523,
+        lng: -0.124243,
+        billboards: [
+          {
+            id: 'scotland-yard-1',
+            heading: 180,
+            pitch: -5,
+            title: 'The Yard',
+            content: 'Scotland Yard, the nerve center of London\'s police force, where Holmes often consulted.',
+            type: 'location',
+            details: 'Holmes had a close relationship with Inspector Lestrade, often solving cases together.'
+          },
+          {
+            id: 'scotland-yard-2',
+            heading: 200,
+            pitch: 0,
+            title: 'The Detective\'s Office',
+            content: 'The office where Inspector Lestrade worked and consulted with Holmes.',
+            type: 'scene',
+            quote: '"Holmes, you are a genius!"',
+            details: 'A place of collaboration between the great detective and Scotland Yard.'
+          }
+        ]
+      }
     ],
   },
   {
@@ -419,6 +461,7 @@ export const LOCATIONS = [
     author: 'Wu Cheng\'en',
     year: 1592,
     genre: 'Classical Chinese Literature',
+    image: MonkeyImage,
     music: MonkeyKingMusic,
     storyPoints: [
       {

@@ -60,7 +60,7 @@
 
 .progress-bar {
   height: 100%;
-  background: linear-gradient(90deg, #3b82f6, #06b6d4);
+  background: #3b82f6;
   animation: progress 2s ease-in-out infinite;
 }
 
@@ -81,7 +81,7 @@
 }
 
 .control-button {
-  background: rgba(16, 43, 91, 0.901);
+  background: #3b82f6;
   color: white;
   border: none;
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1), /* Inner white outline */
@@ -99,7 +99,7 @@
 }
 
 .control-button:hover:not(:disabled) {
-  background: rgba(16, 44, 76, 0.9);
+  background: #2c61b5;
   transform: translateY(-2px);
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
@@ -737,4 +737,233 @@
 }
 
 
+/* Billboard Styles for Map3D.jsx */
 
+/* Billboard popover content styling */
+.billboard-popover-content {
+  padding: 16px;
+  max-width: 300px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.billboard-popover-content .popover-header {
+  margin-bottom: 12px;
+}
+
+.billboard-popover-content .popover-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 4px 0;
+  color: #1f2937;
+}
+
+.billboard-popover-content .popover-type {
+  display: inline-block;
+  background: #10b981;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.billboard-popover-content .popover-description {
+  margin: 8px 0;
+  color: #374151;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.billboard-popover-content .popover-quote {
+  background: #f3f4f6;
+  border-left: 3px solid #10b981;
+  padding: 8px 12px;
+  margin: 12px 0;
+  font-style: italic;
+  color: #4b5563;
+  font-size: 13px;
+}
+
+.billboard-popover-content .popover-details {
+  background: #f9fafb;
+  padding: 8px 12px;
+  border-radius: 6px;
+  margin-top: 12px;
+  font-size: 13px;
+  color: #4b5563;
+}
+
+/* Billboard information in location info overlay */
+.billboards-info {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.billboards-info h4 {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.billboards-hint {
+  font-size: 12px;
+  color: #6b7280;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.billboards-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.billboard-info-item {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 10px;
+  transition: all 0.2s ease;
+}
+
+.billboard-info-item.active {
+  background: #ecfdf5;
+  border-color: #10b981;
+  box-shadow: 0 2px 4px rgba(16, 185, 129, 0.1);
+}
+
+.billboard-info-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 6px;
+}
+
+.billboard-info-title {
+  font-weight: 500;
+  font-size: 13px;
+  color: #1f2937;
+}
+
+.billboard-info-type {
+  background: #10b981;
+  color: white;
+  padding: 1px 6px;
+  border-radius: 8px;
+  font-size: 10px;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.billboard-info-content {
+  font-size: 12px;
+  color: #4b5563;
+  margin: 0 0 6px 0;
+  line-height: 1.3;
+}
+
+.billboard-info-quote {
+  font-size: 11px;
+  color: #6b7280;
+  font-style: italic;
+  margin: 6px 0 0 0;
+  padding-left: 8px;
+  border-left: 2px solid #d1d5db;
+}
+
+/* Green pin indicator in instructions */
+.green-pin-indicator {
+  color: #10b981;
+  font-weight: 600;
+  background: #ecfdf5;
+  padding: 1px 4px;
+  border-radius: 3px;
+}
+
+/* Billboard instructions section */
+.billboard-instructions {
+  margin-top: 16px;
+  padding: 12px;
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
+  border-radius: 6px;
+}
+
+.instruction-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+  font-weight: 500;
+  color: #0c4a6e;
+  font-size: 13px;
+}
+
+.instruction-header .material-icons {
+  font-size: 16px;
+  color: #0284c7;
+}
+
+.billboard-instructions p {
+  margin: 0;
+  font-size: 12px;
+  color: #075985;
+  line-height: 1.4;
+}
+
+/* Enhanced story point cards with billboard count */
+.story-point-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.story-point-billboards {
+  background: #10b981;
+  color: white;
+  padding: 1px 6px;
+  border-radius: 8px;
+  font-size: 10px;
+  font-weight: 500;
+}
+
+/* Billboard badge in story point context */
+.billboard-badge {
+  background: #10b981;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 500;
+  margin-left: 8px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .billboard-popover-content {
+    max-width: 250px;
+    padding: 12px;
+  }
+  
+  .billboards-info {
+    padding-top: 12px;
+    margin-top: 12px;
+  }
+  
+  .billboard-info-item {
+    padding: 8px;
+  }
+  
+  .billboard-instructions {
+    padding: 10px;
+    margin-top: 12px;
+  }
+}
