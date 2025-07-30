@@ -1,4 +1,3 @@
-// Simplified Map3D.jsx
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useGoogleMaps } from '../hooks/useGoogleMaps';
@@ -456,6 +455,12 @@ function Map3D({ locations = [], showOnboarding = false }) {
         const popover = new PopoverElement();
         const popoverContent = document.createElement('div');
         popoverContent.className = 'story-popover-content';
+        
+        // Determine button text and action based on view mode
+        const isZoomedIn = viewMode === 'zoomed' && currentLocation?.id === location.id;
+        const buttonText = isZoomedIn ? 'Street View' : 'Explore';
+        const buttonAction = isZoomedIn ? 'street-view' : 'explore';
+        
         popoverContent.innerHTML = `
           <div class="popover-header">
             <img src="${location.image}" alt="${location.title}" class="popover-image">
@@ -467,13 +472,23 @@ function Map3D({ locations = [], showOnboarding = false }) {
             <button class="popover-close-btn" data-location-id="${location.id}" title="Close">×</button>
           </div>
           <p class="popover-description">${location.description}</p>
-          <button class="popover-explore-btn" data-location-id="${location.id}">Explore</button>
+          <button class="popover-explore-btn" data-location-id="${location.id}" data-action="${buttonAction}">
+            ${buttonText}
+          </button>
         `;
 
         // Add event listeners
-        popoverContent.querySelector('.popover-explore-btn').addEventListener('click', (e) => {
+        const exploreBtn = popoverContent.querySelector('.popover-explore-btn');
+        exploreBtn.addEventListener('click', (e) => {
           e.stopPropagation();
-          handleExplore(location);
+          const action = e.target.dataset.action;
+          if (action === 'street-view') {
+            // Navigate to street view
+            navigate(`/location/${location.id}?point=${currentStoryPointIndex}`);
+          } else {
+            // Regular explore action
+            handleExplore(location);
+          }
         });
 
         popoverContent.querySelector('.popover-close-btn').addEventListener('click', (e) => {
@@ -510,6 +525,43 @@ function Map3D({ locations = [], showOnboarding = false }) {
       console.error('Error initializing 3D map:', error);
     }
   };
+
+  // Update popover content when view mode changes
+  useEffect(() => {
+    if (!map3DRef.current) return;
+    
+    // Update all popovers to reflect current view mode
+    markersRef.current.forEach((marker, locationId) => {
+      const location = locations.find(loc => loc.id === locationId);
+      if (!location) return;
+      
+      const popover = marker.gmpPopoverTargetElement;
+      if (popover) {
+        const exploreBtn = popover.querySelector('.popover-explore-btn');
+        if (exploreBtn) {
+          const isZoomedIn = viewMode === 'zoomed' && currentLocation?.id === location.id;
+          const buttonText = isZoomedIn ? 'Street View' : 'Explore';
+          const buttonAction = isZoomedIn ? 'street-view' : 'explore';
+          
+          exploreBtn.textContent = buttonText;
+          exploreBtn.dataset.action = buttonAction;
+          
+          // Update the click handler
+          const newBtn = exploreBtn.cloneNode(true);
+          newBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const action = e.target.dataset.action;
+            if (action === 'street-view') {
+              navigate(`/location/${location.id}?point=${currentStoryPointIndex}`);
+            } else {
+              handleExplore(location);
+            }
+          });
+          exploreBtn.parentNode.replaceChild(newBtn, exploreBtn);
+        }
+      }
+    });
+  }, [viewMode, currentLocation]);
 
   useEffect(() => {
     if (isLoaded && locations.length > 0) {

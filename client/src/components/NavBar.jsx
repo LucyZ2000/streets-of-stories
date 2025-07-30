@@ -13,7 +13,10 @@ function NavBar({ showOnboarding = false }) {
 
   return (
     <nav className={`navbar ${isStreetViewPage ? 'navbar-solid' : 'navbar-transparent'}`}>
-      <Link to="/" className="navbar-logo">Streets of Stories</Link>
+      <Link to="/" className="navbar-logo">
+        Streets of Stories
+      </Link>
+
     </nav>
   );
 }
