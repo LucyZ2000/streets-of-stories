@@ -79,7 +79,47 @@ export const LOCATIONS = [
     image: HarryImage,
     music: HarryMusic,
     storyPoints: [
-      
+      {
+        text: 'Hogwarts Great Hall',
+        description: 'Inspired the Hogwarts Great Hall.',
+        lat: 51.749844,
+        lng: -1.2558267,
+        heading: 80,
+        pitch: 10,
+        billboards: [
+          {
+            id: 'christchurch-1',
+            heading: 60,
+            pitch: -8,
+            title: 'Hogwarts Great Hall',
+            content: 'Christ Church\'s dining hall inspired the design of the Great Hall at Hogwarts.',
+            type: 'location',
+            details: 'Christ Church\'s Tudor dining hall features a stunning hammerbeam roof designed by master-carpenter Humphrey Coke, with eight bays supported by stone corbels carved with Henry VIII and Cardinal Wolsey\'s arms. The walls display a collection of portraits including famous alumni, with Henry VIII\'s portrait hanging above the High Table where dons dine. While actual Great Hall scenes were filmed on a replica set at Leavesden Studios, this 16th-century hall provided the visual inspiration for Hogwarts\' magical dining experiences.',
+            lat: 51.750215081072824,
+            lng: -1.2547261028732304,
+          },
+        ]
+      }, {
+        text: 'Hogwards Grand Staircase',
+        description: 'This staircase in Christ Church, Oxford, inspired the Hogwarts grand staircase.',
+        lat: 51.7499414,
+        lng: -1.2549495,
+        heading: 210,
+        pitch: 15,
+        billboards: [
+          {
+            id: 'christchurch-2',
+            heading: 75,
+            pitch: 0,
+            title: 'Stairs to the Great Hall',
+            content: 'The grand staircase appears in scenes where students enter Hogwarts.',
+            type: 'architecture',
+            details: 'The Bodley Tower staircase at Christ Church College features stunning fan-vaulted ceilings installed in 1638. This architecture was used to film the iconic scene where Harry, Ron, and Hermione first enter Hogwarts and meet Professor McGonagall.',
+            lat: 51.7498,
+            lng: -1.25506,
+          }]
+      },
+
       {
         heading: 0,
         pitch: -5,
@@ -145,46 +185,7 @@ export const LOCATIONS = [
           }
         ]
       },
-      {
-        text: 'Hogwarts Great Hall',
-        description: 'Inspired the Hogwarts Great Hall.',
-        lat: 51.749844,
-        lng: -1.2558267,
-        heading: 80,
-        pitch: 10,
-        billboards: [
-          {
-            id: 'christchurch-1',
-            heading: 60,
-            pitch: -8,
-            title: 'Hogwarts Great Hall',
-            content: 'Christ Church\'s dining hall inspired the design of the Great Hall at Hogwarts.',
-            type: 'location',
-            details: 'Christ Church\'s Tudor dining hall features a stunning hammerbeam roof designed by master-carpenter Humphrey Coke, with eight bays supported by stone corbels carved with Henry VIII and Cardinal Wolsey\'s arms. The walls display a collection of portraits including famous alumni, with Henry VIII\'s portrait hanging above the High Table where dons dine. While actual Great Hall scenes were filmed on a replica set at Leavesden Studios, this 16th-century hall provided the visual inspiration for Hogwarts\' magical dining experiences.',
-            lat: 51.750215081072824,
-            lng: -1.2547261028732304,
-          },
-        ]
-      }, {
-        text: 'Hogwards Grand Staircase',
-        description: 'This staircase in Christ Church, Oxford, inspired the Hogwarts grand staircase.',
-        lat: 51.7499414,
-        lng: -1.2549495,
-        heading: 210,
-        pitch: 15,
-        billboards: [
-          {
-            id: 'christchurch-2',
-            heading: 75,
-            pitch: 0,
-            title: 'Stairs to the Great Hall',
-            content: 'The grand staircase appears in scenes where students enter Hogwarts.',
-            type: 'architecture',
-            details: 'The Bodley Tower staircase at Christ Church College features stunning fan-vaulted ceilings installed in 1638. This architecture was used to film the iconic scene where Harry, Ron, and Hermione first enter Hogwarts and meet Professor McGonagall.',
-            lat: 51.7498,
-            lng: -1.25506,
-          }]
-      },
+
     ]
   },
   {
