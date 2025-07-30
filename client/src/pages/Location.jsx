@@ -248,6 +248,9 @@ function Location() {
 
             {state.location.storyPoints?.length > 1 && (
               <div className="story-points-quick-nav-enhanced">
+                <div className="nav-header">
+                  <h4>Story Points</h4>
+                </div>
                 <div className="story-points-grid">
                   {state.location.storyPoints.map((point, index) => (
                     <button

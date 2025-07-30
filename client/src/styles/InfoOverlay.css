@@ -141,10 +141,6 @@
   margin: 0 0 12px 0;
 }
 
-.story-point-context {
-  display: flex;
-  gap: 8px;
-}
 
 .story-point-badge {
   background: rgba(34, 197, 94, 0.15);

@@ -4,10 +4,11 @@ import '../styles/StreetViewPins.css';
 const StreetViewPins = ({ 
   panorama, 
   isInitialized, 
-  currentBillboards
+  currentBillboards,
+  onNavigateToLocation // Add this new prop
 }) => {
   const [billboardMarkers, setBillboardMarkers] = useState([]);
-  const activeDialogsRef = useRef(new Map()); // Use ref for immediate access
+  const activeDialogsRef = useRef(new Map());
 
   useEffect(() => {
     if (!panorama || !isInitialized || !currentBillboards.length) {
@@ -23,7 +24,7 @@ const StreetViewPins = ({
 
     // Function to calculate distance between two lat/lng points (in meters)
     const calculateDistance = (lat1, lng1, lat2, lng2) => {
-      const R = 6371e3; // Earth's radius in meters
+      const R = 6371e3;
       const φ1 = lat1 * Math.PI / 180;
       const φ2 = lat2 * Math.PI / 180;
       const Δφ = (lat2 - lat1) * Math.PI / 180;
@@ -127,14 +128,16 @@ const StreetViewPins = ({
       }
     }
 
-    // Location-anchored dialog class that stays in physical location
+    // Location-anchored dialog class
     class LocationDialog extends window.google.maps.OverlayView {
-      constructor(position, content, billboardId, onClose) {
+      constructor(position, content, billboardId, billboard, onClose, onNavigate) {
         super();
         this.position = position;
         this.content = content;
         this.billboardId = billboardId;
+        this.billboard = billboard;
         this.onClose = onClose;
+        this.onNavigate = onNavigate;
         this.div = null;
       }
 
@@ -142,6 +145,25 @@ const StreetViewPins = ({
         const div = document.createElement('div');
         div.className = 'location-dialog';
         div.innerHTML = this.content;
+
+        // Add navigation button ONLY if billboard has 'viewpoint' tag and coordinates
+        const hasViewpointTag = this.billboard.tags && this.billboard.tags.includes('viewpoint');
+        const hasCoordinates = this.billboard.lat && this.billboard.lng;
+        
+        if (hasViewpointTag && hasCoordinates && this.onNavigate) {
+          const navBtn = document.createElement('button');
+          navBtn.innerHTML = 'Visit Viewpoint';
+          navBtn.className = 'dialog-nav-btn viewpoint-btn';
+          navBtn.title = 'Navigate to this special viewpoint';
+          
+          navBtn.onclick = (e) => {
+            e.stopPropagation();
+            this.onNavigate(this.billboard);
+            this.close();
+          };
+
+          div.appendChild(navBtn);
+        }
 
         // Add close functionality
         const closeBtn = document.createElement('button');
@@ -267,23 +289,15 @@ const StreetViewPins = ({
         event.stopPropagation();
         console.log('Story point pin clicked:', billboard);
         
-        // Create unique ID for this billboard
         const billboardId = billboard.id || `billboard-${billboard.title}-${index}`;
-        console.log('Billboard ID:', billboardId);
-        console.log('Active dialogs:', Array.from(activeDialogsRef.current.keys()));
         
-        // Check if dialog is already open for this billboard
         if (activeDialogsRef.current.has(billboardId)) {
-          console.log('Closing existing dialog for:', billboardId);
-          // Close existing dialog
           const existingDialog = activeDialogsRef.current.get(billboardId);
           existingDialog.close();
           return;
         }
 
-        console.log('Opening new dialog for:', billboardId);
-
-        // Create dialog content based on your data structure
+        // Create dialog content
         const dialogContent = `
           <div class="dialog-content">
             <div class="dialog-header">
@@ -305,23 +319,20 @@ const StreetViewPins = ({
           </div>
         `;
 
-        // Create location-anchored dialog
+        // Create location-anchored dialog with navigation capability
         const dialog = new LocationDialog(
           new window.google.maps.LatLng(billboard.lat, billboard.lng),
           dialogContent,
           billboardId,
+          billboard,
           (closedBillboardId) => {
-            // Remove from active dialogs when closed
             activeDialogsRef.current.delete(closedBillboardId);
-            console.log('Dialog removed from active dialogs:', closedBillboardId);
-          }
+          },
+          onNavigateToLocation // Pass the navigation callback
         );
 
         dialog.setMap(panorama);
-        
-        // Add to active dialogs immediately
         activeDialogsRef.current.set(billboardId, dialog);
-        console.log('Dialog added to active dialogs:', billboardId);
       };
 
       // Create custom overlay marker
@@ -350,7 +361,6 @@ const StreetViewPins = ({
       window.google.maps.event.removeListener(positionChangedListener);
       window.google.maps.event.removeListener(povChangedListener);
       
-      // Close all active dialogs
       activeDialogsRef.current.forEach(dialog => {
         dialog.setMap(null);
       });
@@ -362,9 +372,9 @@ const StreetViewPins = ({
         }
       });
     };
-  }, [panorama, isInitialized, currentBillboards]);
+  }, [panorama, isInitialized, currentBillboards, onNavigateToLocation]);
 
-  return null; // This component doesn't render anything visible
+  return null;
 };
 
 export default StreetViewPins;

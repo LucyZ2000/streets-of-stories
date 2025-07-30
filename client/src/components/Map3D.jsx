@@ -45,7 +45,7 @@ function Map3D({ locations = [], showOnboarding = false }) {
     heading: 0,
   };
   
-  const defaultExplorationRange = 800;
+  const defaultExplorationRange = 500;
 
   // Watch for onboarding state changes to trigger zoom animation
   useEffect(() => {
@@ -697,11 +697,6 @@ function Map3D({ locations = [], showOnboarding = false }) {
                 <p className="story-point-description">
                   {currentStory.storyPoints[currentStoryPointIndex].description}
                 </p>
-                <div className="story-point-context">
-                  <span className="story-point-badge">
-                    Point {currentStoryPointIndex + 1} of {currentStory.storyPoints.length}
-                  </span>
-                </div>
               </div>
             )}
 
