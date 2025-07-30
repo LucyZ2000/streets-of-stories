@@ -1,70 +1,86 @@
-// Enhanced Map3D.jsx with location-info-overlay instead of view-mode-indicator
-import { createBillboard } from '../utils/mapUtils';
+// Simplified Map3D.jsx
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useGoogleMaps } from '../hooks/useGoogleMaps';
+import { useSessionState } from '../hooks/SessionStateContext';
 
 import StoryList from './StoryList';
 import '../styles/App.css';
 import '../styles/StoryList.css';
-import '../styles/Toggle.css';
+import '../styles/InfoOverlay.css';
 
 
-function Map3D({ locations = [] }) {
+function Map3D({ locations = [], showOnboarding = false }) {
   const { isLoaded, error } = useGoogleMaps();
+  const { sessionState, updateSessionState } = useSessionState();
   const containerRef = useRef(null);
   const map3DRef = useRef(null);
   const navigate = useNavigate();
-  const location = useLocation(); // Get navigation state
+  const location = useLocation();
+  const markersRef = useRef(new Map());
+
+  // State
   const [selectedLocationId, setSelectedLocationId] = useState(null);
   const [isAnimating, setIsAnimating] = useState(false);
   const [showStoryList, setShowStoryList] = useState(false);
-  const [viewMode, setViewMode] = useState('globe'); // 'globe', 'zoomed', 'street'
+  const [viewMode, setViewMode] = useState('globe');
   const [currentLocation, setCurrentLocation] = useState(null);
   const [currentStory, setCurrentStory] = useState(null);
   const [currentStoryPointIndex, setCurrentStoryPointIndex] = useState(0);
   const [pendingNavigation, setPendingNavigation] = useState(null);
-  const [showInfo, setShowInfo] = useState(true); // Add showInfo state for info panel toggle
-  const markersRef = useRef(new Map());
+  const showInfo = sessionState.isInfoExpanded;
+  const setShowInfo = (value) => updateSessionState({ isInfoExpanded: value });
 
-  // Default globe view settings
+  // Constants
   const defaultGlobeView = {
     center: { lat: 46.717, lng: 7.075, altitude: 2175.130 },
     range: 5814650,
     tilt: 33,
     heading: 0,
   };
+  
+  const onboardingGlobeView = {
+    center: { lat: 20.0, lng: 0.0, altitude: 0 },
+    range: 25000000, // Much more zoomed out
+    tilt: 0,
+    heading: 0,
+  };
+  
+  const defaultExplorationRange = 800;
 
-  // Default zoomed exploration range - increased for farther out view
-  const defaultExplorationRange = 800; // Increased from 150 to 800 for farther zoom
-
-  // Handle navigation state from Location component
+  // Watch for onboarding state changes to trigger zoom animation
   useEffect(() => {
-    if (location.state && locations.length > 0) {
-      const { selectedLocationId, viewMode, shouldExplore, storyPointIndex } = location.state;
+    if (!showOnboarding && map3DRef.current) {
+      // When onboarding ends, animate to the normal globe view
+      setIsAnimating(true);
+      map3DRef.current.flyCameraTo({
+        endCamera: defaultGlobeView,
+        durationMillis: 3000, // 3 second smooth zoom in
+      });
+      
+      setTimeout(() => {
+        setIsAnimating(false);
+      }, 3000);
+    }
+  }, [showOnboarding]);
 
-      if (selectedLocationId && shouldExplore) {
-        const targetLocation = locations.find(loc => loc.id === selectedLocationId);
-        if (targetLocation) {
-          if (map3DRef.current) {
-            // Map is ready, execute immediately
-            executeNavigationState(targetLocation, storyPointIndex || 0);
-          } else {
-            // Map not ready, store for later
-            setPendingNavigation({
-              targetLocation,
-              storyPointIndex: storyPointIndex || 0
-            });
-          }
+  // Navigation state handler
+  useEffect(() => {
+    if (location.state?.selectedLocationId && location.state?.shouldExplore && locations.length > 0) {
+      const targetLocation = locations.find(loc => loc.id === location.state.selectedLocationId);
+      if (targetLocation) {
+        const storyPointIndex = location.state.storyPointIndex || 0;
+        if (map3DRef.current) {
+          executeNavigationState(targetLocation, storyPointIndex);
+        } else {
+          setPendingNavigation({ targetLocation, storyPointIndex });
         }
       }
-
-      // Clear the navigation state to prevent re-triggering
       navigate(location.pathname, { replace: true });
     }
   }, [location.state, locations]);
 
-  // Execute pending navigation when map becomes available
+  // Execute pending navigation
   useEffect(() => {
     if (pendingNavigation && map3DRef.current) {
       executeNavigationState(pendingNavigation.targetLocation, pendingNavigation.storyPointIndex);
@@ -72,272 +88,23 @@ function Map3D({ locations = [] }) {
     }
   }, [pendingNavigation, map3DRef.current]);
 
-  const handleHomeReset = () => {
-    if (!map3DRef.current || isAnimating) return;
-
-    setIsAnimating(true);
-    setSelectedLocationId(null);
-    setCurrentLocation(null);
-    setCurrentStory(null);
-    setCurrentStoryPointIndex(0);
-    setViewMode('globe');
-
-    // Clear story point markers when returning to globe view
-    clearStoryPointMarkers();
-
-    try {
-      // Reset to default globe view
-      map3DRef.current.flyCameraTo({
-        endCamera: defaultGlobeView,
-        durationMillis: 2000,
-      });
-
-      setTimeout(() => {
-        setIsAnimating(false);
-      }, 2000);
-
-    } catch (error) {
-      console.error('Error during home reset:', error);
-      setIsAnimating(false);
-    }
+  // Helper functions
+  const calculateDistance = (point1, point2) => {
+    if (!point1 || !point2) return 15;
+    const R = 6371;
+    const dLat = (point2.lat - point1.lat) * Math.PI / 180;
+    const dLon = (point2.lng - point1.lng) * Math.PI / 180;
+    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(point1.lat * Math.PI / 180) * Math.cos(point2.lat * Math.PI / 180) *
+      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
   };
 
-  // Add this new function to Map3D.jsx
-  const handleImmediatePosition = (targetLocation, storyPointIndex) => {
-    // Set the state immediately
-    setSelectedLocationId(targetLocation.id);
-    setCurrentLocation(targetLocation);
-    setCurrentStory(targetLocation);
-    setCurrentStoryPointIndex(storyPointIndex);
-    setViewMode('zoomed');
-
-    // Position camera immediately without animation using flyCameraTo with 0 duration
-    const targetStoryPoint = targetLocation.storyPoints?.[storyPointIndex] || targetLocation.storyPoints?.[0];
-    const targetPoint = targetStoryPoint || targetLocation;
-
-    // Use flyCameraTo with 0 duration for instant positioning
-    try {
-      map3DRef.current.flyCameraTo({
-        endCamera: {
-          center: {
-            lat: targetPoint.lat,
-            lng: targetPoint.lng,
-            altitude: targetLocation.altitude || 500
-          },
-          tilt: targetStoryPoint?.pitch ? Math.abs(targetStoryPoint.pitch) + 65 : 75,
-          range: targetStoryPoint?.range || 500, // Increased from 150 to 500 for more zoomed out view
-          heading: targetStoryPoint?.heading || 0,
-        },
-        durationMillis: 0, // Instant positioning
-      });
-
-      // Add story point markers immediately
-      setTimeout(() => {
-        addStoryPointMarkers(targetLocation);
-      }, 100); // Small delay to ensure camera is positioned
-
-    } catch (error) {
-      console.error('Error setting immediate position:', error);
-      // Fallback to animated transition if immediate fails
-      executeNavigationState(targetLocation, storyPointIndex);
-    }
-  };
-
-  // Function to execute the navigation state
-  const executeNavigationState = (targetLocation, storyPointIndex) => {
-    // Set the state first
-    setSelectedLocationId(targetLocation.id);
-    setCurrentLocation(targetLocation);
-    setCurrentStory(targetLocation);
-    setCurrentStoryPointIndex(storyPointIndex);
-    setViewMode('zoomed');
-
-    // Then perform the exploration with a small delay to ensure state is set
-    setTimeout(() => {
-      handleExploreFromState(targetLocation, storyPointIndex);
-    }, 200);
-  };
-
-  // Special explore function for handling state navigation
-  const handleExploreFromState = async (targetLocation, storyPointIndex = 0) => {
-    if (!map3DRef.current || isAnimating) return;
-
-    setIsAnimating(true);
-
-    try {
-      // Determine which story point to fly to
-      const targetStoryPoint = targetLocation.storyPoints?.[storyPointIndex] || targetLocation.storyPoints?.[0];
-      const targetPoint = targetStoryPoint || targetLocation;
-      console.log('flying to location: ')
-      console.log(targetPoint.lat)
-      console.log(targetPoint.lng)
-      map3DRef.current.flyCameraTo({
-        endCamera: {
-          center: {
-            lat: targetPoint.lat,
-            lng: targetPoint.lng,
-            altitude: targetLocation.altitude || 200
-          },
-          tilt: targetStoryPoint?.pitch ? Math.abs(targetStoryPoint.pitch) + 65 : 75,
-          range: targetStoryPoint?.range || defaultExplorationRange, // Use default exploration range
-          heading: targetStoryPoint?.heading || 0,
-        },
-        durationMillis: 2000,
-      });
-
-      setTimeout(() => {
-        addStoryPointMarkers(targetLocation);
-        setIsAnimating(false);
-      }, 2000);
-
-    } catch (error) {
-      console.error('Error during explore from state animation:', error);
-      setIsAnimating(false);
-    }
-  };
-
-  // Updated handleLocationSelect to accept optional storyPointIndex
-  const handleLocationSelect = async (location, storyPointIndex = null) => {
-    if (!map3DRef.current || isAnimating) return;
-
-    setIsAnimating(true);
-    setSelectedLocationId(location.id);
-    setShowStoryList(false);
-
-    // If a specific story point is selected, go directly to exploration mode
-    if (storyPointIndex !== null) {
-      setCurrentLocation(location);
-      setCurrentStory(location);
-      setCurrentStoryPointIndex(storyPointIndex);
-      setViewMode('zoomed');
-
-      // Clear any existing story point markers
-      clearStoryPointMarkers();
-
-      try {
-        // Fly directly to the specific story point
-        const targetStoryPoint = location.storyPoints?.[storyPointIndex] || location.storyPoints?.[0];
-        const targetPoint = targetStoryPoint || location;
-
-        map3DRef.current.flyCameraTo({
-          endCamera: {
-            center: {
-              lat: targetPoint.lat,
-              lng: targetPoint.lng,
-              altitude: location.altitude || 200
-            },
-            tilt: targetStoryPoint?.pitch ? Math.abs(targetStoryPoint.pitch) + 65 : 75,
-            range: targetStoryPoint?.range || defaultExplorationRange, // Use default exploration range
-            heading: targetStoryPoint?.heading || 0,
-          },
-          durationMillis: 2000,
-        });
-
-        setTimeout(() => {
-          addStoryPointMarkers(location);
-          setIsAnimating(false);
-        }, 2000);
-
-      } catch (error) {
-        console.error('Error during story point navigation:', error);
-        setIsAnimating(false);
-      }
-
-      return; // Exit early since we handled the story point navigation
-    }
-
-    // Original logic for location selection (without specific story point)
-    // Reset exploration state when selecting a new location from the list
-    setCurrentLocation(null);
-    setCurrentStory(null);
-    setCurrentStoryPointIndex(0);
-    setViewMode('globe');
-
-    // Clear any existing story point markers
-    clearStoryPointMarkers();
-
-    try {
-      // Fly to the location but keep it in global view - higher altitude and range
-      map3DRef.current.flyCameraTo({
-        endCamera: {
-          center: { lat: location.lat, lng: location.lng, altitude: location.altitude || 60 },
-          tilt: 30,
-          range: 2500000, // Much more zoomed out - global view
-          heading: 0,
-        },
-        durationMillis: 2000,
-      });
-
-      setTimeout(() => {
-        setIsAnimating(false);
-
-        // Trigger the popup by programmatically clicking the marker
-        const marker = markersRef.current.get(location.id);
-        if (marker) {
-          const clickEvent = new CustomEvent('gmp-click', {
-            bubbles: true,
-            cancelable: true
-          });
-          marker.dispatchEvent(clickEvent);
-        }
-      }, 2000);
-
-    } catch (error) {
-      console.error('Error during flyto animation:', error);
-      setIsAnimating(false);
-    }
-  };
-
-  const handleExplore = (location) => {
-    if (!map3DRef.current || isAnimating) return;
-
-    console.log('=== EXPLORING LOCATION ===');
-    console.log('Location:', location.title);
-    console.log('Location data:', location);
-
-
-    setIsAnimating(true);
-    setCurrentLocation(location);
-    setCurrentStory(location);
-    setCurrentStoryPointIndex(0);
-    setViewMode('zoomed');
-
-    try {
-      // Fly to the first story point
-      const firstStoryPoint = location.storyPoints?.[0];
-      const targetLocation = firstStoryPoint || location;
-
-      map3DRef.current.flyCameraTo({
-        endCamera: {
-          center: {
-            lat: targetLocation.lat,
-            lng: targetLocation.lng,
-            altitude: location.altitude || 500
-          },
-          tilt: firstStoryPoint?.pitch ? Math.abs(firstStoryPoint.pitch) + 65 : 75,
-          range: firstStoryPoint?.range || 500, // Increased from 150 to 500 for more zoomed out view
-          heading: firstStoryPoint?.heading || 0,
-        },
-        durationMillis: 2000,
-      });
-
-      setTimeout(() => {
-        addStoryPointMarkers(location);
-        setIsAnimating(false);
-      }, 2000);
-
-    } catch (error) {
-      console.error('Error during explore animation:', error);
-      setIsAnimating(false);
-    }
-  };
-
-  // Enhanced function to fly to specific story point
   const flyToStoryPoint = (storyPoint, location, duration = 2000) => {
-    if (!map3DRef.current || !storyPoint) return;
+    if (!map3DRef.current || !storyPoint) return Promise.resolve();
 
     return new Promise((resolve) => {
-
       map3DRef.current.flyCameraTo({
         endCamera: {
           center: {
@@ -351,18 +118,22 @@ function Map3D({ locations = [] }) {
         },
         durationMillis: duration,
       });
-
-      setTimeout(() => {
-        resolve();
-      }, duration);
+      setTimeout(resolve, duration);
     });
   };
 
-  // Function to add story point markers using createBillboard
+  const clearStoryPointMarkers = () => {
+    markersRef.current.forEach((marker, key) => {
+      if (key.startsWith('storypoint-')) {
+        if (marker.remove) marker.remove();
+        else if (marker.setMap) marker.setMap(null);
+        markersRef.current.delete(key);
+      }
+    });
+  };
+
   const addStoryPointMarkers = (location) => {
     if (!map3DRef.current || !location.storyPoints) return;
-
-    // Clear existing story point markers
     clearStoryPointMarkers();
 
     location.storyPoints.forEach((storyPoint, index) => {
@@ -371,21 +142,19 @@ function Map3D({ locations = [] }) {
         position: { lat: storyPoint.lat, lng: storyPoint.lng },
         title: storyPoint.text,
         content: `
-        <div class="story-point-billboard">
-          <div class="billboard-number">${index + 1}</div>
-          <div class="billboard-content">
-            <h4>${storyPoint.text}</h4>
-            <p>${storyPoint.description}</p>
+          <div class="story-point-billboard">
+            <div class="billboard-number">${index + 1}</div>
+            <div class="billboard-content">
+              <h4>${storyPoint.text}</h4>
+              <p>${storyPoint.description}</p>
+            </div>
           </div>
-        </div>
-      `,
+        `,
         className: 'story-point-marker',
         onClick: async () => {
           if (isAnimating) return;
-
           setIsAnimating(true);
           setCurrentStoryPointIndex(index);
-
           try {
             await flyToStoryPoint(storyPoint, location, 1500);
           } catch (error) {
@@ -395,129 +164,259 @@ function Map3D({ locations = [] }) {
           }
         }
       });
-
-      // Store billboard reference for cleanup
       markersRef.current.set(`storypoint-${location.id}-${index}`, billboard);
     });
   };
+  const calculateScreenPosition = (panorama, point) => {
+  const povHeading = panorama.getPov().heading;
+  const povPitch = panorama.getPov().pitch;
+  const zoom = panorama.getZoom();
+  
+  // Calculate relative position based on heading difference
+  const headingDiff = point.heading - povHeading;
+  const normalizedHeading = ((headingDiff + 540) % 360) - 180;
+  
+  // Only show if within view
+  if (Math.abs(normalizedHeading) > 90) {
+    return null;
+  }
+  
+  // Calculate screen position
+  const container = panorama.getDiv();
+  const centerX = container.offsetWidth / 2;
+  const centerY = container.offsetHeight / 2;
+  
+  // Convert heading to screen X position
+  const fov = 90 / Math.pow(2, zoom - 1);
+  const x = centerX + (normalizedHeading / fov) * (container.offsetWidth / 2);
+  
+  // Convert pitch to screen Y position
+  const pitchDiff = point.pitch - povPitch;
+  const y = centerY - (pitchDiff / fov) * (container.offsetHeight / 2);
+  
+  return { x, y };
+};
 
-  // Function to clear story point markers
-  const clearStoryPointMarkers = () => {
-    markersRef.current.forEach((marker, key) => {
-      if (key.startsWith('storypoint-')) {
-        if (marker.remove) {
-          marker.remove();
-        } else if (marker.setMap) {
-          marker.setMap(null);
-        }
-        markersRef.current.delete(key);
+  const createBillboard = (billboard) => {
+    const billboardDiv = document.createElement('div');
+    billboardDiv.className = 'story-billboard';
+    
+    const arrow = document.createElement('div');
+    arrow.className = 'billboard-arrow';
+    
+    // Use the correct billboard properties
+    billboardDiv.innerHTML = `
+      ${billboard.image ? `<img src="${billboard.image}" alt="${billboard.title}" class="billboard-image">` : ''}
+      <div class="billboard-icon">${billboard.icon || '📋'}</div>
+      <h3 class="billboard-title">${billboard.title}</h3>
+      <p class="billboard-description">${billboard.content}</p>
+      ${billboard.quote ? `<blockquote class="billboard-quote">"${billboard.quote}"</blockquote>` : ''}
+      ${billboard.details ? `<div class="billboard-details">${billboard.details}</div>` : ''}
+    `;
+    
+    billboardDiv.appendChild(arrow);
+    return billboardDiv;
+  };
+
+  const executeNavigationState = (targetLocation, storyPointIndex) => {
+    setSelectedLocationId(targetLocation.id);
+    setCurrentLocation(targetLocation);
+    setCurrentStory(targetLocation);
+    setCurrentStoryPointIndex(storyPointIndex);
+    setViewMode('zoomed');
+    setTimeout(() => handleExploreFromState(targetLocation, storyPointIndex), 200);
+  };
+
+  const handleExploreFromState = async (targetLocation, storyPointIndex = 0) => {
+    if (!map3DRef.current || isAnimating) return;
+
+    setIsAnimating(true);
+    try {
+      const targetStoryPoint = targetLocation.storyPoints?.[storyPointIndex] || targetLocation.storyPoints?.[0];
+      const targetPoint = targetStoryPoint || targetLocation;
+      
+      map3DRef.current.flyCameraTo({
+        endCamera: {
+          center: {
+            lat: targetPoint.lat,
+            lng: targetPoint.lng,
+            altitude: targetLocation.altitude || 200
+          },
+          tilt: targetStoryPoint?.pitch ? Math.abs(targetStoryPoint.pitch) + 65 : 75,
+          range: targetStoryPoint?.range || defaultExplorationRange,
+          heading: targetStoryPoint?.heading || 0,
+        },
+        durationMillis: 2000,
+      });
+
+      setTimeout(() => {
+        addStoryPointMarkers(targetLocation);
+        setIsAnimating(false);
+      }, 2000);
+    } catch (error) {
+      console.error('Error during explore from state animation:', error);
+      setIsAnimating(false);
+    }
+  };
+
+  const handleLocationSelect = async (location, storyPointIndex = null) => {
+    if (!map3DRef.current || isAnimating) return;
+
+    setIsAnimating(true);
+    setSelectedLocationId(location.id);
+    setShowStoryList(false);
+
+    if (storyPointIndex !== null) {
+      setCurrentLocation(location);
+      setCurrentStory(location);
+      setCurrentStoryPointIndex(storyPointIndex);
+      setViewMode('zoomed');
+      clearStoryPointMarkers();
+
+      try {
+        const targetStoryPoint = location.storyPoints?.[storyPointIndex] || location.storyPoints?.[0];
+        const targetPoint = targetStoryPoint || location;
+
+        map3DRef.current.flyCameraTo({
+          endCamera: {
+            center: {
+              lat: targetPoint.lat,
+              lng: targetPoint.lng,
+              altitude: location.altitude || 200
+            },
+            tilt: targetStoryPoint?.pitch ? Math.abs(targetStoryPoint.pitch) + 65 : 75,
+            range: targetStoryPoint?.range || defaultExplorationRange,
+            heading: targetStoryPoint?.heading || 0,
+          },
+          durationMillis: 2000,
+        });
+
+        setTimeout(() => {
+          addStoryPointMarkers(location);
+          setIsAnimating(false);
+        }, 2000);
+      } catch (error) {
+        console.error('Error during story point navigation:', error);
+        setIsAnimating(false);
       }
-    });
+      return;
+    }
+
+    // Regular location selection
+    setCurrentLocation(null);
+    setCurrentStory(null);
+    setCurrentStoryPointIndex(0);
+    setViewMode('globe');
+    clearStoryPointMarkers();
+
+    try {
+      map3DRef.current.flyCameraTo({
+        endCamera: {
+          center: { lat: location.lat, lng: location.lng, altitude: location.altitude || 60 },
+          tilt: 30,
+          range: 2500000,
+          heading: 0,
+        },
+        durationMillis: 2000,
+      });
+
+      setTimeout(() => {
+        setIsAnimating(false);
+        const marker = markersRef.current.get(location.id);
+        if (marker) {
+          marker.dispatchEvent(new CustomEvent('gmp-click', { bubbles: true, cancelable: true }));
+        }
+      }, 2000);
+    } catch (error) {
+      console.error('Error during flyto animation:', error);
+      setIsAnimating(false);
+    }
+  };
+
+  const handleExplore = (location) => {
+    if (!map3DRef.current || isAnimating) return;
+
+    setIsAnimating(true);
+    setCurrentLocation(location);
+    setCurrentStory(location);
+    setCurrentStoryPointIndex(0);
+    setViewMode('zoomed');
+
+    try {
+      const firstStoryPoint = location.storyPoints?.[0];
+      const targetLocation = firstStoryPoint || location;
+
+      map3DRef.current.flyCameraTo({
+        endCamera: {
+          center: {
+            lat: targetLocation.lat,
+            lng: targetLocation.lng,
+            altitude: location.altitude || 500
+          },
+          tilt: firstStoryPoint?.pitch ? Math.abs(firstStoryPoint.pitch) + 65 : 75,
+          range: firstStoryPoint?.range || 500,
+          heading: firstStoryPoint?.heading || 0,
+        },
+        durationMillis: 2000,
+      });
+
+      setTimeout(() => {
+        addStoryPointMarkers(location);
+        setIsAnimating(false);
+      }, 2000);
+    } catch (error) {
+      console.error('Error during explore animation:', error);
+      setIsAnimating(false);
+    }
   };
 
   const handleViewToggle = () => {
     if (!currentLocation) return;
-
     if (viewMode === 'street') {
-      // Now uses the new smooth transition
       setViewMode('zoomed');
       handleReturnFromStreetView(currentLocation, currentStoryPointIndex);
     } else {
-      // Switch to street view (unchanged)
       setViewMode('street');
       navigate(`/location/${currentLocation.id}?point=${currentStoryPointIndex}`);
     }
   };
 
-  const handleNextStoryPoint = async () => {
-    if (!currentStory || !currentStory.storyPoints || isAnimating) return;
+  const handleStoryPointNavigation = async (direction) => {
+    if (!currentStory?.storyPoints || isAnimating) return;
 
-    const nextIndex = (currentStoryPointIndex + 1) % currentStory.storyPoints.length;
-    const nextPoint = currentStory.storyPoints[nextIndex];
+    const nextIndex = direction === 'next' 
+      ? (currentStoryPointIndex + 1) % currentStory.storyPoints.length
+      : currentStoryPointIndex === 0 ? currentStory.storyPoints.length - 1 : currentStoryPointIndex - 1;
 
     if (viewMode === 'street') {
-      // If in street view, navigate to the story point
       navigate(`/location/${currentStory.id}?point=${nextIndex}`);
     } else {
-      // If in 3D view, fly to the next story point
       setIsAnimating(true);
       setCurrentStoryPointIndex(nextIndex);
-
+      
       try {
-        // Calculate duration based on distance between points
         const currentPoint = currentStory.storyPoints[currentStoryPointIndex];
-        const distance = calculateDistance(currentPoint, nextPoint);
-        const duration = Math.min(Math.max(distance * 100, 1500), 4000); // 1.5-4 seconds based on distance
-
-        await flyToStoryPoint(nextPoint, currentStory, duration);
+        const targetPoint = currentStory.storyPoints[nextIndex];
+        const distance = calculateDistance(currentPoint, targetPoint);
+        const duration = Math.min(Math.max(distance * 100, 1500), 4000);
+        
+        await flyToStoryPoint(targetPoint, currentStory, duration);
       } catch (error) {
-        console.error('Error navigating to next story point:', error);
+        console.error('Error navigating story point:', error);
       } finally {
         setIsAnimating(false);
       }
     }
   };
 
-  const handlePrevStoryPoint = async () => {
-    if (!currentStory || !currentStory.storyPoints || isAnimating) return;
-
-    const prevIndex = currentStoryPointIndex === 0
-      ? currentStory.storyPoints.length - 1
-      : currentStoryPointIndex - 1;
-    const prevPoint = currentStory.storyPoints[prevIndex];
-
-    if (viewMode === 'street') {
-      // If in street view, navigate to the story point
-      navigate(`/location/${currentStory.id}?point=${prevIndex}`);
-    } else {
-      // If in 3D view, fly to the previous story point
-      setIsAnimating(true);
-      setCurrentStoryPointIndex(prevIndex);
-
-      try {
-        // Calculate duration based on distance between points
-        const currentPoint = currentStory.storyPoints[currentStoryPointIndex];
-        const distance = calculateDistance(currentPoint, prevPoint);
-        const duration = Math.min(Math.max(distance * 100, 1500), 4000); // 1.5-4 seconds based on distance
-
-        await flyToStoryPoint(prevPoint, currentStory, duration);
-      } catch (error) {
-        console.error('Error navigating to previous story point:', error);
-      } finally {
-        setIsAnimating(false);
-      }
-    }
-  };
-
-  // Helper function to calculate distance between two points (approximate)
-  const calculateDistance = (point1, point2) => {
-    if (!point1 || !point2) return 15; // Default medium distance
-
-    const R = 6371; // Earth's radius in km
-    const dLat = (point2.lat - point1.lat) * Math.PI / 180;
-    const dLon = (point2.lng - point1.lng) * Math.PI / 180;
-    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(point1.lat * Math.PI / 180) * Math.cos(point2.lat * Math.PI / 180) *
-      Math.sin(dLon / 2) * Math.sin(dLon / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    return R * c; // Distance in km
-  };
-
-  // Add toggle function for info panel
-  const toggleInfo = () => {
-    setShowInfo(!showInfo);
-  };
-
-  // Add function to handle jumping to story points
   const handleJumpToStoryPoint = async (index) => {
-    if (!currentLocation || !currentLocation.storyPoints || isAnimating || index === currentStoryPointIndex) return;
+    if (!currentLocation?.storyPoints || isAnimating || index === currentStoryPointIndex) return;
 
     setIsAnimating(true);
     setCurrentStoryPointIndex(index);
 
     try {
-      const targetPoint = currentLocation.storyPoints[index];
-      await flyToStoryPoint(targetPoint, currentLocation, 2000);
+      await flyToStoryPoint(currentLocation.storyPoints[index], currentLocation, 2000);
     } catch (error) {
       console.error('Error jumping to story point:', error);
     } finally {
@@ -525,29 +424,28 @@ function Map3D({ locations = [] }) {
     }
   };
 
+  // Initialize map
   const initializeMap = async () => {
     if (!isLoaded || !containerRef.current) return;
 
     try {
-      const { Map3DElement, Marker3DElement, Marker3DInteractiveElement, PopoverElement } = await google.maps.importLibrary("maps3d");
+      const { Map3DElement, Marker3DInteractiveElement, PopoverElement } = await google.maps.importLibrary("maps3d");
       const { PinElement } = await google.maps.importLibrary("marker");
 
-      const map3D = new Map3DElement(defaultGlobeView);
+      const map3D = new Map3DElement(showOnboarding ? onboardingGlobeView : defaultGlobeView);
       map3D.mode = 'SATELLITE';
 
-      map3D.addEventListener('gmp-click', (event) => {
+      map3D.addEventListener('gmp-click', () => {
         setSelectedLocationId(null);
         map3D.stopCameraAnimation();
       });
 
-      // Add markers for each location
-      locations.forEach((location, index) => {
+      locations.forEach((location) => {
         if (!location || typeof location.lat !== "number" || typeof location.lng !== "number") {
           console.warn("Skipping invalid location:", location);
           return;
         }
 
-        // Create custom pin with story number
         const pin = new PinElement({
           scale: 3,
           glyphColor: "#FFFFFF",
@@ -555,44 +453,42 @@ function Map3D({ locations = [] }) {
           borderColor: "#1d4ed8",
         });
 
-        // Create popover with story information
         const popover = new PopoverElement();
-
-        // Create popover content
         const popoverContent = document.createElement('div');
         popoverContent.className = 'story-popover-content';
         popoverContent.innerHTML = `
           <div class="popover-header">
-            <img src="${location.image}" 
-                alt="${location.title}" class="popover-image">
+            <img src="${location.image}" alt="${location.title}" class="popover-image">
             <div class="popover-title-section">
               <h3 class="popover-title">${location.title}</h3>
               <p class="popover-author">by ${location.author} (${location.year})</p>
               <span class="popover-genre">${location.genre}</span>
             </div>
+            <button class="popover-close-btn" data-location-id="${location.id}" title="Close">×</button>
           </div>
           <p class="popover-description">${location.description}</p>
-          <button class="popover-explore-btn" data-location-id="${location.id}">
-            Explore
-          </button>
+          <button class="popover-explore-btn" data-location-id="${location.id}">Explore</button>
         `;
 
-        // Add click handler for explore button
-        const exploreBtn = popoverContent.querySelector('.popover-explore-btn');
-        exploreBtn.addEventListener('click', (e) => {
+        // Add event listeners
+        popoverContent.querySelector('.popover-explore-btn').addEventListener('click', (e) => {
           e.stopPropagation();
           handleExplore(location);
         });
 
+        popoverContent.querySelector('.popover-close-btn').addEventListener('click', (e) => {
+          e.stopPropagation();
+          popover.open = false;
+        });
+
         popover.append(popoverContent);
 
-        // Create interactive marker with label
         const interactiveMarker = new Marker3DInteractiveElement({
           title: `${location.title} - ${location.author}`,
           position: { lat: location.lat, lng: location.lng, altitude: location.altitude || 60 },
           altitudeMode: "ABSOLUTE",
           extruded: false,
-          label: location.title, // Add the label here
+          label: location.title,
           gmpPopoverTargetElement: popover
         });
 
@@ -600,10 +496,8 @@ function Map3D({ locations = [] }) {
         map3D.append(interactiveMarker);
         map3D.append(popover);
 
-        // Store marker reference for programmatic access
         markersRef.current.set(location.id, interactiveMarker);
 
-        // Add click handler for marker selection
         interactiveMarker.addEventListener('gmp-click', (event) => {
           event.stopPropagation();
           setSelectedLocationId(location.id);
@@ -612,7 +506,6 @@ function Map3D({ locations = [] }) {
 
       containerRef.current.appendChild(map3D);
       map3DRef.current = map3D;
-
     } catch (error) {
       console.error('Error initializing 3D map:', error);
     }
@@ -632,18 +525,12 @@ function Map3D({ locations = [] }) {
         }
         map3DRef.current = null;
       }
-      // Clear marker references
       markersRef.current.clear();
     };
   }, [isLoaded, locations]);
 
-  if (error) {
-    return <div className="loading">Error loading Google Maps: {error}</div>;
-  }
-
-  if (!isLoaded) {
-    return <div className="loading">Loading Google Maps...</div>;
-  }
+  if (error) return <div className="loading">Error loading Google Maps: {error}</div>;
+  if (!isLoaded) return <div className="loading">Loading Google Maps...</div>;
 
   return (
     <div style={{ position: 'relative' }}>
@@ -662,51 +549,37 @@ function Map3D({ locations = [] }) {
         }}
       />
 
-      {/* Navigation Controls */}
-      <div className="map-controls">
-        {/* Home Button */}
-        <button
-          className="control-button"
-          onClick={handleHomeReset}
-          disabled={isAnimating}
-        >
-          <span className="material-icons">home</span>
-          <span>Home</span>
-        </button>
-
-        {/* Story List Toggle Button */}
-        <button
-          className="control-button"
-          onClick={() => setShowStoryList(!showStoryList)}
-        >
-          <span className="material-icons">menu</span>
-          <span>Stories</span>
-        </button>
-
-        {/* View Toggle Button - show when exploring a location */}
-        {(viewMode === 'zoomed' || viewMode === 'street') && currentLocation && (
-          <button
-            className="control-button view-toggle pulse" /* Make sure this matches */
-            onClick={handleViewToggle}
-            disabled={isAnimating}
-            title={viewMode === 'street' ? 'Switch to 3D View' : 'Switch to Street View'}
-          >
-            <span className="material-icons">
-              {viewMode === 'street' ? 'public' : 'streetview'}
-            </span>
-            <span>{viewMode === 'street' ? '3D View' : 'Walk the Streets'}</span>
+      {/* Controls - Hidden during onboarding */}
+      {!showOnboarding && (
+        <div className="map-controls">
+          <button className="control-button" onClick={() => setShowStoryList(!showStoryList)}>
+            <span className="material-icons">book</span>
+            <span>Stories</span>
           </button>
-        )}
-      </div>
 
-      {/* Story Navigation Controls - only show when exploring a story */}
-      {currentStory && currentStory.storyPoints && currentStory.storyPoints.length > 1 && (
+          {(viewMode === 'zoomed' || viewMode === 'street') && currentLocation && (
+            <button
+              className="control-button view-toggle pulse"
+              onClick={handleViewToggle}
+              disabled={isAnimating}
+              title={viewMode === 'street' ? 'Switch to 3D View' : 'Switch to Street View'}
+            >
+              <span className="material-icons">
+                {viewMode === 'street' ? 'public' : 'streetview'}
+              </span>
+              <span>{viewMode === 'street' ? '3D View' : 'Walk the Streets'}</span>
+            </button>
+          )}
+        </div>
+      )}
+
+      {/* Story Navigation - Hidden during onboarding */}
+      {!showOnboarding && currentStory?.storyPoints?.length > 1 && (
         <div className="story-navigation">
           <button
             className="story-nav-button prev-button"
-            onClick={handlePrevStoryPoint}
+            onClick={() => handleStoryPointNavigation('prev')}
             disabled={isAnimating}
-            title="Previous Story Point"
           >
             ← Previous Story Point
           </button>
@@ -720,42 +593,38 @@ function Map3D({ locations = [] }) {
 
           <button
             className="story-nav-button next-button"
-            onClick={handleNextStoryPoint}
+            onClick={() => handleStoryPointNavigation('next')}
             disabled={isAnimating}
-            title="Next Story Point"
           >
-            Next Story Point→
+            Next Story Point →
           </button>
         </div>
       )}
 
-      {/* Story List Panel */}
-      {showStoryList && (
+      {/* Story List - Hidden during onboarding */}
+      {!showOnboarding && showStoryList && (
         <div className="story-list-overlay">
           <StoryList
             locations={locations}
             onLocationSelect={handleLocationSelect}
             selectedLocationId={selectedLocationId}
+            onClose={() => setShowStoryList(false)}
           />
         </div>
       )}
 
-
-      {/* Location Info Overlay - Replaces view-mode-indicator */}
-      {viewMode !== 'globe' && currentLocation && (
+      {/* Location Info - Hidden during onboarding */}
+      {!showOnboarding && viewMode !== 'globe' && currentLocation && (
         <div className={`location-info-overlay ${showInfo ? 'expanded' : ''}`}>
-          {/* Header - always visible */}
-          <div className="info-header" onClick={toggleInfo}>
+          <div className="info-header" onClick={() => setShowInfo(!showInfo)}>
             <h1 className="location-title">{currentLocation.title}</h1>
             <p className="location-author">by {currentLocation.author} ({currentLocation.year})</p>
             <span className="location-genre">{currentLocation.genre}</span>
-
-            {/* Toggle button with arrows */}
             <button
               className="info-collapse-toggle"
               onClick={(e) => {
                 e.stopPropagation();
-                toggleInfo();
+                setShowInfo(!showInfo);
               }}
               title={showInfo ? 'Collapse info panel' : 'Expand info panel'}
             >
@@ -763,14 +632,11 @@ function Map3D({ locations = [] }) {
             </button>
           </div>
 
-          {/* Collapsible content area */}
           <div className="info-collapsible-content">
-            {/* Location description */}
             <div className="location-description">
               <p>{currentLocation.description}</p>
             </div>
 
-            {/* Current story point */}
             {currentStory?.storyPoints?.[currentStoryPointIndex] && (
               <div className="current-story-point">
                 <h3 className="story-point-title">
@@ -787,7 +653,6 @@ function Map3D({ locations = [] }) {
               </div>
             )}
 
-            {/* Story points navigation */}
             {currentLocation?.storyPoints?.length > 1 && (
               <div className="story-points-quick-nav-enhanced">
                 <div className="nav-header">
@@ -826,8 +691,9 @@ function Map3D({ locations = [] }) {
           </div>
         </div>
       )}
-      {/* Loading indicator for transitions */}
-      {isAnimating && (
+
+      {/* Loading indicator - Hidden during onboarding */}
+      {!showOnboarding && isAnimating && (
         <div className="transition-indicator">
           <div className="loading-spinner"></div>
           <p>Flying to story point...</p>

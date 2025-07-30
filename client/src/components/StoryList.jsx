@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import '../styles/StoryList.css';
 
-function StoryList({ locations, onLocationSelect, selectedLocationId }) {
+function StoryList({ locations, onLocationSelect, selectedLocationId, onClose }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState(-1);
@@ -152,7 +152,17 @@ function StoryList({ locations, onLocationSelect, selectedLocationId }) {
   return (
     <div className="story-list-container">
       <div className="story-list-header">
-        <h2>Stories</h2>
+        <div className="story-list-title-row">
+          <h2>Stories</h2>
+          <button 
+            className="story-list-close-btn"
+            onClick={onClose}
+            aria-label="Close story list"
+            title="Close story list"
+          >
+            <span className="material-icons">close</span>
+          </button>
+        </div>
         
         <div className="search-container" ref={suggestionsRef}>
           <input
