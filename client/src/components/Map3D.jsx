@@ -641,7 +641,7 @@ function Map3D({ locations = [], showOnboarding = false, resetRef }) {
           height: '100vh',
           margin: 0,
           padding: 0,
-          position: 'absolute',
+          position: 'fixed', // Change from 'absolute' to 'fixed'
           top: 0,
           left: 0,
           zIndex: 0,
@@ -703,7 +703,10 @@ function Map3D({ locations = [], showOnboarding = false, resetRef }) {
 
       {/* Story List - Hidden during onboarding */}
       {!showOnboarding && showStoryList && (
-        <div className="story-list-overlay">
+        <div 
+          className="story-list-overlay"
+          onClick={(e) => e.stopPropagation()} // Add this
+        >
           <StoryList
             locations={locations}
             onLocationSelect={handleLocationSelect}
