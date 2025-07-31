@@ -1,0 +1,335 @@
+/* Map3D.css - Enhanced Styles for the 3D map component */
+
+/* ==================== STORY NAVIGATION ==================== */
+.story-navigation {
+  position: fixed;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(20px);
+  border-radius: 20px;
+  padding: 20px 32px;
+  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.2),
+              0 0 0 1px rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.story-nav-button {
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 14px 24px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 16px rgba(59, 130, 246, 0.25);
+  min-width: 140px;
+  position: relative;
+  overflow: hidden;
+}
+
+.story-nav-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+  pointer-events: none;
+}
+
+.story-nav-button:hover:not(:disabled) {
+  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+}
+
+.story-nav-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  background: rgba(59, 130, 246, 0.3);
+}
+
+.story-point-indicator {
+  text-align: center;
+  padding: 0 24px;
+  color: white;
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.story-point-title {
+  font-size: 14px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.8);
+  margin-top: 4px;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ==================== STORY LIST OVERLAY ==================== */
+.story-list-overlay {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  max-width: 350px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+/* ==================== CURRENT STORY POINT ==================== */
+.current-story-point {
+  margin-bottom: 20px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.story-point-title {
+  color: #ffffff;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+}
+
+.story-point-description {
+  color: #cccccc;
+  line-height: 1.4;
+  margin: 0 0 12px 0;
+}
+
+.story-point-context {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.story-point-badge {
+  background: rgba(59, 130, 246, 0.2);
+  color: #3b82f6;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+/* ==================== STORY POINTS NAVIGATION ==================== */
+.story-points-quick-nav-enhanced {
+  margin-bottom: 20px;
+}
+
+.nav-header {
+  margin-bottom: 12px;
+}
+
+.nav-header h4 {
+  margin: 0;
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 600;
+}
+
+.story-points-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.story-point-card {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  padding: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+  text-align: left;
+}
+
+.story-point-card:hover:not(:disabled) {
+  background: rgba(59, 130, 246, 0.2);
+  border-color: #3b82f6;
+  transform: translateY(-1px);
+}
+
+.story-point-card.active {
+  background: rgba(59, 130, 246, 0.3);
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+}
+
+.story-point-card:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.story-point-number {
+  background: #3b82f6;
+  color: white;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+.story-point-card.active .story-point-number {
+  background: #1d4ed8;
+}
+
+.story-point-info {
+  flex: 1;
+}
+
+.story-point-name {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: white;
+  margin-bottom: 2px;
+}
+
+.story-point-distance {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 400;
+}
+
+/* ==================== BILLBOARD STYLES ==================== */
+.story-point-billboard {
+  background: white;
+  border-radius: 8px;
+  padding: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  max-width: 250px;
+}
+
+.billboard-number {
+  background: #3b82f6;
+  color: white;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.billboard-content h4 {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  color: #1f2937;
+  font-weight: 600;
+}
+
+.billboard-content p {
+  margin: 0;
+  font-size: 12px;
+  color: #4b5563;
+  line-height: 1.4;
+}
+
+/* ==================== LOADING INDICATOR ==================== */
+.transition-indicator {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2000;
+  background: rgba(0, 0, 0, 0.9);
+  color: white;
+  padding: 24px 32px;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.3);
+}
+
+.loading-spinner {
+  width: 44px;
+  height: 44px;
+  border: 3px solid rgba(255, 255, 255, 0.2);
+  border-top: 3px solid #3b82f6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.transition-indicator p {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* ==================== RESPONSIVE DESIGN ==================== */
+  
+  .story-navigation {
+    bottom: 20px;
+    left: 16px;
+    right: 16px;
+    transform: none;
+    flex-direction: column;
+    gap: 16px;
+    padding: 16px 20px;
+    border-radius: 16px;
+  }
+  
+  .story-nav-button {
+    min-width: 120px;
+    padding: 12px 20px;
+    font-size: 13px;
+  }
+  
+  .story-point-indicator {
+    padding: 0 16px;
+  }
+  
+  .story-point-title {
+    max-width: 250px;
+  }
+  
+  .story-list-overlay {
+    top: 10px;
+    right: 10px;
+    left: 10px;
+    max-width: none;
+    max-height: 70vh;
+  }
+}
+

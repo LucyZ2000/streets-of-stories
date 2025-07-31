@@ -1,5 +1,9 @@
 /* NavBar.css */
 
+a {
+  text-decoration: none;
+  }
+
 .navbar {
   position: fixed;
   top: 0;
@@ -26,27 +30,6 @@
 
 .navbar-logo {
   font-weight: bold;
-  font-size: 1.5rem;
+  font-size: 1.8rem;
   color: white;
-}
-
-.navbar-links {
-  display: flex;
-}
-
-.navbar-links a {
-  margin-left: 1.5rem;
-  text-decoration: none;
-  color: white;
-  font-weight: 500;
-  transition: color 0.3s ease;
-}
-
-.navbar-links a:hover {
-  color: #0077ff;
-}
-
-.nav-spacer {
-    height: 80px; /* Match your nav bar height */
-    width: 100%;
 }

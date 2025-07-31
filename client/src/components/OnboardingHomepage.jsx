@@ -39,4 +39,5 @@ function OnboardingHomepage({ onExplore }) {
     </div>
   );
 }
+
 export default OnboardingHomepage;
