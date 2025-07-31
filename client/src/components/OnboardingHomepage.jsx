@@ -6,9 +6,10 @@ function OnboardingHomepage({ onExplore }) {
 
   const handleExplore = () => {
     setIsAnimating(true);
+    // Increased timeout to allow for smoother fade out
     setTimeout(() => {
       onExplore();
-    }, 300);
+    }, 500); // Changed from 300ms to 500ms to match CSS animation
   };
 
   return (
@@ -39,4 +40,5 @@ function OnboardingHomepage({ onExplore }) {
     </div>
   );
 }
+
 export default OnboardingHomepage;

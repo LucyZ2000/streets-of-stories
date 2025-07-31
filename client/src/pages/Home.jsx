@@ -4,29 +4,22 @@ import OnboardingHomepage from '../components/OnboardingHomepage';
 import { LOCATIONS } from '../data/Locations';
 import '../styles/Home.css';
 
-function Home() {
+function Home({ showOnboarding, onStartExploring, mapResetRef }) {
   const [locations, setLocations] = useState([]);
-  // Initialize showOnboarding based on whether user has seen it before
-  const [showOnboarding, setShowOnboarding] = useState(() => {
-    // Check if user has seen onboarding before (stored in memory for this session)
-    return !window.hasSeenOnboarding;
-  });
 
   useEffect(() => {
     setLocations(LOCATIONS);
   }, []);
 
-  const handleStartExploring = () => {
-    // Mark that user has seen onboarding
-    window.hasSeenOnboarding = true;
-    setShowOnboarding(false);
-  };
-
   return (
     <div className="map-page">
-      <Map3D locations={locations} />
+      <Map3D 
+        locations={locations} 
+        showOnboarding={showOnboarding}
+        resetRef={mapResetRef}
+      />
       {showOnboarding && (
-        <OnboardingHomepage onExplore={handleStartExploring} />
+        <OnboardingHomepage onExplore={onStartExploring} />
       )}
     </div>
   );

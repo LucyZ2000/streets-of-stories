@@ -200,3 +200,122 @@
   top: 0;
   left: 0;
 }
+
+/* Add these styles to your existing StreetViewPins.css file */
+
+.dialog-nav-btn {
+  background: #325388;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  margin: 8px 0;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.dialog-nav-btn:hover {
+  background: #1c2e4c;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+
+.dialog-nav-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+/* Ensure the navigation button appears above the close button */
+.location-dialog {
+  position: relative;
+}
+
+.location-dialog .dialog-nav-btn {
+  position: relative;
+  z-index: 10;
+}
+
+.location-dialog .dialog-close-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 11;
+}
+/* Back Navigation Button */
+.back-navigation-overlay {
+  position: absolute;
+  top: 140px;
+  left: 35px;
+  z-index: 1000;
+  pointer-events: none;
+}
+
+.back-nav-button {
+  background: #1565C0;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.4);
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 80px;
+  justify-content: center;
+}
+
+.back-nav-button:hover {
+  background: #0e437e;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(22, 89, 144, 0.5);
+}
+
+.back-nav-button:active {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(19, 86, 141, 0.4);
+}
+
+/* Animation for back button appearance */
+.back-navigation-overlay {
+  animation: slideInFromLeft 0.3s ease-out;
+}
+
+@keyframes slideInFromLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Ensure the navigation button appears above the close button */
+.location-dialog {
+  position: relative;
+}
+
+.location-dialog .dialog-nav-btn {
+  position: relative;
+  z-index: 10;
+}
+
+.location-dialog .dialog-close-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 11;
+}
+

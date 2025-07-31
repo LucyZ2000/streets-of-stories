@@ -9,8 +9,100 @@ function StreetViewPanorama({ location, currentStoryPointIndex, isTransitioning,
   const [panorama, setPanorama] = useState(null);
   const [isInitialized, setIsInitialized] = useState(false);
   const [billboardMarkers, setBillboardMarkers] = useState([]);
+  const [navigationHistory, setNavigationHistory] = useState([]);
+  const [showBackButton, setShowBackButton] = useState(false);
 
   const currentBillboards = location?.storyPoints?.[currentStoryPointIndex]?.billboards || [];
+
+  // Function to navigate to a specific billboard location
+  const handleNavigateToLocation = (billboard) => {
+    if (!panorama || !billboard.lat || !billboard.lng) return;
+
+    console.log('Navigating to billboard location:', billboard);
+
+    try {
+      // Save current position to history before navigating
+      const currentPosition = panorama.getPosition();
+      const currentPov = panorama.getPov();
+      
+      if (currentPosition) {
+        const historyEntry = {
+          lat: currentPosition.lat(),
+          lng: currentPosition.lng(),
+          heading: currentPov.heading,
+          pitch: currentPov.pitch,
+          zoom: panorama.getZoom(),
+          timestamp: Date.now(),
+          fromLocation: 'Story Point' // You could make this more descriptive
+        };
+        
+        setNavigationHistory(prev => [...prev, historyEntry]);
+        setShowBackButton(true);
+      }
+
+      // Set the panorama position to the billboard's coordinates
+      panorama.setPosition({
+        lat: billboard.lat,
+        lng: billboard.lng
+      });
+
+      // Set the view direction if specified in the billboard
+      if (billboard.heading !== undefined || billboard.pitch !== undefined) {
+        panorama.setPov({
+          heading: billboard.heading || 0,
+          pitch: billboard.pitch || 0
+        });
+      }
+
+      // Set zoom if specified
+      if (billboard.zoom !== undefined) {
+        panorama.setZoom(billboard.zoom);
+      }
+
+      console.log(`Navigated to ${billboard.title}`);
+      
+    } catch (error) {
+      console.error('Error navigating to billboard location:', error);
+    }
+  };
+
+  // Function to go back to previous location
+  const handleGoBack = () => {
+    if (navigationHistory.length === 0 || !panorama) return;
+
+    try {
+      // Get the last location from history
+      const lastLocation = navigationHistory[navigationHistory.length - 1];
+      
+      // Navigate back to that location
+      panorama.setPosition({
+        lat: lastLocation.lat,
+        lng: lastLocation.lng
+      });
+
+      panorama.setPov({
+        heading: lastLocation.heading,
+        pitch: lastLocation.pitch
+      });
+
+      if (lastLocation.zoom !== undefined) {
+        panorama.setZoom(lastLocation.zoom);
+      }
+
+      // Remove the last entry from history
+      setNavigationHistory(prev => prev.slice(0, -1));
+      
+      // Hide back button if no more history
+      if (navigationHistory.length <= 1) {
+        setShowBackButton(false);
+      }
+
+      console.log('Navigated back to previous location');
+      
+    } catch (error) {
+      console.error('Error navigating back:', error);
+    }
+  };
 
   // Initialize panorama
   useEffect(() => {
@@ -18,19 +110,16 @@ function StreetViewPanorama({ location, currentStoryPointIndex, isTransitioning,
       return;
     }
 
-    // Make sure Google Maps API is fully loaded
     if (!window.google?.maps?.StreetViewPanorama) {
       console.error('Google Maps StreetViewPanorama not available');
       return;
     }
 
     try {
-      // Get the target position (current story point or main location)
       const targetPosition = location.storyPoints && location.storyPoints[currentStoryPointIndex]
         ? location.storyPoints[currentStoryPointIndex]
         : location;
 
-      // Create panorama instance
       const panoramaInstance = new window.google.maps.StreetViewPanorama(
         panoramaRef.current,
         {
@@ -55,7 +144,6 @@ function StreetViewPanorama({ location, currentStoryPointIndex, isTransitioning,
         }
       );
 
-      // Add error handling for Street View
       panoramaInstance.addListener('status_changed', () => {
         const status = panoramaInstance.getStatus();
         if (status === 'OK') {
@@ -63,14 +151,13 @@ function StreetViewPanorama({ location, currentStoryPointIndex, isTransitioning,
           console.log('Street View loaded successfully');
         } else {
           console.error('Street View failed to load:', status);
-          // You could show a fallback message or image here
         }
       });
 
       panoramaInstance.addListener('position_changed', () => {
         try {
           const position = panoramaInstance.getPosition();
-          const pov = panoramaInstance.getPov(); // Get Point of View (camera angle)
+          const pov = panoramaInstance.getPov();
 
           if (position && typeof position.lat === 'function' && typeof position.lng === 'function') {
             const coordinates = {
@@ -79,15 +166,13 @@ function StreetViewPanorama({ location, currentStoryPointIndex, isTransitioning,
             };
 
             const cameraAngle = {
-              heading: pov.heading, // Direction facing (0-360 degrees, 0 = North)
-              pitch: pov.pitch,     // Up/down tilt (-90 to 90 degrees, 0 = straight ahead)
-              zoom: pov.zoom || panoramaInstance.getZoom() // Zoom level
+              heading: pov.heading,
+              pitch: pov.pitch,
+              zoom: pov.zoom || panoramaInstance.getZoom()
             };
 
             console.log('Current Street View Position:', coordinates);
             console.log('heading, pitch, zoom:', cameraAngle);
-          } else {
-            console.warn('Position object is invalid or missing lat/lng methods');
           }
         } catch (error) {
           console.error('Error getting position:', error);
@@ -100,10 +185,8 @@ function StreetViewPanorama({ location, currentStoryPointIndex, isTransitioning,
       console.error('Error initializing Street View:', error);
     }
 
-    // Cleanup function
     return () => {
       if (panorama) {
-        // Clear all listeners
         window.google.maps.event.clearInstanceListeners(panorama);
       }
       setPanorama(null);
@@ -123,22 +206,23 @@ function StreetViewPanorama({ location, currentStoryPointIndex, isTransitioning,
     }
 
     try {
-      // Update position
       panorama.setPosition({
         lat: targetStoryPoint.lat,
         lng: targetStoryPoint.lng
       });
 
-      // Update point of view
       panorama.setPov({
         heading: targetStoryPoint.heading || 0,
         pitch: targetStoryPoint.pitch || 0
       });
 
-      // Update zoom if specified
       if (targetStoryPoint.zoom !== undefined) {
         panorama.setZoom(targetStoryPoint.zoom);
       }
+
+      // Clear navigation history when moving to a new story point
+      setNavigationHistory([]);
+      setShowBackButton(false);
 
     } catch (error) {
       console.error('Error updating panorama:', error);
@@ -153,6 +237,7 @@ function StreetViewPanorama({ location, currentStoryPointIndex, isTransitioning,
       });
     };
   }, []);
+
   if (error) {
     return (
       <div className="panorama-error">
@@ -199,7 +284,6 @@ function StreetViewPanorama({ location, currentStoryPointIndex, isTransitioning,
         }}
       />
 
-      {/* Show loading overlay during transitions */}
       {isTransitioning && (
         <div className="panorama-transition-overlay">
           <div className="loading-spinner"></div>
@@ -207,7 +291,19 @@ function StreetViewPanorama({ location, currentStoryPointIndex, isTransitioning,
         </div>
       )}
 
-      {/* Only render overlays when panorama is initialized */}
+      {/* Back Navigation Button */}
+      {showBackButton && (
+        <div className="back-navigation-overlay">
+          <button 
+            className="back-nav-button"
+            onClick={handleGoBack}
+            title="Go back to previous location"
+          >
+            ← Leave ViewPoint
+          </button>
+        </div>
+      )}
+
       {isInitialized && panorama && (
         <>
           <StreetViewPins
@@ -215,6 +311,7 @@ function StreetViewPanorama({ location, currentStoryPointIndex, isTransitioning,
             isInitialized={isInitialized}
             currentBillboards={currentBillboards}
             onBillboardClick={onBillboardClick}
+            onNavigateToLocation={handleNavigateToLocation}
           />
 
           <NavigationIndicators
@@ -225,7 +322,6 @@ function StreetViewPanorama({ location, currentStoryPointIndex, isTransitioning,
         </>
       )}
 
-      {/* Fallback message if Street View is not available */}
       {isLoaded && !isInitialized && !isTransitioning && (
         <div className="panorama-fallback">
           <div className="fallback-message">
@@ -234,7 +330,6 @@ function StreetViewPanorama({ location, currentStoryPointIndex, isTransitioning,
           </div>
         </div>
       )}
-
     </div>
   );
 }
