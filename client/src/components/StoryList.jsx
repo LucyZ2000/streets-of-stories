@@ -1,7 +1,9 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../styles/StoryList.css';
 
 function StoryList({ locations, onLocationSelect, selectedLocationId, onClose }) {
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState(-1);
@@ -102,7 +104,8 @@ function StoryList({ locations, onLocationSelect, selectedLocationId, onClose })
         if (selectedSuggestionIndex >= 0) {
           handleSuggestionClick(suggestions[selectedSuggestionIndex]);
         } else if (filteredLocations.length > 0) {
-          onLocationSelect(filteredLocations[0]);
+          // Navigate to location without story point (will start from beginning)
+          handleLocationNavigation(filteredLocations[0]);
         }
         break;
       case 'Escape':
@@ -118,7 +121,8 @@ function StoryList({ locations, onLocationSelect, selectedLocationId, onClose })
     setSearchQuery(suggestion.text);
     setShowSuggestions(false);
     setSelectedSuggestionIndex(-1);
-    onLocationSelect(suggestion.location);
+    // Navigate to location without story point (will start from beginning)
+    handleLocationNavigation(suggestion.location);
   };
 
   // Handle clicking outside to close suggestions
@@ -143,10 +147,33 @@ function StoryList({ locations, onLocationSelect, selectedLocationId, onClose })
     searchInputRef.current?.focus();
   };
 
-  // Handle explore from beginning
-  const handleExploreFromBeginning = (location, e) => {
-    e.stopPropagation(); // Prevent triggering the main story item click
-    onLocationSelect(location, 0); // Pass 0 as the story point index to start from beginning
+  // Navigate to location - this function handles the routing properly
+  const handleLocationNavigation = (location, storyPointIndex = null) => {
+    if (onClose) onClose(); // Close the story list if onClose is provided
+    
+    if (storyPointIndex !== null) {
+      // Navigate to specific story point using URL parameters
+      navigate(`/location/${location.id}?point=${storyPointIndex}`);
+    } else {
+      // Use the provided onLocationSelect function for main navigation
+      if (onLocationSelect) {
+        onLocationSelect(location);
+      } else {
+        // Fallback to direct navigation
+        navigate(`/location/${location.id}`);
+      }
+    }
+  };
+
+  // Handle main story item click
+  const handleMainStoryClick = (location) => {
+    handleLocationNavigation(location);
+  };
+
+  // Handle story point click
+  const handleStoryPointClick = (location, index, e) => {
+    e.stopPropagation(); // Prevent triggering parent clicks
+    handleLocationNavigation(location, index);
   };
 
   return (
@@ -154,14 +181,16 @@ function StoryList({ locations, onLocationSelect, selectedLocationId, onClose })
       <div className="story-list-header">
         <div className="story-list-title-row">
           <h2>Stories</h2>
-          <button 
-            className="story-list-close-btn"
-            onClick={onClose}
-            aria-label="Close story list"
-            title="Close story list"
-          >
-            <span className="material-icons">close</span>
-          </button>
+          {onClose && (
+            <button 
+              className="story-list-close-btn"
+              onClick={onClose}
+              aria-label="Close story list"
+              title="Close story list"
+            >
+              <span className="material-icons">close</span>
+            </button>
+          )}
         </div>
         
         <div className="search-container" ref={suggestionsRef}>
@@ -225,7 +254,7 @@ function StoryList({ locations, onLocationSelect, selectedLocationId, onClose })
             >
               <div 
                 className="story-item-main"
-                onClick={() => onLocationSelect(location)}
+                onClick={() => handleMainStoryClick(location)}
               >
                 <div className="story-item-image">
                   <img 
@@ -240,17 +269,6 @@ function StoryList({ locations, onLocationSelect, selectedLocationId, onClose })
                   <p className="story-year">{location.year}</p>
                   <span className="story-genre">{location.genre}</span>
                 </div>
-              </div>
-              
-              {/* Explore from Beginning Button */}
-              <div className="story-explore-section">
-                <button 
-                  className="explore-from-beginning-btn"
-                  onClick={(e) => handleExploreFromBeginning(location, e)}
-                >
-                  <span className="explore-icon">▶</span>
-                  Explore from Beginning
-                </button>
               </div>
               
               {location.storyPoints && location.storyPoints.length > 0 && (
@@ -271,7 +289,7 @@ function StoryList({ locations, onLocationSelect, selectedLocationId, onClose })
                         <div 
                           key={`${location.id}-${index}`}
                           className="story-point"
-                          onClick={() => onLocationSelect(location, index)}
+                          onClick={(e) => handleStoryPointClick(location, index, e)}
                         >
                           <h4 className="story-point-list-title">
                             {point.text}

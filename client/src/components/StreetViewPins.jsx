@@ -1,4 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
+import binoculars from '../assets/img/binoculars.png';
+import books from '../assets/img/books.png';
 import '../styles/StreetViewPins.css';
 
 const StreetViewPins = ({ 
@@ -9,6 +11,35 @@ const StreetViewPins = ({
 }) => {
   const [billboardMarkers, setBillboardMarkers] = useState([]);
   const activeDialogsRef = useRef(new Map());
+
+  // Function to create marker content with custom images
+  const createMarkerContent = (billboard, size) => {
+    const hasViewpointTag = billboard.tags && billboard.tags.includes('viewpoint');
+    const hasCoordinates = billboard.lat && billboard.lng;
+    const isViewpoint = hasViewpointTag && hasCoordinates;
+    
+    if (isViewpoint) {
+      // Custom image for billboards with viewpoints
+      return `
+        <div class="marker-pin" style="width: ${size}px; height: ${size}px;">
+          <img src=${binoculars}
+               class="marker-image viewpoint-marker" 
+               style="width: ${size}px; height: ${size}px; background-color: white; padding: 4px; box-sizing: border-box; border-radius: 50%; object-fit: contain;"
+               alt="${billboard.title} (viewpoint)" />
+        </div>
+      `;
+    } else {
+      // Custom image for regular billboards
+      return `
+        <div class="marker-pin" style="width: ${size}px; height: ${size}px;">
+          <img src=${books}
+               class="marker-image regular-marker" 
+               style="width: ${size}px; height: ${size}px; background-color: white; padding: 4px; box-sizing: border-box; border-radius: 50%; object-fit: cover;"
+               alt="${billboard.title}" />
+        </div>
+      `;
+    }
+  };
 
   useEffect(() => {
     if (!panorama || !isInitialized || !currentBillboards.length) {
@@ -248,13 +279,7 @@ const StreetViewPins = ({
 
         if (isVisible) {
           const newSize = calculateMarkerSize(distance);
-          
-          const iconContent = `
-            <div class="marker-pin" style="width: ${newSize}px; height: ${newSize}px;">
-              <div class="marker-pin-circle" style="width: ${newSize}px; height: ${newSize}px;"></div>
-            </div>
-          `;
-
+          const iconContent = createMarkerContent(billboard, newSize);
           markerData.marker.updateContent(iconContent);
           markerData.marker.setVisible(true);
         } else {
@@ -278,11 +303,7 @@ const StreetViewPins = ({
         initialSize = calculateMarkerSize(distance);
       }
 
-      const iconContent = `
-        <div class="marker-pin" style="width: ${initialSize}px; height: ${initialSize}px;">
-          <div class="marker-pin-circle" style="width: ${initialSize}px; height: ${initialSize}px;"></div>
-        </div>
-      `;
+      const iconContent = createMarkerContent(billboard, initialSize);
 
       // Create click handler for this pin
       const clickHandler = (event) => {
