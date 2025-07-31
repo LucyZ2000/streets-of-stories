@@ -449,7 +449,7 @@ export const LOCATIONS = [
           content: 'The winding mountain market that inspired the spirit world\'s food stalls',
           type: 'marketplace',
           details: 'This narrow stepped street winds through the mountainside, packed with traditional food vendors selling local specialties like taro balls, fish ball soup, and peanut ice cream rolls. The covered market\'s intimate scale, diverse aromas, and constant bustle directly inspired the spirit world market where Chihiro\'s parents gorge themselves on mysterious spirit food.',
-          tags: ['market', 'food culture', 'traditional'],
+          tags: ['viewpoint'],
           lat: 25.1084638,
           lng: 121.84352,
         },
@@ -479,40 +479,6 @@ export const LOCATIONS = [
         }
       ]
     },
-    {
-      heading: 180,
-      pitch: -10,
-      text: 'Meiji-mura Museum',
-      description: 'An open-air architectural museum in Aichi Prefecture featuring over 60 preserved Meiji-era (1868-1912) buildings relocated from across Japan. This museum town represents the rapid modernization period that transformed Japan, providing inspiration for the abandoned theme park where Chihiro\'s family first encounters the spirit world - a place caught between Japan\'s traditional past and its modern future.',
-      lat: 35.3283,
-      lng: 137.0742,
-      billboards: [
-        {
-          id: 'meiji-village',
-          heading: 180,
-          pitch: -10,
-          title: 'Meiji Period Architecture',
-          content: 'Preserved buildings from Japan\'s rapid modernization era',
-          type: 'historical',
-          details: 'This outdoor museum preserves authentic Meiji-era architecture including Western-style buildings, traditional Japanese structures, and hybrid designs that emerged during Japan\'s opening to the West. The eclectic mix of architectural styles mirrors the abandoned theme park\'s confused blend of modern attractions and traditional elements.',
-          tags: ['Meiji era', 'architecture', 'modernization'],
-          lat: 35.3283,
-          lng: 137.0742,
-        },
-        {
-          id: 'abandoned-modernization',
-          heading: 200,
-          pitch: -5,
-          title: 'Dreams of Progress',
-          content: 'The complex legacy of Japan\'s modernization efforts',
-          type: 'theme',
-          details: 'Meiji-mura represents both the achievements and costs of rapid modernization - a theme central to Spirited Away. The abandoned theme park symbolizes failed dreams of progress that ignore traditional values and environmental harmony, reflecting Miyazaki\'s concerns about Japan losing its cultural and spiritual connection to nature.',
-          tags: ['modernization', 'progress', 'cultural loss'],
-          lat: 35.3285,
-          lng: 137.0745,
-        }
-      ]
-    }
   ]
 },
   {
