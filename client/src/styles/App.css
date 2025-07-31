@@ -8,21 +8,24 @@ html, body, #root {
   width: 100%;
   font-family: 'Segoe UI', sans-serif;
   box-sizing: border-box;
-  overflow-x: auto;
-  overflow-y: auto;
+  overflow-x: hidden; /* Prevent horizontal scrolling */
+  overflow-y: hidden; /* Prevent vertical scrolling during transitions */
+  background: #000; /* Black background to prevent white flashes */
 }
 
 * {
   box-sizing: inherit;
 }
 
-/* App container - remove any default padding/margin that might interfere */
+/* App container - ensure no white backgrounds show through */
 .app-container {
   position: relative;
   width: 100%;
   height: 100vh;
   margin: 0;
   padding: 0;
+  background: #000; /* Black background as fallback */
+  overflow: hidden;
 }
 
 /* For regular pages (not the full-screen map page) */
@@ -32,6 +35,7 @@ html, body, #root {
   padding-right: 2rem;
   height: calc(100vh - 80px); /* Prevent content overflow */
   overflow-y: auto; /* Scroll if content exceeds visible space */
+  background: #000; /* Ensure dark background */
 }
 
 /* For pages that should have full-screen map */
@@ -42,6 +46,7 @@ html, body, #root {
   margin: 0;
   padding: 0;
   overflow: hidden;
+  background: #000; /* Black background to prevent white strips */
 }
 
 /* Popover Styles */
@@ -167,7 +172,6 @@ html, body, #root {
 }
 
 /* Modern Popover Close Button Styles */
-
 .popover-close-btn {
   position: absolute;
   top: 10px;
@@ -359,6 +363,79 @@ html, body, #root {
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+/* Add these styles to your App.css to fix the black strip issue */
 
+/* Ensure the map container maintains proper dimensions during transitions */
+.map-page {
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  position: relative;
+  overflow: hidden;
+  background: #000; /* This should match your map's background */
+  /* Add these new properties: */
+  min-height: 100vh; /* Prevent height collapse */
+  max-height: 100vh; /* Prevent height expansion */
+}
 
+/* Ensure the map container ref maintains dimensions */
+div[style*="width: 100vw"][style*="height: 100vh"] {
+  /* Target the map container specifically */
+  min-height: 100vh !important;
+  max-height: 100vh !important;
+  position: fixed !important; /* Changed from absolute to fixed */
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  overflow: hidden !important;
+  background: #000 !important; /* Ensure consistent background */
+}
 
+/* Alternative approach - add a specific class to your map container */
+.map-container-fixed {
+  position: fixed !important;
+  top: 0;
+  left: 0;
+  width: 100vw !important;
+  height: 100vh !important;
+  overflow: hidden;
+  background: #000;
+  z-index: 0;
+}
+
+/* Ensure the Google Maps 3D element fills the container properly */
+gmp-map-3d {
+  width: 100% !important;
+  height: 100% !important;
+  display: block !important;
+  background: #000 !important;
+}
+
+/* Prevent any margin/padding issues on the body during transitions */
+body.map-transitioning {
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+  background: #000;
+}
+
+/* Additional fix for Safari/WebKit browsers */
+@supports (-webkit-appearance: none) {
+  .map-page {
+    -webkit-transform: translateZ(0); /* Force hardware acceleration */
+    transform: translateZ(0);
+  }
+}
+
+/* Fix for potential viewport unit issues on mobile */
+@supports (height: 100dvh) {
+  .map-page {
+    height: 100dvh; /* Dynamic viewport height */
+  }
+  
+  div[style*="height: 100vh"] {
+    height: 100dvh !important;
+  }
+}

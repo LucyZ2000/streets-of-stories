@@ -4,7 +4,7 @@ import OnboardingHomepage from '../components/OnboardingHomepage';
 import { LOCATIONS } from '../data/Locations';
 import '../styles/Home.css';
 
-function Home({ showOnboarding, onStartExploring }) {
+function Home({ showOnboarding, onStartExploring, mapResetRef }) {
   const [locations, setLocations] = useState([]);
 
   useEffect(() => {
@@ -13,7 +13,11 @@ function Home({ showOnboarding, onStartExploring }) {
 
   return (
     <div className="map-page">
-      <Map3D locations={locations} showOnboarding={showOnboarding} />
+      <Map3D 
+        locations={locations} 
+        showOnboarding={showOnboarding}
+        resetRef={mapResetRef}
+      />
       {showOnboarding && (
         <OnboardingHomepage onExplore={onStartExploring} />
       )}

@@ -151,15 +151,14 @@ function StoryList({ locations, onLocationSelect, selectedLocationId, onClose })
   const handleLocationNavigation = (location, storyPointIndex = null) => {
     if (onClose) onClose(); // Close the story list if onClose is provided
     
-    if (storyPointIndex !== null) {
-      // Navigate to specific story point using URL parameters
-      navigate(`/location/${location.id}?point=${storyPointIndex}`);
+    // Always use onLocationSelect if available (for 3D view navigation)  
+    if (onLocationSelect) {
+      onLocationSelect(location, storyPointIndex);
     } else {
-      // Use the provided onLocationSelect function for main navigation
-      if (onLocationSelect) {
-        onLocationSelect(location);
+      // Fallback to direct navigation (for when there's no parent to handle selection)
+      if (storyPointIndex !== null) {
+        navigate(`/location/${location.id}?point=${storyPointIndex}`);
       } else {
-        // Fallback to direct navigation
         navigate(`/location/${location.id}`);
       }
     }

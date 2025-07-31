@@ -9,7 +9,7 @@ import '../styles/StoryList.css';
 import '../styles/InfoOverlay.css';
 
 
-function Map3D({ locations = [], showOnboarding = false }) {
+function Map3D({ locations = [], showOnboarding = false, resetRef }) {
   const { isLoaded, error } = useGoogleMaps();
   const { sessionState, updateSessionState } = useSessionState();
   const containerRef = useRef(null);
@@ -17,6 +17,7 @@ function Map3D({ locations = [], showOnboarding = false }) {
   const navigate = useNavigate();
   const location = useLocation();
   const markersRef = useRef(new Map());
+  const popoversRef = useRef(new Map()); // Track popovers separately
 
   // State
   const [selectedLocationId, setSelectedLocationId] = useState(null);
@@ -46,6 +47,42 @@ function Map3D({ locations = [], showOnboarding = false }) {
   };
   
   const defaultExplorationRange = 500;
+
+  // Reset function to return to default globe view
+  const resetToGlobeView = () => {
+    if (!map3DRef.current) return;
+
+    setIsAnimating(true);
+    setSelectedLocationId(null);
+    setCurrentLocation(null);
+    setCurrentStory(null);
+    setCurrentStoryPointIndex(0);
+    setViewMode('globe');
+    setShowStoryList(false);
+    clearStoryPointMarkers();
+
+    map3DRef.current.flyCameraTo({
+      endCamera: defaultGlobeView,
+      durationMillis: 2000,
+    });
+
+    setTimeout(() => {
+      setIsAnimating(false);
+    }, 2000);
+  };
+
+  // Expose reset function via ref
+  useEffect(() => {
+    if (resetRef) {
+      resetRef.current = resetToGlobeView;
+      console.log('Reset function registered with ref');
+    }
+    return () => {
+      if (resetRef) {
+        resetRef.current = null;
+      }
+    };
+  }, [resetRef, resetToGlobeView]);
 
   // Watch for onboarding state changes to trigger zoom animation
   useEffect(() => {
@@ -166,35 +203,36 @@ function Map3D({ locations = [], showOnboarding = false }) {
       markersRef.current.set(`storypoint-${location.id}-${index}`, billboard);
     });
   };
+  
   const calculateScreenPosition = (panorama, point) => {
-  const povHeading = panorama.getPov().heading;
-  const povPitch = panorama.getPov().pitch;
-  const zoom = panorama.getZoom();
-  
-  // Calculate relative position based on heading difference
-  const headingDiff = point.heading - povHeading;
-  const normalizedHeading = ((headingDiff + 540) % 360) - 180;
-  
-  // Only show if within view
-  if (Math.abs(normalizedHeading) > 90) {
-    return null;
-  }
-  
-  // Calculate screen position
-  const container = panorama.getDiv();
-  const centerX = container.offsetWidth / 2;
-  const centerY = container.offsetHeight / 2;
-  
-  // Convert heading to screen X position
-  const fov = 90 / Math.pow(2, zoom - 1);
-  const x = centerX + (normalizedHeading / fov) * (container.offsetWidth / 2);
-  
-  // Convert pitch to screen Y position
-  const pitchDiff = point.pitch - povPitch;
-  const y = centerY - (pitchDiff / fov) * (container.offsetHeight / 2);
-  
-  return { x, y };
-};
+    const povHeading = panorama.getPov().heading;
+    const povPitch = panorama.getPov().pitch;
+    const zoom = panorama.getZoom();
+    
+    // Calculate relative position based on heading difference
+    const headingDiff = point.heading - povHeading;
+    const normalizedHeading = ((headingDiff + 540) % 360) - 180;
+    
+    // Only show if within view
+    if (Math.abs(normalizedHeading) > 90) {
+      return null;
+    }
+    
+    // Calculate screen position
+    const container = panorama.getDiv();
+    const centerX = container.offsetWidth / 2;
+    const centerY = container.offsetHeight / 2;
+    
+    // Convert heading to screen X position
+    const fov = 90 / Math.pow(2, zoom - 1);
+    const x = centerX + (normalizedHeading / fov) * (container.offsetWidth / 2);
+    
+    // Convert pitch to screen Y position
+    const pitchDiff = point.pitch - povPitch;
+    const y = centerY - (pitchDiff / fov) * (container.offsetHeight / 2);
+    
+    return { x, y };
+  };
 
   const createBillboard = (billboard) => {
     const billboardDiv = document.createElement('div');
@@ -215,6 +253,38 @@ function Map3D({ locations = [], showOnboarding = false }) {
     
     billboardDiv.appendChild(arrow);
     return billboardDiv;
+  };
+
+  // Update popover for a specific location
+  const updatePopoverForLocation = (locationToUpdate) => {
+    const marker = markersRef.current.get(locationToUpdate.id);
+    const popover = popoversRef.current.get(locationToUpdate.id);
+    
+    if (!marker || !popover) return;
+    
+    // Determine button text and action based on current state
+    const isZoomedIn = viewMode === 'zoomed' && currentLocation?.id === locationToUpdate.id;
+    const buttonText = isZoomedIn ? 'Street View' : 'Explore';
+    
+    // Find and update the button
+    const exploreBtn = popover.querySelector('.popover-explore-btn');
+    if (exploreBtn) {
+      exploreBtn.textContent = buttonText;
+      exploreBtn.dataset.action = isZoomedIn ? 'street-view' : 'explore';
+      
+      // Remove existing event listeners by cloning the element
+      const newBtn = exploreBtn.cloneNode(true);
+      newBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const action = e.target.dataset.action;
+        if (action === 'street-view') {
+          navigate(`/location/${locationToUpdate.id}?point=${currentStoryPointIndex}`);
+        } else {
+          handleExplore(locationToUpdate);
+        }
+      });
+      exploreBtn.parentNode.replaceChild(newBtn, exploreBtn);
+    }
   };
 
   const executeNavigationState = (targetLocation, storyPointIndex) => {
@@ -321,10 +391,15 @@ function Map3D({ locations = [], showOnboarding = false }) {
 
       setTimeout(() => {
         setIsAnimating(false);
-        const marker = markersRef.current.get(location.id);
-        if (marker) {
-          marker.dispatchEvent(new CustomEvent('gmp-click', { bubbles: true, cancelable: true }));
-        }
+        // Update the popover for this location before opening it
+        updatePopoverForLocation(location);
+        // Small delay to ensure popover is updated
+        setTimeout(() => {
+          const marker = markersRef.current.get(location.id);
+          if (marker) {
+            marker.dispatchEvent(new CustomEvent('gmp-click', { bubbles: true, cancelable: true }));
+          }
+        }, 100);
       }, 2000);
     } catch (error) {
       console.error('Error during flyto animation:', error);
@@ -453,14 +528,12 @@ function Map3D({ locations = [], showOnboarding = false }) {
         });
 
         const popover = new PopoverElement();
+        
+        // Create popover content
         const popoverContent = document.createElement('div');
         popoverContent.className = 'story-popover-content';
         
-        // Determine button text and action based on view mode
-        const isZoomedIn = viewMode === 'zoomed' && currentLocation?.id === location.id;
-        const buttonText = isZoomedIn ? 'Street View' : 'Explore';
-        const buttonAction = isZoomedIn ? 'street-view' : 'explore';
-        
+        // Initial button state (always "Explore" at initialization)
         popoverContent.innerHTML = `
           <div class="popover-header">
             <img src="${location.image}" alt="${location.title}" class="popover-image">
@@ -472,26 +545,26 @@ function Map3D({ locations = [], showOnboarding = false }) {
             <button class="popover-close-btn" data-location-id="${location.id}" title="Close">×</button>
           </div>
           <p class="popover-description">${location.description}</p>
-          <button class="popover-explore-btn" data-location-id="${location.id}" data-action="${buttonAction}">
-            ${buttonText}
+          <button class="popover-explore-btn" data-location-id="${location.id}" data-action="explore">
+            Explore
           </button>
         `;
 
         // Add event listeners
         const exploreBtn = popoverContent.querySelector('.popover-explore-btn');
+        const closeBtn = popoverContent.querySelector('.popover-close-btn');
+        
         exploreBtn.addEventListener('click', (e) => {
           e.stopPropagation();
           const action = e.target.dataset.action;
           if (action === 'street-view') {
-            // Navigate to street view
             navigate(`/location/${location.id}?point=${currentStoryPointIndex}`);
           } else {
-            // Regular explore action
             handleExplore(location);
           }
         });
 
-        popoverContent.querySelector('.popover-close-btn').addEventListener('click', (e) => {
+        closeBtn.addEventListener('click', (e) => {
           e.stopPropagation();
           popover.open = false;
         });
@@ -512,6 +585,7 @@ function Map3D({ locations = [], showOnboarding = false }) {
         map3D.append(popover);
 
         markersRef.current.set(location.id, interactiveMarker);
+        popoversRef.current.set(location.id, popoverContent); // Store popover content reference
 
         interactiveMarker.addEventListener('gmp-click', (event) => {
           event.stopPropagation();
@@ -526,42 +600,15 @@ function Map3D({ locations = [], showOnboarding = false }) {
     }
   };
 
-  // Update popover content when view mode changes
+  // Update all popovers when view mode changes
   useEffect(() => {
     if (!map3DRef.current) return;
     
-    // Update all popovers to reflect current view mode
-    markersRef.current.forEach((marker, locationId) => {
-      const location = locations.find(loc => loc.id === locationId);
-      if (!location) return;
-      
-      const popover = marker.gmpPopoverTargetElement;
-      if (popover) {
-        const exploreBtn = popover.querySelector('.popover-explore-btn');
-        if (exploreBtn) {
-          const isZoomedIn = viewMode === 'zoomed' && currentLocation?.id === location.id;
-          const buttonText = isZoomedIn ? 'Street View' : 'Explore';
-          const buttonAction = isZoomedIn ? 'street-view' : 'explore';
-          
-          exploreBtn.textContent = buttonText;
-          exploreBtn.dataset.action = buttonAction;
-          
-          // Update the click handler
-          const newBtn = exploreBtn.cloneNode(true);
-          newBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            const action = e.target.dataset.action;
-            if (action === 'street-view') {
-              navigate(`/location/${location.id}?point=${currentStoryPointIndex}`);
-            } else {
-              handleExplore(location);
-            }
-          });
-          exploreBtn.parentNode.replaceChild(newBtn, exploreBtn);
-        }
-      }
+    // Update all popover buttons to reflect current state
+    locations.forEach((location) => {
+      updatePopoverForLocation(location);
     });
-  }, [viewMode, currentLocation]);
+  }, [viewMode, currentLocation, currentStoryPointIndex, locations]);
 
   useEffect(() => {
     if (isLoaded && locations.length > 0) {
@@ -578,6 +625,7 @@ function Map3D({ locations = [], showOnboarding = false }) {
         map3DRef.current = null;
       }
       markersRef.current.clear();
+      popoversRef.current.clear();
     };
   }, [isLoaded, locations]);
 
@@ -725,7 +773,7 @@ function Map3D({ locations = [], showOnboarding = false }) {
                           <div className="story-point-name">{point.text}</div>
                           {distance > 0 && (
                             <div className="story-point-distance">
-                              {`${distance.toFixed(1)}km`}
+              {`${distance.toFixed(1)}km`}
                             </div>
                           )}
                         </div>
